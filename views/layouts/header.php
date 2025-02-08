@@ -8,8 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Egyptian Bites</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/public/assets/style.css">
-</head>
+    <link rel="stylesheet" href="/public/css/styles.css">
+
+
+
+</head>/public/assets/style.css
 <body>
 
 <!-- Navbar -->
