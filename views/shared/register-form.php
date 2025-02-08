@@ -21,7 +21,7 @@
             </div>
         <?php } ?>
 
-        <form action="../../controllers/RegistrationController.php" method="POST" enctype="multipart/form-data">
+        <form action="/views/shared/register.php" method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
                 <input type="text" class="form-control" name="full_name" required>
