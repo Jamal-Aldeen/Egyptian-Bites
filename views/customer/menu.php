@@ -50,10 +50,10 @@
     <div class="row g-4" id="menuContainer">
         <?php
         $menuItems = [
-            ["name" => "Koshari", "price" => "$5.99", "rating" => 4.5, "image" => "Egyptian-Koshari-Featured.jpg", "category" => "main-dishes"],
-            ["name" => "Mahshi", "price" => "$7.99", "rating" => 4, "image" => "mahshi-plato.jpg", "category" => "main-dishes"],
-            ["name" => "Molokhia", "price" => "$6.99", "rating" => 3.5, "image" => "Molokhia-17.webp", "category" => "main-dishes"],
-            ["name" => "Feteer Meshaltet", "price" => "$8.50", "rating" => 5, "image" => "th.jpg", "category" => "desserts"]
+            ["name" => "Koshari", "price" => "$5.99", "rating" => 4.5, "image" => "Egyptian-Koshari-Featured.jpg", "category" => "main-dishes","desc" => "A mix of lentils, rice, pasta, and chickpeas.","discount" => "10% Off"],
+            ["name" => "Mahshi", "price" => "$7.99", "rating" => 4, "image" => "mahshi-plato.jpg", "category" => "main-dishes","discount" => "5% Off" ,"desc" => "Stuffed vegetables with rice & spices." ],
+            ["name" => "Molokhia", "price" => "$6.99", "rating" => 3.5, "image" => "Molokhia-17.webp", "category" => "main-dishes","discount" => "","desc" => "Green soup made from jute leaves."],
+            ["name" => "Feteer Meshaltet", "price" => "$8.50", "rating" => 5, "image" => "th.jpg", "category" => "desserts","discount" => "15% Off","desc" => "Flaky layered pastry with honey, sugar, or cheese."]
         ];
 
         function generateStars($rating) {
@@ -69,17 +69,28 @@
         }
 
         foreach ($menuItems as $item) {
+            
             echo '<div class="col-md-3 menu-item" data-category="' . $item["category"] . '">
-                    <div class="card text-center border-0 shadow-sm">
-                        <img src="/public/assets/images/' . $item["image"] . '" class="card-img-top" alt="' . $item["name"] . '">
-                        <div class="card-body">
-                            <h5 class="card-title">' . $item["name"] . '</h5>
-                            <div class="rating">' . generateStars($item["rating"]) . '</div>
-                            <p class="price text-warning fw-bold">' . $item["price"] . '</p>
-                            <button class="btn btn-outline-warning w-100 btn-add-cart">Add to Cart</button>
-                        </div>
+            <div class="card text-center border-0 shadow-sm p-3">
+                <img src="/public/assets/images/' . $item["image"] . '" class="card-img-top rounded" alt="' . $item["name"] . '">
+                <div class="card-body">
+                    <h5 class="card-title">' . $item["name"] . '</h5>
+                    <div class="rating">' . generateStars($item["rating"]) . '</div>
+                    <p class="price text-warning fw-bold">' . $item["price"] . '</p>
+                    <p class="text-muted">' . $item["desc"] . '</p>
+
+                    <div class="d-flex justify-content-center align-items-center mb-3">
+                        <button class="btn btn-sm btn-outline-secondary decrease-qty">-</button>
+                        <input type="number" class="form-control text-center mx-2 quantity-input" value="1" min="1" style="width: 50px;">
+                        <button class="btn btn-sm btn-outline-secondary increase-qty">+</button>
                     </div>
-                  </div>';
+
+                    <button class="btn btn-warning w-100 btn-add-cart d-flex align-items-center justify-content-center">
+                        <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>';
         }
         ?>
     </div>
