@@ -66,6 +66,10 @@
                 <p>Flaky layered pastry served with honey, sugar, or stuffed with cheese and meat.</p>
             </div>
         </div>
+          <!-- View Full Menu Button -->
+        <div class="text-center mt-4">
+            <a href="views/customer/menu.php" class="btn btn-warning btn-lg">View Full Menu</a>
+        </div>
     </div>
 </section>
 
