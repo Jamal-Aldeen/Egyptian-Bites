@@ -1,4 +1,7 @@
-<?php include '../layouts/header.php'; ?>
+<?php
+session_start(); // Start the session
+include '../layouts/header.php';
+?>
 
 <div class="container">
     <div class="register-container">
@@ -21,7 +24,7 @@
             </div>
         <?php } ?>
 
-        <form action="/views/shared/register.php" method="POST" enctype="multipart/form-data">
+        <form action="register.php" method="POST" enctype="multipart/form-data">
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
                 <input type="text" class="form-control" name="full_name" required>

@@ -15,22 +15,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_type = htmlspecialchars(trim($_POST['user_type']));
     $profile_pic = $_FILES['profile_pic'];
 
-    $allowed_roles = ['staff', 'customer'];
-    if (!in_array($user_type, $allowed_roles)) {
-        $user_type = 'customer';
-    }
-
     $validation->checkEmptyFields([
         "Full Name" => $full_name,
         "Email" => $email,
         "Password" => $password
     ]);
-    $validation->validateEmail($email);
+    $validation->validateEmail($email, $pdo); // Pass $pdo here
     $validation->validatePassword($password, $confirm_password);
     $validation->validateProfilePic($profile_pic);
 
     if ($validation->isValid()) {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt = $pdo->prepare("SELECT * FROM Users WHERE email = :email");
         $stmt->execute(['email' => $email]);
 
         if ($stmt->rowCount() > 0) {
@@ -40,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $profile_pic_name = "default.jpg";
 
             if (!empty($profile_pic['name'])) {
-                $target_dir = __DIR__ . "/../public/uploads/";
+                $target_dir = __DIR__ . "/../../public/uploads/"; // Ensure this path is correct
                 if (!is_dir($target_dir)) {
                     mkdir($target_dir, 0777, true);
                 }
@@ -58,15 +53,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (empty($errors)) {
                 $activation_code = md5(uniqid(rand(), true));
 
-                $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password, role, profile_pic, activation_code, email_verified) 
-                                       VALUES (:full_name, :email, :password, :role, :profile_pic, :activation_code, 0)");
+                $stmt = $pdo->prepare("INSERT INTO Users (full_name, email, password, role, profile_picture, verification_token, verified) 
+                                       VALUES (:full_name, :email, :password, :role, :profile_picture, :verification_token, 0)");
                 $stmt->execute([
                     'full_name' => $full_name,
                     'email' => $email,
                     'password' => $hashed_password,
                     'role' => $user_type,
-                    'profile_pic' => $profile_pic_name,
-                    'activation_code' => $activation_code
+                    'profile_picture' => $profile_pic_name,
+                    'verification_token' => $activation_code
                 ]);
 
                 $verification_link = "https://yourwebsite.com/verify.php?code=$activation_code";
@@ -75,12 +70,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $_SESSION['success'] = "Registration successful! Please check your email to verify your account.";
                 
-                header("Location: ../public/login.php");
+                header("Location: login.php"); // Update the redirect path
                 exit();
             }
         }
     } else {
         $errors = $validation->getErrors();
     }
+
+    // Store errors in session and redirect back to the registration form
+    $_SESSION['errors'] = $errors;
+    header("Location: register-form.php");
+    exit();
 }
 ?>

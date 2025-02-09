@@ -1,9 +1,8 @@
 <?php
+require_once __DIR__ . '/../config/db.php';
 
 class Validation {
-    
     private $errors = [];
-
 
     public function checkEmptyFields($fields) {
         foreach ($fields as $field => $value) {
@@ -13,21 +12,19 @@ class Validation {
         }
     }
 
-
     public function validateEmail($email, $pdo) {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->errors[] = "Invalid email format.";
             return;
         }
 
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email");
+        $stmt = $pdo->prepare("SELECT id FROM Users WHERE email = :email");
         $stmt->execute(['email' => $email]);
 
         if ($stmt->rowCount() > 0) {
             $this->errors[] = "Email is already registered.";
         }
     }
-
 
     public function validateFullName($full_name) {
         if (strlen($full_name) < 3 || strlen($full_name) > 50) {
@@ -37,7 +34,6 @@ class Validation {
             $this->errors[] = "Full Name can only contain letters and spaces.";
         }
     }
-
 
     public function validatePassword($password, $confirm_password) {
         if (strlen($password) < 8 || !preg_match("/[A-Za-z]/", $password) || !preg_match("/\d/", $password)) {
@@ -74,11 +70,9 @@ class Validation {
         }
     }
 
-
     public function getErrors() {
         return $this->errors;
     }
-
 
     public function isValid() {
         return empty($this->errors);

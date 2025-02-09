@@ -24,12 +24,12 @@ class User {
     }
 
     // Create a new user
-    public function create($username, $email, $password, $role, $verificationToken = null) {
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->pdo->prepare("INSERT INTO Users (username, email, password, role, verification_token) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$username, $email, $hashedPassword, $role, $verificationToken]);
-        return $this->pdo->lastInsertId();
-    }
+    public function create($full_name, $email, $password, $role, $verificationToken = null) {
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    $stmt = $this->pdo->prepare("INSERT INTO Users (full_name, email, password, role, verification_token) VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([$full_name, $email, $hashedPassword, $role, $verificationToken]);
+    return $this->pdo->lastInsertId();
+}
 
     // Update user profile
     public function updateProfile($id, $username, $email, $profilePicture = null) {
