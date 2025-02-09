@@ -1,18 +1,32 @@
 <?php
 require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Validation.php';
 
 class AuthController {
     private $userModel;
+    private $validation;
+    private $pdo;
 
     public function __construct() {
+        global $pdo;
+        $this->pdo = $pdo;
         $this->userModel = new User();
+        $this->validation = new Validation();
     }
 
     // User registration
-    public function register($username, $email, $password, $role) {
-        // Validate password strength
-        if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/', $password)) {
-            throw new Exception("Password must be at least 8 characters long and include at least one letter and one number.");
+    public function register($full_name, $email, $password, $role) {
+        // Validate inputs
+        $this->validation->checkEmptyFields([
+            "Full Name" => $full_name,
+            "Email" => $email,
+            "Password" => $password
+        ]);
+        $this->validation->validateEmail($email, $this->pdo); // Pass $pdo here
+        $this->validation->validatePassword($password, $password); // Confirm password is the same
+
+        if (!$this->validation->isValid()) {
+            throw new Exception(implode(" ", $this->validation->getErrors()));
         }
 
         // Check if email already exists
@@ -24,7 +38,7 @@ class AuthController {
         $verificationToken = bin2hex(random_bytes(32));
 
         // Create user
-        $userId = $this->userModel->create($username, $email, $password, $role, $verificationToken);
+        $userId = $this->userModel->create($full_name, $email, $password, $role, $verificationToken);
 
         // Send verification email
         $this->sendVerificationEmail($email, $verificationToken);
@@ -53,6 +67,13 @@ class AuthController {
 
         if (!$user) {
             throw new Exception("Email not found.");
+        }
+
+        // Validate new password
+        $this->validation->validateNewPassword($newPassword);
+
+        if (!$this->validation->isValid()) {
+            throw new Exception(implode(" ", $this->validation->getErrors()));
         }
 
         return $this->userModel->changePassword($user['id'], $newPassword);
