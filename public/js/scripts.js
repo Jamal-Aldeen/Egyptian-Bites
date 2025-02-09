@@ -46,12 +46,27 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 document.querySelectorAll(".btn-add-cart").forEach(button => {
     button.addEventListener("click", function () {
-        this.innerText = "Added!";
+        this.innerHTML = '<i class="fas fa-check"></i> Added!';
         this.style.backgroundColor = "#28a745";
         setTimeout(() => {
-            this.innerText = "Add to Cart";
+            this.innerHTML = '<i class="fas fa-shopping-cart "></i>  Add to Cart';
             this.style.backgroundColor = "";
         }, 2000);
+    });
+});
+document.querySelectorAll(".increase-qty").forEach(btn => {
+    btn.addEventListener("click", function () {
+        let input = this.previousElementSibling;
+        input.value = parseInt(input.value) + 1;
+    });
+});
+
+document.querySelectorAll(".decrease-qty").forEach(btn => {
+    btn.addEventListener("click", function () {
+        let input = this.nextElementSibling;
+        if (input.value > 1) {
+            input.value = parseInt(input.value) - 1;
+        }
     });
 });
 
@@ -62,12 +77,18 @@ document.getElementById("searchInput").addEventListener("keyup", function () {
         item.style.display = title.includes(filter) ? "block" : "none";
     });
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const filterButtons = document.querySelectorAll(".filter-btn");
 
-document.querySelectorAll(".filter-btn").forEach(btn => {
-    btn.addEventListener("click", function () {
-        let category = this.getAttribute("data-filter");
-        document.querySelectorAll(".menu-item").forEach(item => {
-            item.style.display = (category === "all" || item.getAttribute("data-category") === category) ? "block" : "none";
+    filterButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            // Remove 'active' class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove("active"));
+
+            // Add 'active' class to the clicked button
+            this.classList.add("active");
         });
     });
 });
+
+
