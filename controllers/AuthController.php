@@ -2,12 +2,14 @@
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Validation.php';
 
-class AuthController {
+class AuthController
+{
     private $userModel;
     private $validation;
     private $pdo;
 
-    public function __construct() {
+    public function __construct()
+    {
         global $pdo;
         $this->pdo = $pdo;
         $this->userModel = new User();
@@ -15,7 +17,8 @@ class AuthController {
     }
 
     // User registration
-    public function register($full_name, $email, $password, $role) {
+    public function register($full_name, $email, $password, $role)
+    {
         // Validate inputs
         $this->validation->checkEmptyFields([
             "Full Name" => $full_name,
@@ -47,7 +50,8 @@ class AuthController {
     }
 
     // User login
-    public function login($email, $password) {
+    public function login($email, $password)
+    {
         $user = $this->userModel->findByEmail($email);
 
         if (!$user || !password_verify($password, $user['password'])) {
@@ -58,11 +62,34 @@ class AuthController {
             throw new Exception("Please verify your email before logging in.");
         }
 
-        return $user;
+        // Set session variables
+        // In login method
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['role'] = $user['role'];
+        $_SESSION['full_name'] = $user['full_name'];
+
+        // Redirect based on role
+        if ($user['role'] === 'Staff') {
+            header("Location: /views/staff/dashboard.php");
+        } else {
+            header("Location: /views/customer/profile.php");
+        }
+        exit();
     }
+    
+    //  logout method
+public function logout() {
+    session_start();
+    session_unset();
+    session_destroy();
+    header("Location: /login"); // Redirect to login page
+    exit();
+}
 
     // Password recovery
-    public function resetPassword($email, $newPassword) {
+    public function resetPassword($email, $newPassword)
+    {
         $user = $this->userModel->findByEmail($email);
 
         if (!$user) {
@@ -80,10 +107,88 @@ class AuthController {
     }
 
     // Send verification email
-    private function sendVerificationEmail($email, $token) {
+    private function sendVerificationEmail($email, $token)
+    {
         $subject = "Verify Your Email";
         $message = "Click the link to verify your email: http://yourapp.com/verify-email?token=$token";
         mail($email, $subject, $message);
     }
+
+    public function updateProfile($userId, $fullName, $email, $profilePicture = null)
+    {
+        $this->validation->checkEmptyFields(["Full Name" => $fullName, "Email" => $email]);
+        $this->validation->validateEmail($email, $this->pdo, $userId);
+
+        if (!$this->validation->isValid()) {
+            throw new Exception(implode(" ", $this->validation->getErrors()));
+        }
+
+        $profilePictureName = $this->handleProfilePicture($profilePicture, $userId);
+
+        return $this->userModel->updateProfile(
+            $userId,
+            $fullName,
+            $email,
+            $profilePictureName
+        );
+    }
+
+    public function addAddress($userId, $addressData)
+    {
+        return $this->userModel->addAddress(
+            $userId,
+            $addressData['label'],
+            $addressData['address_line1'],
+            $addressData['address_line2'],
+            $addressData['city']
+        );
+    }
+
+    public function deleteAddress($addressId, $userId)
+    {
+        return $this->userModel->deleteAddress($addressId, $userId);
+    }
+
+    private function handleProfilePicture($file, $userId)
+    {
+        if ($file && $file['error'] === UPLOAD_ERR_OK) {
+            $targetDir = __DIR__ . "/../../public/uploads/";
+            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = "user_{$userId}_" . time() . ".$extension";
+            move_uploaded_file($file['tmp_name'], $targetDir . $filename);
+            return $filename;
+        }
+        return null;
+    }
 }
-?>
+
+// Handle profile actions
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $authController = new AuthController();
+    $userId = $_SESSION['user_id'];
+
+    try {
+        switch ($_GET['action']) {
+            case 'update_profile':
+                $authController->updateProfile(
+                    $userId,
+                    $_POST['full_name'],
+                    $_POST['email'],
+                    $_FILES['profile_picture']
+                );
+                break;
+            case 'add_address':
+                $authController->addAddress($userId, $_POST);
+                break;
+            case 'delete_address':
+                $authController->deleteAddress($_POST['address_id'], $userId);
+                break;
+        }
+        header("Location: /views/customer/profile.php");
+        exit();
+    } catch (Exception $e) {
+        $_SESSION['error'] = $e->getMessage();
+        header("Location: /views/customer/profile.php");
+        exit();
+    }
+}

@@ -284,6 +284,37 @@ LOCK TABLES `SpecialOffers` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `UserAddresses`
+--
+
+DROP TABLE IF EXISTS `UserAddresses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `UserAddresses` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `label` varchar(50) NOT NULL,
+  `address_line1` varchar(255) NOT NULL,
+  `address_line2` varchar(255) DEFAULT NULL,
+  `city` varchar(100) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `UserAddresses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `UserAddresses`
+--
+
+LOCK TABLES `UserAddresses` WRITE;
+/*!40000 ALTER TABLE `UserAddresses` DISABLE KEYS */;
+/*!40000 ALTER TABLE `UserAddresses` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Users`
 --
 
@@ -303,7 +334,7 @@ CREATE TABLE `Users` (
   `verification_token` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -312,6 +343,7 @@ CREATE TABLE `Users` (
 
 LOCK TABLES `Users` WRITE;
 /*!40000 ALTER TABLE `Users` DISABLE KEYS */;
+INSERT INTO `Users` VALUES (1,'gamal','gamal@gmail.com','$2y$10$K0RXY88mxCBbmEl4QB8LqOWxXvpLE2qsFjqABe2szA0K9hhzMCGPW','Customer','1739061897_277c997872.jpg','2025-02-09 00:44:57','2025-02-09 00:44:57',0,'425998e5afec4553d0d184ac178e5cb2'),(2,'jamal','jamal@gmail.com','$2y$10$VW7fZeMfLbubXEfbA.OJaeiXLC92OsJWYDzF5qB/c/KstIgs67WyW','Customer','1739329757_3a28d2b17a.png','2025-02-12 03:09:17','2025-02-12 03:09:17',0,'8083e2866b0ad0a5352d9219cecc5e4d');
 /*!40000 ALTER TABLE `Users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -324,4 +356,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-08  3:40:23
+-- Dump completed on 2025-02-12  6:43:12
