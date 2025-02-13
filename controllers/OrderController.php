@@ -22,5 +22,9 @@ class OrderController {
         return $this->orderModel->getOrderHistory($user_id);
     }
     
+    public function updateOrderStatus($order_id, $status) {
+        return $this->orderModel->updateOrderStatus($order_id, $status);
+    }
+    
 }
 ?>
