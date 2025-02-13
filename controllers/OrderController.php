@@ -18,5 +18,9 @@ class OrderController {
         return ["status" => "error"];
     }
     
+    public function getOrderHistory($user_id) {
+        return $this->orderModel->getOrderHistory($user_id);
+    }
+    
 }
 ?>
