@@ -1,15 +1,14 @@
 <?php
+session_start(); 
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Validation.php';
 
-class AuthController
-{
+class AuthController {
     private $userModel;
     private $validation;
     private $pdo;
 
-    public function __construct()
-    {
+    public function __construct() {
         global $pdo;
         $this->pdo = $pdo;
         $this->userModel = new User();
@@ -114,25 +113,43 @@ public function logout() {
         mail($email, $subject, $message);
     }
 
-    public function updateProfile($userId, $fullName, $email, $profilePicture = null)
-    {
+    public function updateProfile($userId, $fullName, $email, $profilePicture = null) {
+        error_log("Updating profile for user ID: $userId");
+        error_log("Full Name: $fullName, Email: $email");
+    
         $this->validation->checkEmptyFields(["Full Name" => $fullName, "Email" => $email]);
         $this->validation->validateEmail($email, $this->pdo, $userId);
-
+    
         if (!$this->validation->isValid()) {
             throw new Exception(implode(" ", $this->validation->getErrors()));
         }
-
+    
         $profilePictureName = $this->handleProfilePicture($profilePicture, $userId);
-
-        return $this->userModel->updateProfile(
+        error_log("Profile Picture Name: " . ($profilePictureName ?? "None"));
+    
+        // Update the profile
+        $result = $this->userModel->updateProfile(
             $userId,
             $fullName,
             $email,
             $profilePictureName
         );
+    
+        if ($result) {
+            error_log("Profile updated successfully.");
+            // Refresh session data
+            $user = $this->userModel->findById($userId);
+            $_SESSION['full_name'] = $user['full_name'];
+            $_SESSION['email'] = $user['email'];
+            if ($profilePictureName) {
+                $_SESSION['profile_picture'] = $profilePictureName;
+            }
+        } else {
+            error_log("Failed to update profile.");
+        }
+    
+        return $result;
     }
-
     public function addAddress($userId, $addressData)
     {
         return $this->userModel->addAddress(
@@ -149,16 +166,29 @@ public function logout() {
         return $this->userModel->deleteAddress($addressId, $userId);
     }
 
-    private function handleProfilePicture($file, $userId)
-    {
+    private function handleProfilePicture($file, $userId) {
         if ($file && $file['error'] === UPLOAD_ERR_OK) {
             $targetDir = __DIR__ . "/../../public/uploads/";
+    
+            // Ensure the uploads directory exists
+            if (!is_dir($targetDir)) {
+                mkdir($targetDir, 0777, true); // Create the directory if it doesn't exist
+            }
+    
+            // Generate a unique filename
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = "user_{$userId}_" . time() . ".$extension";
-            move_uploaded_file($file['tmp_name'], $targetDir . $filename);
-            return $filename;
+            $targetFile = $targetDir . $filename;
+    
+            // Move the uploaded file to the target directory
+            if (move_uploaded_file($file['tmp_name'], $targetFile)) {
+                return $filename; // Return the filename for database storage
+            } else {
+                error_log("Failed to move uploaded file to: $targetFile");
+                throw new Exception("Failed to upload profile picture.");
+            }
         }
-        return null;
+        return null; // No file uploaded
     }
 }
 
