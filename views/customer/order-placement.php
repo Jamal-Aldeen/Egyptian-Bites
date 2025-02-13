@@ -102,4 +102,29 @@ function placeOrder() {
 }
 
 
+    $(document).ready(function() {
+        loadMenu();
+    });
+
+    function loadMenu() {
+        $.get("/public/api/get_menu.php", function(data) {
+            let menuItems = JSON.parse(data);
+            let output = "";
+            menuItems.forEach(item => {
+                output += `
+                    <div class="menu-item">
+                        <h4>${item.name} - $${item.price}</h4>
+                        <p>${item.description}</p>
+                        <input type="number" id="qty-${item.id}" min="1" value="1">
+                        <input type="text" id="custom-${item.id}" placeholder="Customizations (optional)">
+                        <button onclick="addToCart(${item.id}, '${item.name}', ${item.price})">Add to Cart</button>
+                    </div>
+                `;
+            });
+            $("#menu-items").html(output);
+        });
+    }
+
+
+
 </script>
