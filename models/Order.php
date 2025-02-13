@@ -24,6 +24,13 @@ class Order {
         }
         return true;
     }
+    public function getOrderHistory($user_id) {
+        $query = "SELECT * FROM Orders WHERE user_id = ? ORDER BY created_at DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
     
 }
 ?>
