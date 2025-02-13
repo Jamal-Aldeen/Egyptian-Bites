@@ -27,7 +27,7 @@
                 <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="#menu">Menu</a></li>
                 <li class="nav-item"><a class="nav-link" href="#booking">Book a Table</a></li>
-                <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li>
+                <!-- <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li> -->
                 <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
                 <!-- Add to header navigation -->
 <?php if (isset($_SESSION['user_id'])) : ?>
@@ -40,6 +40,7 @@
 <?php else : ?>
     <li class="nav-item">
         <a class="nav-link" href="/views/shared/login.php">Login</a>
+        <li class="nav-item"><a class="nav-link" href="../shared/register-form.php">Register</a></li>
     </li>
 <?php endif; ?>
             </ul>
