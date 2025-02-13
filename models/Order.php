@@ -16,5 +16,14 @@ class Order {
         }
         return false;
     }
+    public function addOrderItems($order_id, $items) {
+        $stmt = $this->conn->prepare("INSERT INTO OrderItems (order_id, menu_item_id, quantity, customizations) VALUES (?, ?, ?, ?)");
+        foreach ($items as $item) {
+            $stmt->bind_param("iiis", $order_id, $item['menu_item_id'], $item['quantity'], $item['customizations']);
+            $stmt->execute();
+        }
+        return true;
+    }
+    
 }
 ?>
