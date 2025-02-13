@@ -12,14 +12,21 @@ class Validation {
         }
     }
 
-    public function validateEmail($email, $pdo) {
+    public function validateEmail($email, $pdo, $currentUserId = null) {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->errors[] = "Invalid email format.";
             return;
         }
 
-        $stmt = $pdo->prepare("SELECT id FROM Users WHERE email = :email");
-        $stmt->execute(['email' => $email]);
+        $sql = "SELECT id FROM Users WHERE email = :email";
+        $params = ['email' => $email];
+        if ($currentUserId !== null) {
+            $sql .= " AND id != :currentUserId";
+            $params['currentUserId'] = $currentUserId;
+        }
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
 
         if ($stmt->rowCount() > 0) {
             $this->errors[] = "Email is already registered.";
