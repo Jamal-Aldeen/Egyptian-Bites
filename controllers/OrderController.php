@@ -13,9 +13,10 @@ class OrderController {
         $order_id = $this->orderModel->createOrder($user_id, $total_price);
         if ($order_id) {
             $this->orderModel->addOrderItems($order_id, $items);
-            return ["status" => "success", "message" => "Order placed successfully!", "order_id" => $order_id];
+            return ["status" => "success", "order_id" => $order_id];
         }
-        return ["status" => "error", "message" => "Order failed."];
+        return ["status" => "error"];
     }
+    
 }
 ?>
