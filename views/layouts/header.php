@@ -26,8 +26,15 @@
                 <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="#menu">Menu</a></li>
                 <li class="nav-item"><a class="nav-link" href="#booking">Book a Table</a></li>
-                <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li>
+                <!-- <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li> -->
                 <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                <!-- Register & Login Links -->
+                <?php if (isset($_SESSION['user_id'])): ?>
+             <li class="nav-item"><a class="nav-link" href="logout.php">Logout</a></li>
+          <?php else: ?>
+            <li class="nav-item"><a class="nav-link" href="../shared/login.php">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="../shared/register-form.php">Register</a></li>
+            <?php endif; ?>
             </ul>
         </div>
     </div>
