@@ -32,5 +32,11 @@ class Order {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
     
+    public function updateOrderStatus($order_id, $status) {
+        $stmt = $this->conn->prepare("UPDATE Orders SET status = ? WHERE id = ?");
+        $stmt->bind_param("si", $status, $order_id);
+        return $stmt->execute();
+    }
+    
 }
 ?>
