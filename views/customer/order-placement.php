@@ -87,6 +87,19 @@ function removeFromCart(index) {
     cart.splice(index, 1);
     updateCart();
 }
+function placeOrder() {
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+    $.post("/public/api/place_order.php", {cart: JSON.stringify(cart)}, function(response) {
+        alert(response.message);
+        if (response.status === "success") {
+            cart = [];
+            updateCart();
+        }
+    }, "json");
+}
 
 
 </script>
