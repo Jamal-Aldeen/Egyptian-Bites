@@ -36,3 +36,57 @@
 
 </body>
 </html>
+
+<script>
+    $(document).ready(function() {
+        loadMenu();
+    });
+
+    function loadMenu() {
+        $.get("/public/api/get_menu.php", function(data) {
+            let menuItems = JSON.parse(data);
+            let output = "";
+            menuItems.forEach(item => {
+                output += `
+                    <div class="menu-item">
+                        <h4>${item.name} - $${item.price}</h4>
+                        <p>${item.description}</p>
+                        <input type="number" id="qty-${item.id}" min="1" value="1">
+                        <input type="text" id="custom-${item.id}" placeholder="Customizations (optional)">
+                        <button onclick="addToCart(${item.id}, '${item.name}', ${item.price})">Add to Cart</button>
+                    </div>
+                `;
+            });
+            $("#menu-items").html(output);
+        });
+    }
+
+    let cart = [];
+let totalPrice = 0;
+
+function addToCart(menuItemId, name, price) {
+    let quantity = parseInt($(`#qty-${menuItemId}`).val());
+    let customizations = $(`#custom-${menuItemId}`).val();
+    cart.push({menu_item_id: menuItemId, quantity, customizations, price});
+    updateCart();
+}
+
+function updateCart() {
+    let output = "";
+    totalPrice = 0;
+    cart.forEach((item, index) => {
+        totalPrice += item.price * item.quantity;
+        output += `<li>${item.quantity} x ${item.menu_item_id} - $${item.price * item.quantity} 
+            <button onclick="removeFromCart(${index})">Remove</button></li>`;
+    });
+    $("#cart-list").html(output);
+    $("#total-price").text(totalPrice.toFixed(2));
+}
+
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    updateCart();
+}
+
+
+</script>
