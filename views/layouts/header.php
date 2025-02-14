@@ -40,7 +40,7 @@
 <?php else : ?>
     <li class="nav-item">
         <a class="nav-link" href="/views/shared/login.php">Login</a>
-        <li class="nav-item"><a class="nav-link" href="../shared/register-form.php">Register</a></li>
+        <li class="nav-item"><a class="nav-link" href="/views/shared/register-form.php">Register</a></li>
     </li>
 <?php endif; ?>
             </ul>
