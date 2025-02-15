@@ -9,7 +9,7 @@
     <title>Egyptian Bites</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/public/css/styles.css">
-
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -22,6 +22,7 @@
         <!-- Mobile Toggle Button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="fas fa-bars"></span>
+            
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
