@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="container mt-5">
     <h2 class="text-center">Reserve a Table</h2>
-    <form action="reservation.php" method="POST" class="card p-4 shadow">
+    <form action="../admin/reservations.php" method="POST" class="card p-4 shadow">
         <div class="mb-3">
             <label for="date" class="form-label">Date:</label>
             <input type="date" name="date" class="form-control" required>
