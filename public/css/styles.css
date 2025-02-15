@@ -16,13 +16,13 @@
 
 .navbar-nav .nav-link {
     font-size: 0.9rem;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.4s ease-in-out;
     color: white !important;
     padding: 8px 10px;
 }
 
 .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
-    color: #242214 !important;
+    
     transform: scale(1.05);
 }
 
@@ -61,9 +61,25 @@
 }
 
 .on:hover{
-    background: #e6c300;
+   color :white;
     border-radius: 20px;
 }
+.navbar-toggler {
+    border: none; /* Remove border */
+    background: none; /* Remove default background */
+}
+
+.navbar-toggler-icon {
+    display: none; /* Hide default Bootstrap icon */
+}
+
+.navbar-toggler::before {
+    content: "\2630"; /* Unicode for hamburger icon */
+    font-size: 1.8rem; /* Adjust size */
+    color: #FFD700; /* Gold color */
+    display: block;
+}
+
 .hero {
     background: url('../assets/images/egypt-food.jpg') no-repeat center center/cover;
     height: 100vh;
