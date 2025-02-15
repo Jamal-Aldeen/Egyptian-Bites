@@ -6,25 +6,21 @@ class OrderController {
     private $orderModel;
 
     public function __construct() {
-        $this->orderModel = new Order($GLOBALS['conn']);
+        global $pdo;
+        $this->orderModel = new Order($pdo);
     }
 
     public function placeOrder($user_id, $items, $total_price) {
         $order_id = $this->orderModel->createOrder($user_id, $total_price);
         if ($order_id) {
             $this->orderModel->addOrderItems($order_id, $items);
-            return ["status" => "success", "order_id" => $order_id];
+            return true;
         }
-        return ["status" => "error"];
+        return false;
     }
-    
+
     public function getOrderHistory($user_id) {
         return $this->orderModel->getOrderHistory($user_id);
     }
-    
-    public function updateOrderStatus($order_id, $status) {
-        return $this->orderModel->updateOrderStatus($order_id, $status);
-    }
-    
 }
 ?>
