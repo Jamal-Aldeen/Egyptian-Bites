@@ -223,18 +223,18 @@ switch ($action) {
     <div class="container contact-content">
         <h2 class="contact-title">Get in Touch</h2>
 
+        <div class="container o">
         <div class="row">
-            <!-- Contact Info -->
-            <div class="col-md-4 text-center">
-                <p class="contact-info"><i class="fas fa-map-marker-alt"></i> 123 Cairo Street, Egypt</p>
-                <p class="contact-info"><i class="fas fa-phone"></i> +20 100 200 3000</p>
-                <p class="contact-info"><i class="fas fa-envelope"></i> contact@egyptianbites.com</p>
+            <!-- Google Map -->
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.123456789012!2d31.23571131511691!3d30.04441928186057!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145846dd16b3e7cf%3A0x5d0d0a59a2f5c7f7!2sCairo%2C%20Egypt!5e0!3m2!1sen!2seg!4v1611177744575!5m2!1sen!2seg" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
-
+            
             <!-- Contact Form -->
-            <div class="col-md-8">
+             <!-- Contact Form -->
+             <div class="contact-container">
                 <form class="contact-form">
-                    <div class="row g-3">
+                    <div class="row  g-3">
                         <div class="col-md-6">
                             <input type="text" placeholder="Your Name" required>
                         </div>
@@ -251,14 +251,17 @@ switch ($action) {
                 </form>
             </div>
         </div>
-
+    </div>
+</body>
+                 <!-- Optional: Google Map -->
+       
         <!-- Optional: Google Map -->
-        <div class="row mt-5">
+        <!-- <div class="row mt-5">
             <div class="col-12">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.123456789012!2d31.23571131511691!3d30.04441928186057!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145846dd16b3e7cf%3A0x5d0d0a59a2f5c7f7!2sCairo%2C%20Egypt!5e0!3m2!1sen!2seg!4v1611177744575!5m2!1sen!2seg"
                     width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
-        </div>
+        </div> -->
     </div>
 </section>
 
