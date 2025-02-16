@@ -38,10 +38,11 @@ switch ($action) {
     <div class="hero-content">
         <h1 class="display-4">Welcome to <span class="text-warning">Egyptian Bites</span></h1>
         <p class="lead">Authentic Egyptian flavors straight from the heart of Cairo!</p>
-        <div>
-            <a href="#menu" class="btn btn-outline-light btn-lg">Our Menu</a>
-            <a href="#booking" class="btn btn-warning btn-lg">Book a Table</a>
-        </div>
+        <div class="button-container">
+    <a href="#menu" class="btn btn-menu">Our Menu</a>
+    <a href="#booking" class="btn btn-yellow">Book a Table</a>
+</div>
+
     </div>
 </div>
 
