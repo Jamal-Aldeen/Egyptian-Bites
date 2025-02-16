@@ -7,7 +7,7 @@
 .navbar-brand {
     font-weight: bold;
     font-size: 1.5rem;
-    color: #FFD700 !important;
+    color: #d4a017 !important;
 }
 
 .navbar-nav {
@@ -25,45 +25,16 @@
     
     transform: scale(1.05);
 }
+.active-now{
+    background: #d4a017;
+}
+
 
 /* Center Navbar Links */
 .navbar-nav.mx-auto {
     text-align: center;
 }
 
-/* Smaller Login/Register Buttons */
-.btn-outline-warning,
-.btn-warning {
-    font-size: 0.8rem;
-    padding: 6px 12px;
-    border-radius: 20px;
-}
-
-.btn-outline-warning {
-    border: 1px solid #FFD700;
-    color: #FFD700;
-    font-weight: bold;
-    transition: all 0.3s ease-in-out;
-}
-
-.btn-outline-warning:hover {
-    background: #FFD700;
-    color: black;
-}
-
-.btn-warning {
-    background: #FFD700;
-    font-weight: bold;
-}
-
-.btn-warning:hover {
-    background:#FFD700;
-}
-
-.on:hover{
-   color :white;
-    border-radius: 20px;
-}
 .navbar-toggler {
     border: none; /* Remove border */
     background: none; /* Remove default background */
@@ -76,9 +47,10 @@
 .navbar-toggler::before {
     content: "\2630"; /* Unicode for hamburger icon */
     font-size: 1.8rem; /* Adjust size */
-    color: #FFD700; /* Gold color */
+    color: #d4a017; /* Gold color */
     display: block;
 }
+
 
 /* Global Styling */
 body {
@@ -133,67 +105,73 @@ body {
 /* Buttons */
 /* Menu Section */
 /* Centered Button Container */
-.button-container {
-    text-align: center;
-    margin-top: 20px;
+.btn {
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    
 }
 
-/* Menu Section */
+.btn-menu {
+    background: linear-gradient(45deg, #1a1a1a, #333);
+    color: #d4a017;
+    font-size: 0.85rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+    border: 1px solid #d4a017;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin: 5px;
+    letter-spacing: 0.5px;
+    
+}
+
+.btn-menu:hover {
+    background-color: #d4a017;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-yellow {
+    background: #d4a017;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+    text-transform: uppercase;
+    margin: 5px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+.btn-yellow:hover {
+    background-color: #d4a017;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
+}
+
 .menu-section {
     background: linear-gradient(to right, #d4a017, #ffcc00);
-    padding: 50px 0; /* Optimized spacing */
+    padding: 50px 0;
     text-align: center;
     border-radius: 10px;
     color: white;
     animation: fadeInUp 1.2s ease-in-out;
 }
 
-/* Button: View Menu */
-.btn-menu {
-    background: linear-gradient(45deg, #222, #444); /* Sleek dark gradient */
-    color: #ffd700; /* Gold text */
-    font-size: 0.85rem; /* Slightly smaller font */
-    padding: 6px 18px; /* Compact padding */
-    border-radius: 15px; /* Rounded corners */
-    transition: all 0.3s ease-in-out;
-    display: inline-block;
-    border: none;
-    text-transform: uppercase;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-}
-
-.btn-menu:hover {
-    background-color: #d4a017; /* Gold hover effect */
-    color: white;
-    transform: scale(1.05);
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15); /* Light shadow */
-}
-
-/* Button: Book a Table */
-.btn-yellow {
-    background-color: white; /* White background */
-    color: #d4a017; /* Egyptian Gold text */
-    font-size: 0.85rem; /* Matching font size */
-    font-weight: bold;
-    padding: 6px 18px; /* Compact padding */
-    border-radius: 15px; /* Soft rounded corners */
-    border: none; /* No border */
-    transition: all 0.3s ease-in-out;
-    display: inline-block;
-    text-transform: uppercase;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-}
-
-.btn-yellow:hover {
-    background-color: #d4a017; /* Gold hover */
-    color: white;
-    transform: scale(1.05);
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15); /* Light shadow */
-}
-
-/* Animations */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -204,7 +182,6 @@ body {
         transform: translateY(0);
     }
 }
-
 
 
 /* =============== MENU SECTION =============== */
@@ -233,6 +210,9 @@ body {
     color: #555;
 }
 
+/* .btn btn-learn {
+    color: #ffffff;
+} */
 
 .menu-item {
     text-align: center;
@@ -269,8 +249,8 @@ body {
 /* "View Full Menu" Button */
 /* Warning Button */
 .btn-warning {
-    background: #FFD700;
-    color: #333;
+    background-color: #d4a017;
+    color: white;
     font-weight: bold;
     font-size: 1.2rem;
     padding: 12px 25px;
@@ -282,7 +262,7 @@ body {
 }
 
 .btn-warning:hover {
-    background: #FFC107;
+    background-color: #d4a017;
     transform: scale(1.1);
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
 }
@@ -526,7 +506,7 @@ body {
 
         .btn-learn {
             background-color: #d4a017;
-            color: #111;
+            color: white;
             font-weight: bold;
             padding: 12px 25px;
             border-radius: 5px;
@@ -600,7 +580,7 @@ body {
 
         .btn-send {
             background-color: #d4a017;
-            color: #111;
+            color: white;
             font-weight: bold;
             padding: 12px 25px;
             border-radius: 5px;
