@@ -18,5 +18,10 @@ class Reservation {
         $stmt = $this->pdo->query("SELECT * FROM Reservations ORDER BY created_at DESC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getUpcomingReservationCount() {
+        $stmt = $this->pdo->query("SELECT COUNT(*) FROM Reservations WHERE date >= CURDATE()");
+        return $stmt->fetchColumn();
+    }
 }
 ?>
