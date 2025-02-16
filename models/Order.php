@@ -26,5 +26,15 @@ class Order {
         $stmt->execute([$user_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getTotalSales() {
+        $stmt = $this->pdo->query("SELECT SUM(total_price) AS total FROM Orders WHERE status = 'Delivered'");
+        return $stmt->fetchColumn() ?? 0; // Return 0 if no sales
+    }
+    
+    public function getActiveOrderCount() {
+        $stmt = $this->pdo->query("SELECT COUNT(*) FROM Orders WHERE status IN ('Pending', 'Preparing')");
+        return $stmt->fetchColumn();
+    }
 }
 ?>
