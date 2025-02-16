@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../controllers/SalesController.php';
+require_once __DIR__ . ' /../lib/vendor/autoload.php';
 
 // Authorization check
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Staff') {
