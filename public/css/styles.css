@@ -377,6 +377,56 @@ body {
         .carousel-indicators button {
             background-color: #b58900;
         }
+        .o {
+            max-width: 1200px;
+            /* margin: auto; */
+            padding: 20px;
+        }
+
+        /* .p {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        } */
+        .col-md-6{
+            display: flex;
+            flex-direction: column;
+            align-items:start;
+        }
+
+        .map-container {
+            width: 50%;
+            height: 30px;
+        }
+
+        .contact-container {
+            width: 50%;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+            background: #222;
+            color: white;
+        }
+
+        .contact-form .btn-send {
+            background: #FFD700;
+            color: black;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+        }
     /* Footer Styling */
     .footer {
             background: #111;
