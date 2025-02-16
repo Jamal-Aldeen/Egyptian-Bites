@@ -419,7 +419,7 @@ body {
 
         .contact-form .btn-send {
             background: #FFD700;
-            color: black;
+            color: rgb(255, 255, 255);
             font-weight: bold;
             padding: 10px;
             border-radius: 5px;
@@ -476,7 +476,7 @@ body {
 
         .btn-subscribe {
             background: #d4a017;
-            color: #111;
+            color: #ffffff;
             font-weight: bold;
             padding: 10px 20px;
             border-radius: 5px;
