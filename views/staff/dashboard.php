@@ -45,6 +45,29 @@ $upcomingReservations = $reservationModel->getUpcomingReservationCount();
         .list-group-item:hover {
             background-color: #f8f9fa;
         }
+        .alert {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
     </style>
 </head>
 <body class="bg-light">
@@ -80,7 +103,55 @@ $upcomingReservations = $reservationModel->getUpcomingReservationCount();
                 </div>
             </div>
         </div>
+        <div class="card shadow mt-4">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0"><i class="fas fa-bell"></i> Notifications</h5>
+    </div>
+    <div class="card-body">
+        <?php
+        $notificationController = new NotificationController();
+        $lowStockItems = $notificationController->getLowStockNotifications();
+        $expiringOffers = $notificationController->getExpiringOfferNotifications();
+        ?>
 
+        <!-- Low Stock Notifications -->
+        <?php if (!empty($lowStockItems)): ?>
+            <div class="alert alert-danger">
+                <h6>Low Stock Items</h6>
+                <ul>
+                    <?php foreach ($lowStockItems as $item): ?>
+                        <li>
+                            <?= htmlspecialchars($item['item_name']) ?> 
+                            (Stock: <?= $item['quantity'] ?>, Reorder Threshold: <?= $item['reorder_threshold'] ?>)
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+
+        <!-- Expiring Special Offers -->
+        <?php if (!empty($expiringOffers)): ?>
+            <div class="alert alert-warning">
+                <h6>Expiring Special Offers</h6>
+                <ul>
+                    <?php foreach ($expiringOffers as $offer): ?>
+                        <li>
+                            <?= htmlspecialchars($offer['menu_item']) ?> 
+                            (Discount: <?= $offer['discount_value'] ?>, Ends: <?= $offer['end_date'] ?>)
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+
+        <!-- No Notifications -->
+        <?php if (empty($lowStockItems) && empty($expiringOffers)): ?>
+            <div class="alert alert-success">
+                <h6>No new notifications.</h6>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
         <!-- Admin Tools Navigation -->
         <div class="card shadow">
             <div class="card-header bg-dark text-white">
