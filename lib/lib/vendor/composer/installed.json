@@ -1,14 +1,9 @@
 {
-    "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-        "This file is @generated automatically"
-    ],
-    "content-hash": "def9fc4850eb3561c4f2b30487f45c00",
     "packages": [
         {
             "name": "tecnickcom/tcpdf",
             "version": "6.8.2",
+            "version_normalized": "6.8.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tecnickcom/TCPDF.git",
@@ -24,7 +19,9 @@
                 "ext-curl": "*",
                 "php": ">=7.1.0"
             },
+            "time": "2025-01-26T14:03:12+00:00",
             "type": "library",
+            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     "config",
@@ -77,18 +74,9 @@
                     "type": "custom"
                 }
             ],
-            "time": "2025-01-26T14:03:12+00:00"
+            "install-path": "../tecnickcom/tcpdf"
         }
     ],
-    "packages-dev": [],
-    "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
-    "prefer-lowest": false,
-    "platform": {
-        "php": "^7.4 || ^8.0"
-    },
-    "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "dev": true,
+    "dev-package-names": []
 }
