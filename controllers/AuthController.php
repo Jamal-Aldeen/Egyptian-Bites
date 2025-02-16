@@ -1,14 +1,16 @@
 <?php
-session_start(); 
+session_start();
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Validation.php';
 
-class AuthController {
+class AuthController
+{
     private $userModel;
     private $validation;
     private $pdo;
 
-    public function __construct() {
+    public function __construct()
+    {
         global $pdo;
         $this->pdo = $pdo;
         $this->userModel = new User();
@@ -76,15 +78,16 @@ class AuthController {
         }
         exit();
     }
-    
+
     //  logout method
-public function logout() {
-    session_start();
-    session_unset();
-    session_destroy();
-    header("Location: /login"); // Redirect to login page
-    exit();
-}
+    public function logout()
+    {
+        session_start();
+        session_unset();
+        session_destroy();
+        header("Location: /login"); // Redirect to login page
+        exit();
+    }
 
     // Password recovery
     public function resetPassword($email, $newPassword)
@@ -113,20 +116,23 @@ public function logout() {
         mail($email, $subject, $message);
     }
 
-    public function updateProfile($userId, $fullName, $email, $profilePicture = null) {
+    public function updateProfile($userId, $fullName, $email, $profilePicture = null)
+    {
         error_log("Updating profile for user ID: $userId");
         error_log("Full Name: $fullName, Email: $email");
-    
+
+        // Validate inputs
         $this->validation->checkEmptyFields(["Full Name" => $fullName, "Email" => $email]);
         $this->validation->validateEmail($email, $this->pdo, $userId);
-    
+
         if (!$this->validation->isValid()) {
             throw new Exception(implode(" ", $this->validation->getErrors()));
         }
-    
+
+        // Handle profile picture upload
         $profilePictureName = $this->handleProfilePicture($profilePicture, $userId);
         error_log("Profile Picture Name: " . ($profilePictureName ?? "None"));
-    
+
         // Update the profile
         $result = $this->userModel->updateProfile(
             $userId,
@@ -134,10 +140,10 @@ public function logout() {
             $email,
             $profilePictureName
         );
-    
+
         if ($result) {
             error_log("Profile updated successfully.");
-            // Refresh session data
+            // Refresh session data after successful update
             $user = $this->userModel->findById($userId);
             $_SESSION['full_name'] = $user['full_name'];
             $_SESSION['email'] = $user['email'];
@@ -147,7 +153,8 @@ public function logout() {
         } else {
             error_log("Failed to update profile.");
         }
-    
+        
+
         return $result;
     }
     public function addAddress($userId, $addressData)
@@ -166,29 +173,32 @@ public function logout() {
         return $this->userModel->deleteAddress($addressId, $userId);
     }
 
-    private function handleProfilePicture($file, $userId) {
+    private function handleProfilePicture($file, $userId)
+    {
         if ($file && $file['error'] === UPLOAD_ERR_OK) {
-            $targetDir = __DIR__ . "/../../public/uploads/";
-    
-            // Ensure the uploads directory exists
+            $targetDir = __DIR__ . "/../public/uploads/";
+
             if (!is_dir($targetDir)) {
-                mkdir($targetDir, 0777, true); // Create the directory if it doesn't exist
+                if (!mkdir($targetDir, 0777, true)) {
+                    error_log("Failed to create directory: $targetDir");
+                    throw new Exception("Failed to create upload directory.");
+                }
             }
-    
-            // Generate a unique filename
+
             $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = "user_{$userId}_" . time() . ".$extension";
             $targetFile = $targetDir . $filename;
-    
-            // Move the uploaded file to the target directory
-            if (move_uploaded_file($file['tmp_name'], $targetFile)) {
-                return $filename; // Return the filename for database storage
-            } else {
-                error_log("Failed to move uploaded file to: $targetFile");
-                throw new Exception("Failed to upload profile picture.");
+
+            if (!move_uploaded_file($file['tmp_name'], $targetFile)) {
+                error_log("Upload failed. Check permissions for: $targetDir");
+                throw new Exception("Failed to save profile picture.");
             }
+            return $filename;
+        } elseif ($file['error'] !== UPLOAD_ERR_NO_FILE) {
+            error_log("Upload error code: " . $file['error']);
+            throw new Exception("File upload error: " . $file['error']);
         }
-        return null; // No file uploaded
+        return null;
     }
 }
 
