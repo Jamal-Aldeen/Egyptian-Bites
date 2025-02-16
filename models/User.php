@@ -98,4 +98,18 @@ class User
         // Return the updated user data
         return $this->findById($id);
     }
+    public function getAllUsers() {
+        $stmt = $this->pdo->query("SELECT * FROM Users");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function updateRole($userId, $newRole) {
+        $stmt = $this->pdo->prepare("UPDATE Users SET role = ? WHERE id = ?");
+        return $stmt->execute([$newRole, $userId]);
+    }
+    
+    public function delete($userId) {
+        $stmt = $this->pdo->prepare("DELETE FROM Users WHERE id = ?");
+        return $stmt->execute([$userId]);
+    }
 }
