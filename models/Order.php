@@ -36,5 +36,20 @@ class Order {
         $stmt = $this->pdo->query("SELECT COUNT(*) FROM Orders WHERE status IN ('Pending', 'Preparing')");
         return $stmt->fetchColumn();
     }
+    public function getSalesReport($startDate, $endDate) {
+        $stmt = $this->pdo->prepare("
+            SELECT DATE(created_at) AS date, COUNT(*) AS total_orders, SUM(total_price) AS revenue 
+            FROM Orders 
+            WHERE created_at BETWEEN ? AND ?
+            GROUP BY DATE(created_at)
+        ");
+        $stmt->execute([$startDate, $endDate]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public function getTotalRevenue() {
+        $stmt = $this->pdo->query("SELECT SUM(total_price) AS total FROM Orders WHERE status = 'Delivered'");
+        return $stmt->fetchColumn() ?? 0;
+    }
 }
 ?>

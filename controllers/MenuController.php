@@ -90,5 +90,14 @@ class MenuController {
         $stmt = $this->pdo->prepare("DELETE FROM SpecialOffers WHERE id = :id");
         return $stmt->execute(['id' => $id]);
     }
+    public function getExpiringOffers() {
+        $stmt = $this->pdo->query("
+            SELECT m.name AS menu_item, s.discount_value, s.end_date 
+            FROM SpecialOffers s
+            JOIN MenuItems m ON s.menu_item_id = m.id
+            WHERE s.end_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
