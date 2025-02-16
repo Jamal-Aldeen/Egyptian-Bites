@@ -76,27 +76,27 @@ switch ($action) {
                 <img src="public/assets/images/Egyptian-Koshari-Featured.jpg" alt="Koshari">
                 <h5>Koshari</h5>
                 <p class="price">$5.00</p>
-                <p>A delicious mix of lentils, rice, pasta, and chickpeas topped with crispy onions and a rich tomato sauce.</p>
+                <p>A tasty blend of lentils, rice, pasta, and chickpeas with crispy onions and tomato sauce.</p>
             </div>
             <div class="col-md-3 menu-item">
                 <img src="public/assets/images/mahshi-plato.jpg" alt="Mahshi">
-                <h5>Mahshi (Stuffed Vegetables)</h5>
+                <h5>Mahshi </h5>
                 <p class="price">$7.50</p>
-                <p>Stuffed zucchini, peppers, and vine leaves with a flavorful mix of rice, herbs, and spices.</p>
+                <p>Zucchini, peppers, and vine leaves stuffed with a mix of rice, herbs, and spices.</p>
             </div>
             <!-- Menu Item 3: Molokhia -->
             <div class="col-md-3 menu-item">
                 <img src="public/assets/images/Molokhia-17.webp" alt="Molokhia">
                 <h5>Molokhia</h5>
                 <p class="price">$6.99</p>
-                <p>Traditional green soup made from jute leaves, served with rice or bread and chicken or rabbit.</p>
+                <p>A traditional soup of jute leaves, served with rice or bread and chicken or rabbit.</p>
             </div>
             <!-- Menu Item 4: Feteer Meshaltet -->
             <div class="col-md-3 menu-item">
                 <img src="public/assets/images/th.jpg" alt="Feteer Meshaltet">
-                <h5>Feteer Meshaltet</h5>
+                <h5>Feteer </h5>
                 <p class="price">$8.50</p>
-                <p>Flaky layered pastry served with honey, sugar, or stuffed with cheese and meat.</p>
+                <p>Flaky layered pastry with honey, sugar, or stuffed with cheese and meat.</p>
             </div>
         </div>
           <!-- View Full Menu Button -->
