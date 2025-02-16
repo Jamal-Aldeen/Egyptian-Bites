@@ -19,7 +19,7 @@
 <nav class="navbar navbar-expand-lg">
     <div class="container">
         <!-- Brand Logo -->
-        <a class="navbar-brand" href="#"><i class="fas fa-utensils"></i> Egyptian Bites</a>
+        <a class="navbar-brand" href="../../index.php"><i class="fas fa-utensils"></i> Egyptian Bites</a>
 
         <!-- Mobile Toggle Button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
