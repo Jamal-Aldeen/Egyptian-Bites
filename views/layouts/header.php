@@ -44,10 +44,10 @@
                     </li>
                 <?php else : ?>
                     <li class="nav-item menu-btn">
-                        <a class="nav-link btn btn-outline-warning px-3 mx-2" href="/views/shared/login.php">Login</a>
+                        <a class="nav-link btn btn-outline-warning px-2 mx-2 w " href="/views/shared/login.php">Login</a>
                     </li>
                     <li class="nav-item menu-btn">
-                        <a class="nav-link btn btn-outline-warning px-3 mx-2 active-now" style="width:auto;" href="/views/shared/register-form.php">Register</a>
+                        <a class="nav-link btn btn-outline-warning px-2 mx-2 active-now" style="width:auto;" href="/views/shared/register-form.php">Register</a>
                     </li>
                 <?php endif; ?>
             </ul>
