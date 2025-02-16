@@ -31,19 +31,16 @@
                 <li class="nav-item on"><a class="nav-link" href="#about">About</a></li>
                 <li class="nav-item on"><a class="nav-link" href="#menu">Menu</a></li>
                 <li class="nav-item on"><a class="nav-link" href="#booking">Book a Table</a></li>
+
+                 <li class="nav-item">
+                    <a class="nav-link" href="/views/customer/payment.php">Payment</a>
+                 </li>
             </ul>
 
             <!-- Right-Aligned Login/Register & Cart -->
             <ul class="navbar-nav">
-                <!-- Order Cart Icon -->
-                <li class="nav-item">
-                    <a class="nav-link position-relative" href="/views/customer/order-placement.php">
-                        <div class="cart-card">
-                            <i class="fa-solid fa-shopping-cart fa-lg"></i>
-                            <span id="cart-count" class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
-                        </div>
-                    </a>
-                </li>
+          
+
 
                 <?php if (isset($_SESSION['user_id'])) : ?>
                     <li class="nav-item">
@@ -56,6 +53,15 @@
                     <li class="nav-item">
                         <a class="nav-link btn btn-warning px-3" href="/views/shared/register-form.php">Register</a>
                     </li>
+                     <!-- Order Cart Icon -->
+                <li class="nav-item cart-container">
+                    <a class="nav-link cart-link" href="/views/customer/order-placement.php">
+                    <div class="cart-card">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-count">0</span>
+                    </div>
+                    </a>
+                </li>
                 <?php endif; ?>
             </ul>
         </div>
