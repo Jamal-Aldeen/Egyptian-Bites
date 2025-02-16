@@ -26,3 +26,23 @@ function removeFromCart(index) {
     cart.splice(index, 1);
     updateCart();
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    updateCartCount();
+});
+
+function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    document.getElementById("cart-count").innerText = cart.length;
+}
+
+function addToCart(menuItemId, name, price) {
+    let quantity = parseInt(document.getElementById(`qty-${menuItemId}`).value);
+    let customizations = document.getElementById(`custom-${menuItemId}`).value;
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push({menu_item_id: menuItemId, name, quantity, customizations, price});
+    
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+}
