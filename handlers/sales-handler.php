@@ -23,6 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $_SESSION['end_date'] = $endDate;
 }
 
+if (isset($_GET['export'])) {
+    $startDate = $_GET['start_date'] ?? date('Y-m-01');
+    $endDate = $_GET['end_date'] ?? date('Y-m-d');
+
+    $salesController = new SalesController();
+
+    if ($_GET['export'] === 'csv') {
+        $salesController->exportSalesReportToCSV($startDate, $endDate);
+    } elseif ($_GET['export'] === 'pdf') {
+        $salesController->exportSalesReportToPDF($startDate, $endDate);
+    }
+}
+
 header("Location: /views/staff/reports.php");
 exit();
 ?>
