@@ -26,5 +26,13 @@ class Inventory {
         $stmt = $this->pdo->prepare("DELETE FROM Inventory WHERE id = ?");
         return $stmt->execute([$itemId]);
     }
+    public function getLowStockItems() {
+        $stmt = $this->pdo->query("
+            SELECT item_name, quantity, reorder_threshold 
+            FROM Inventory 
+            WHERE quantity <= reorder_threshold
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
