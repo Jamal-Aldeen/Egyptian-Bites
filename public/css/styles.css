@@ -80,6 +80,16 @@
     display: block;
 }
 
+/* Global Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* =============== HERO SECTION =============== */
 .hero {
     background: url('../assets/images/egypt-food.jpg') no-repeat center center/cover;
     height: 100vh;
@@ -92,19 +102,26 @@
     padding: 20px;
 }
 
-
 .hero-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Adjust for better readability */
+    background: rgba(0, 0, 0, 0.6);
 }
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    animation: fadeInUp 1.5s ease-in-out;
+}
+
 .hero-content h1 {
     font-size: 3.5rem;
     font-weight: bold;
     margin-bottom: 15px;
+    text-transform: uppercase;
 }
 
 .hero-content p {
@@ -112,116 +129,89 @@
     line-height: 1.6;
     margin-bottom: 20px;
 }
-.btn-outline-light {
-    border: 2px solid white;
+
+/* Buttons */
+/* Menu Section */
+/* Centered Button Container */
+.button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Menu Section */
+.menu-section {
+    background: linear-gradient(to right, #d4a017, #ffcc00);
+    padding: 50px 0; /* Optimized spacing */
+    text-align: center;
+    border-radius: 10px;
     color: white;
-    padding: 10px 20px;
+    animation: fadeInUp 1.2s ease-in-out;
 }
 
-.btn-outline-light:hover {
-    background-color: white;
-    color: black;
-}
-
-@media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 2.5rem;
-    }
-    .hero-content p {
-        font-size: 1rem;
-    }
-}
-
-
-.hero-content {
-    position: relative;
-    z-index: 2; /* Ensures text appears above the background */
-}
-.custom-yellow {
-    background-color: #FFD700;
-    color: black;
-    border: 2px solid #FFC107;
-    font-weight: bold;
+/* Button: View Menu */
+.btn-menu {
+    background: linear-gradient(45deg, #222, #444); /* Sleek dark gradient */
+    color: #ffd700; /* Gold text */
+    font-size: 0.85rem; /* Slightly smaller font */
+    padding: 6px 18px; /* Compact padding */
+    border-radius: 15px; /* Rounded corners */
     transition: all 0.3s ease-in-out;
+    display: inline-block;
+    border: none;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.5px;
 }
 
-.custom-yellow:hover {
-    background-color: #FFC107;
-    border-color: #FFB300;
+.btn-menu:hover {
+    background-color: #d4a017; /* Gold hover effect */
     color: white;
-}
-
-.custom-transparent {
-    background: transparent !important;
-    color: white !important;
-    border: 2px solid white !important;
-    font-weight: bold;
-    transition: none; /* No hover effect */
-}
-
-/* Keeping it unchanged on hover */
-.custom-transparent:hover {
-    background: transparent !important;
-    color: #FFD700 !important;
-    border-color: #FFD700 !important;
-}
-
-        .menu-section h2 {
-            text-align: center;
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-        .menu-item {
-            text-align: center;
-            
-            padding: 15px;
-            margin-bottom: 30px;
-        }
-        .menu-item img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-        .menu-item h5 {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-        .menu-item p {
-            font-size: 14px;
-            color: #555;
-        }
-        
-        .menu-item .price {
-    font-size: 18px;
-    color: #d4a017; /* Darker Gold */
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Adds subtle contrast */
-}
-.menu-item img {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.menu-item img:hover {
     transform: scale(1.05);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15); /* Light shadow */
+}
+
+/* Button: Book a Table */
+.btn-yellow {
+    background-color: white; /* White background */
+    color: #d4a017; /* Egyptian Gold text */
+    font-size: 0.85rem; /* Matching font size */
+    font-weight: bold;
+    padding: 6px 18px; /* Compact padding */
+    border-radius: 15px; /* Soft rounded corners */
+    border: none; /* No border */
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+.btn-yellow:hover {
+    background-color: #d4a017; /* Gold hover */
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15); /* Light shadow */
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
-.booking-section {
-            background: white;
-            padding: 50px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
 
-        /* Form Elements */
-        .form-control {
-            border: 1px solid #d4a017; /* Egyptian Gold */
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 1rem;
-        }
+/* =============== MENU SECTION =============== */
+/* =============== MENU SECTION STYLING =============== */
+/* Menu Section */
+/* General Reset */
+/* Menu Items Styling */
 /* Menu Section Styling */
 .menu-section {
     background: #f8f9fa;
@@ -243,7 +233,7 @@
     color: #555;
 }
 
-/* Menu Items Styling */
+
 .menu-item {
     text-align: center;
     padding: 15px;
@@ -277,22 +267,24 @@
 }
 
 /* "View Full Menu" Button */
-.btn-view-menu {
-    background: linear-gradient(45deg, #d4a017, #ffcc00);
-    color: black;
+/* Warning Button */
+.btn-warning {
+    background: #FFD700;
+    color: #333;
+    font-weight: bold;
     font-size: 1.2rem;
     padding: 12px 25px;
     border-radius: 50px;
     transition: all 0.3s ease-in-out;
     text-decoration: none;
-    font-weight: bold;
     display: inline-block;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.btn-view-menu:hover {
-    background: linear-gradient(45deg, #ffcc00, #d4a017);
+.btn-warning:hover {
+    background: #FFC107;
     transform: scale(1.1);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
 }
 
         /* Custom Button */
@@ -308,6 +300,25 @@
         .btn-book:hover {
             background-color: #d4a017;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Header Styles */
+        .booking-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #d4a017;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Image Styling */
+        .booking-image img {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
         }
 
         /* Header Styles */
