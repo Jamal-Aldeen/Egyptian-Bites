@@ -1,5 +1,5 @@
 <?php
-
+// Add to index.php's switch statement
 $action = $_GET['action'] ?? 'home';
 
 switch ($action) {
@@ -7,7 +7,7 @@ switch ($action) {
         session_start();
         session_unset();
         session_destroy();
-        header("Location: /login"); 
+        header("Location: /login"); // Redirect to login page after logout
         exit();
         break;
     case 'profile':
@@ -38,10 +38,11 @@ switch ($action) {
     <div class="hero-content">
         <h1 class="display-4">Welcome to <span class="text-warning">Egyptian Bites</span></h1>
         <p class="lead">Authentic Egyptian flavors straight from the heart of Cairo!</p>
-        <div>
-        <a href="#menu" class="btn custom-transparent btn-lg">Our Menu</a>
-        <a href="#booking" class="btn custom-yellow btn-lg">Book a Table</a>
-            </div>
+        <div class="button-container">
+    <a href="#menu" class="btn btn-menu">Our Menu</a>
+    <a href="#booking" class="btn btn-yellow">Book a Table</a>
+</div>
+
     </div>
 </div>
 
