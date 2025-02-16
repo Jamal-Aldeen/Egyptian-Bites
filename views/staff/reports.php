@@ -66,6 +66,8 @@ unset($_SESSION['end_date']);
                     </div>
                 </form>
 
+                
+
                 <!-- Total Revenue -->
                 <div class="alert alert-success">
                     <h5>Total Revenue: $<?= number_format($totalRevenue, 2) ?></h5>
@@ -95,7 +97,21 @@ unset($_SESSION['end_date']);
             </div>
         </div>
     </div>
-
+    <!-- Export Buttons -->
+    <div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <a href="../../handlers/sales-handler.php?export=csv&start_date=<?= $startDate ?>&end_date=<?= $endDate ?>"
+           class="btn btn-success w-100">
+            <i class="fas fa-file-csv"></i> Export as CSV
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="../../handlers/sales-handler.php?export=pdf&start_date=<?= $startDate ?>&end_date=<?= $endDate ?>"
+           class="btn btn-danger w-100">
+            <i class="fas fa-file-pdf"></i> Export as PDF
+        </a>
+    </div>
+</div>
     <!-- Bootstrap 5 JS and FontAwesome -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
