@@ -30,7 +30,7 @@ if (isset($_SESSION['error'])) {
         <div class="col-md-4">
             <div class="card shadow">
                 <div class="card-body text-center">
-                    <img src="/../../public/uploads/"<?= htmlspecialchars($user['profile_picture'] ?? 'default.jpg') ?>"
+                <img src="/public/uploads/<?= htmlspecialchars($user['profile_picture'] ?? 'default.jpg') ?>"
                         class="rounded-circle mb-3"
                         style="width: 150px; height: 150px; object-fit: cover;">
                     <h4><?= htmlspecialchars($user['full_name']) ?></h4>
