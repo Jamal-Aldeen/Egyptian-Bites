@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/../../models/Order.php';
 require_once __DIR__ . '/../../models/Reservation.php';
 require_once __DIR__ . '/../../models/User.php';
-require_once __DIR__ . '/../../controllers\NotificationController.php';
+require_once __DIR__ . '/../../controllers/NotificationController.php';
 
 // Authorization check
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Staff') {

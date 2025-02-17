@@ -38,10 +38,11 @@ switch ($action) {
     <div class="hero-content">
         <h1 class="display-4">Welcome to <span class="text-warning">Egyptian Bites</span></h1>
         <p class="lead">Authentic Egyptian flavors straight from the heart of Cairo!</p>
-        <div>
-            <a href="#menu" class="btn btn-outline-light btn-lg">Our Menu</a>
-            <a href="#booking" class="btn btn-warning btn-lg">Book a Table</a>
-        </div>
+        <div class="button-container">
+    <a href="#menu" class="btn btn-menu">Our Menu</a>
+    <a href="#booking" class="btn btn-yellow">Book a Table</a>
+</div>
+
     </div>
 </div>
 
@@ -75,27 +76,27 @@ switch ($action) {
                 <img src="public/assets/images/Egyptian-Koshari-Featured.jpg" alt="Koshari">
                 <h5>Koshari</h5>
                 <p class="price">$5.00</p>
-                <p>A delicious mix of lentils, rice, pasta, and chickpeas topped with crispy onions and a rich tomato sauce.</p>
+                <p>A tasty blend of lentils, rice, pasta, and chickpeas with crispy onions and tomato sauce.</p>
             </div>
             <div class="col-md-3 menu-item">
                 <img src="public/assets/images/mahshi-plato.jpg" alt="Mahshi">
-                <h5>Mahshi (Stuffed Vegetables)</h5>
+                <h5>Mahshi </h5>
                 <p class="price">$7.50</p>
-                <p>Stuffed zucchini, peppers, and vine leaves with a flavorful mix of rice, herbs, and spices.</p>
+                <p>Zucchini, peppers, and vine leaves stuffed with a mix of rice, herbs, and spices.</p>
             </div>
             <!-- Menu Item 3: Molokhia -->
             <div class="col-md-3 menu-item">
                 <img src="public/assets/images/Molokhia-17.webp" alt="Molokhia">
                 <h5>Molokhia</h5>
                 <p class="price">$6.99</p>
-                <p>Traditional green soup made from jute leaves, served with rice or bread and chicken or rabbit.</p>
+                <p>A traditional soup of jute leaves, served with rice or bread and chicken or rabbit.</p>
             </div>
             <!-- Menu Item 4: Feteer Meshaltet -->
             <div class="col-md-3 menu-item">
                 <img src="public/assets/images/th.jpg" alt="Feteer Meshaltet">
-                <h5>Feteer Meshaltet</h5>
+                <h5>Feteer </h5>
                 <p class="price">$8.50</p>
-                <p>Flaky layered pastry served with honey, sugar, or stuffed with cheese and meat.</p>
+                <p>Flaky layered pastry with honey, sugar, or stuffed with cheese and meat.</p>
             </div>
         </div>
           <!-- View Full Menu Button -->
@@ -222,18 +223,18 @@ switch ($action) {
     <div class="container contact-content">
         <h2 class="contact-title">Get in Touch</h2>
 
+        <div class="container o">
         <div class="row">
-            <!-- Contact Info -->
-            <div class="col-md-4 text-center">
-                <p class="contact-info"><i class="fas fa-map-marker-alt"></i> 123 Cairo Street, Egypt</p>
-                <p class="contact-info"><i class="fas fa-phone"></i> +20 100 200 3000</p>
-                <p class="contact-info"><i class="fas fa-envelope"></i> contact@egyptianbites.com</p>
+            <!-- Google Map -->
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.123456789012!2d31.23571131511691!3d30.04441928186057!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145846dd16b3e7cf%3A0x5d0d0a59a2f5c7f7!2sCairo%2C%20Egypt!5e0!3m2!1sen!2seg!4v1611177744575!5m2!1sen!2seg" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
-
-            <!-- Contact Form -->
-            <div class="col-md-8">
+            
+           
+             <!-- Contact Form -->
+             <div class="contact-container">
                 <form class="contact-form">
-                    <div class="row g-3">
+                    <div class="row  g-3">
                         <div class="col-md-6">
                             <input type="text" placeholder="Your Name" required>
                         </div>
@@ -250,14 +251,11 @@ switch ($action) {
                 </form>
             </div>
         </div>
-
-        <!-- Optional: Google Map -->
-        <div class="row mt-5">
-            <div class="col-12">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.123456789012!2d31.23571131511691!3d30.04441928186057!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x145846dd16b3e7cf%3A0x5d0d0a59a2f5c7f7!2sCairo%2C%20Egypt!5e0!3m2!1sen!2seg!4v1611177744575!5m2!1sen!2seg"
-                    width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-            </div>
-        </div>
+    </div>
+</body>
+              
+       
+  
     </div>
 </section>
 

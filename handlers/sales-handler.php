@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../controllers/SalesController.php';
+require_once __DIR__ . ' /../lib/vendor/autoload.php';
 
 // Authorization check
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Staff') {
@@ -23,6 +24,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $_SESSION['end_date'] = $endDate;
 }
 
+<<<<<<< HEAD
+=======
+if (isset($_GET['export'])) {
+    $startDate = $_GET['start_date'] ?? date('Y-m-01');
+    $endDate = $_GET['end_date'] ?? date('Y-m-d');
+
+    $salesController = new SalesController();
+
+    if ($_GET['export'] === 'csv') {
+        $salesController->exportSalesReportToCSV($startDate, $endDate);
+    } elseif ($_GET['export'] === 'pdf') {
+        $salesController->exportSalesReportToPDF($startDate, $endDate);
+    }
+}
+>>>>>>> 97875ae4853ceb13ed4acd6c6361e64cf9b6a39e
 
 header("Location: /views/staff/reports.php");
 exit();

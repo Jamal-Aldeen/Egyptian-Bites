@@ -1,3 +1,67 @@
+.navbar {
+    background: linear-gradient(45deg, #1a1a1a, #333);
+    padding: 10px 15px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #d4a017 !important;
+}
+
+.navbar-nav {
+    gap: 10px;
+}
+
+.navbar-nav .nav-link {
+    font-size: 0.9rem;
+    transition: all 0.4s ease-in-out;
+    color: white !important;
+    padding: 8px 10px;
+}
+
+.navbar-nav .nav-link:hover, .navbar-nav .nav-link.active .w {
+    
+    transform: scale(1.05);
+}
+.active-now {
+    background: #d4a017;
+}
+
+
+/* Center Navbar Links */
+.navbar-nav.mx-auto {
+    text-align: center;
+}
+
+.navbar-toggler {
+    border: none; /* Remove border */
+    background: none; /* Remove default background */
+}
+
+.navbar-toggler-icon {
+    display: none; /* Hide default Bootstrap icon */
+}
+
+.navbar-toggler::before {
+    content: "\2630"; /* Unicode for hamburger icon */
+    font-size: 1.8rem; /* Adjust size */
+    color: #d4a017; /* Gold color */
+    display: block;
+}
+
+
+/* Global Styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* =============== HERO SECTION =============== */
 .hero {
     background: url('../assets/images/egypt-food.jpg') no-repeat center center/cover;
     height: 100vh;
@@ -10,19 +74,26 @@
     padding: 20px;
 }
 
-
 .hero-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Adjust for better readability */
+    background: rgba(0, 0, 0, 0.6);
 }
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    animation: fadeInUp 1.5s ease-in-out;
+}
+
 .hero-content h1 {
     font-size: 3.5rem;
     font-weight: bold;
     margin-bottom: 15px;
+    text-transform: uppercase;
 }
 
 .hero-content p {
@@ -30,87 +101,94 @@
     line-height: 1.6;
     margin-bottom: 20px;
 }
-.btn-outline-light {
-    border: 2px solid white;
-    color: white;
-    padding: 10px 20px;
-}
 
-.btn-outline-light:hover {
-    background-color: white;
-    color: black;
-}
-
-@media (max-width: 768px) {
-    .hero-content h1 {
-        font-size: 2.5rem;
-    }
-    .hero-content p {
-        font-size: 1rem;
-    }
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2; /* Ensures text appears above the background */
-}
-
-        .menu-section h2 {
-            text-align: center;
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-        .menu-item {
-            text-align: center;
-            
-            padding: 15px;
-            margin-bottom: 30px;
-        }
-        .menu-item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-        .menu-item h5 {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-        .menu-item p {
-            font-size: 14px;
-            color: #555;
-        }
-        
-        .menu-item .price {
-    font-size: 18px;
-    color: #d4a017; /* Darker Gold */
+/* Buttons */
+/* Menu Section */
+/* Centered Button Container */
+.btn {
+    padding: 12px 25px;
+    font-size: 1rem;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Adds subtle contrast */
-}
-.menu-item img {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    
 }
 
-.menu-item img:hover {
+.btn-menu {
+    background: linear-gradient(45deg, #1a1a1a, #333);
+    color: #d4a017;
+    font-size: 0.85rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+    border: 1px solid #d4a017;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin: 5px;
+    letter-spacing: 0.5px;
+    
+}
+
+.btn-menu:hover {
+    background-color: #d4a017;
+    color: white;
     transform: scale(1.05);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-yellow {
+    background: #d4a017;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    display: inline-block;
+    text-transform: uppercase;
+    margin: 5px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+.btn-yellow:hover {
+    background-color: #d4a017;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.menu-section {
+    background: linear-gradient(to right, #d4a017, #ffcc00);
+    padding: 50px 0;
+    text-align: center;
+    border-radius: 10px;
+    color: white;
+    animation: fadeInUp 1.2s ease-in-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 
-.booking-section {
-            background: white;
-            padding: 50px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Form Elements */
-        .form-control {
-            border: 1px solid #d4a017; /* Egyptian Gold */
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 1rem;
-        }
+/* =============== MENU SECTION =============== */
+/* =============== MENU SECTION STYLING =============== */
+/* Menu Section */
+/* General Reset */
+/* Menu Items Styling */
 /* Menu Section Styling */
 .menu-section {
     background: #f8f9fa;
@@ -132,14 +210,19 @@
     color: #555;
 }
 
-/* Menu Items Styling */
+/* .btn btn-learn {
+    color: #ffffff;
+} */
+
 .menu-item {
     text-align: center;
-    padding: 15px;
+    
+    padding: 10px;
+
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     background: white;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .menu-item img {
@@ -150,38 +233,48 @@
 }
 
 .menu-item h5 {
-    margin-top: 15px;
+    margin: 15px;
+    
     font-weight: bold;
+    color :black;
 }
 
 .menu-item p {
     font-size: 14px;
-    color: #777;
+    color:black;
+    text-align: start;
 }
-
+.menu-item .price{
+    font-size: 16px;
+    color:#d4a017;
+    text-align:center;
+    
+}
 /* Hover Effect on Menu Items */
 .menu-item:hover {
-    transform: scale(1.05);
+    transform: scale(1.01);
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* "View Full Menu" Button */
-.btn-view-menu {
-    background: linear-gradient(45deg, #d4a017, #ffcc00);
-    color: black;
+/* Warning Button */
+.btn-warning {
+    background-color: #d4a017;
+    color: white;
+    font-weight: bold;
     font-size: 1.2rem;
     padding: 12px 25px;
     border-radius: 50px;
     transition: all 0.3s ease-in-out;
     text-decoration: none;
-    font-weight: bold;
     display: inline-block;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.btn-view-menu:hover {
-    background: linear-gradient(45deg, #ffcc00, #d4a017);
+.btn-warning:hover {
+    background-color: #d4a017;
     transform: scale(1.1);
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
 }
 
         /* Custom Button */
@@ -197,6 +290,25 @@
         .btn-book:hover {
             background-color: #d4a017;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Header Styles */
+        .booking-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #d4a017;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Image Styling */
+        .booking-image img {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
         }
 
         /* Header Styles */
@@ -275,6 +387,28 @@
         .carousel-indicators button {
             background-color: #b58900;
         }
+        .o {
+            max-width: 1200px;
+            /* margin: auto; */
+            padding: 20px;
+        }
+
+        .col-md-6{
+            display: flex;
+            flex-direction: column;
+            align-items:start;
+        }
+
+        .map-container {
+            width: 50%;
+            height: 30px;
+        }
+
+        .contact-container {
+            width: 50%;
+        }
+
+        
     /* Footer Styling */
     .footer {
             background: #111;
@@ -324,7 +458,7 @@
 
         .btn-subscribe {
             background: #d4a017;
-            color: #111;
+            color: #ffffff;
             font-weight: bold;
             padding: 10px 20px;
             border-radius: 5px;
@@ -348,19 +482,19 @@
 
         .scroll-up {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 10px;
+            right: 10px;
             background: #d4a017;
             color: #111;
-            padding: 12px;
-            border-radius: 50%;
+            padding: 10px;
+            border-radius: 100%;
             font-size: 1.3rem;
             cursor: pointer;
             transition: 0.3s;
         }
 
         .scroll-up:hover {
-            background: #b58900;
+            background: #d4a017;
         }
     /* About Section Styling */
     /* About Section Styling */
@@ -404,7 +538,7 @@
 
         .btn-learn {
             background-color: #d4a017;
-            color: #111;
+            color: white;
             font-weight: bold;
             padding: 12px 25px;
             border-radius: 5px;
@@ -412,10 +546,10 @@
             border: none;
         }
 
-        .btn-learn:hover {
-            background: #b58900;
+        /* .btn-learn:hover {
+            background: #d4a017;
             color: white;
-        }
+        } */
 
         /* Responsive Image Styling */
         .about-image img {
@@ -477,20 +611,20 @@
         }
 
         .btn-send {
-            background-color: #d4a017;
-            color: #111;
+            background-color: #d69e0e;
+            color: white;
             font-weight: bold;
             padding: 12px 25px;
             border-radius: 5px;
             transition: 0.3s;
             border: none;
             width: 100%;
-        }
+        } 
 
-        .btn-send:hover {
-            background: #b58900;
+        /* .btn-send:hover {
+            background: #d4a017;
             color: white;
-        }
+        } */
 
         /* Contact Info */
         .contact-info {
@@ -650,7 +784,7 @@
 }
 
 .pagination .page-link:hover {
-    background: #ffcc00;
+    background: #d4a017;
     color: white;
     transform: scale(1.0);
 }
@@ -663,4 +797,60 @@
 
 .pagination .page-link:focus {
     box-shadow: none;
+}
+
+
+.cart-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.cart-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* background: linear-gradient(135deg, #ffd700, #ffcc00);  */
+    padding: 10px 15px;
+    border-radius: 12px;
+    /* box-shadow: 0px 5px 15px rgba(255, 215, 0, 0.3); */
+    transition: all 0.3s ease-in-out;
+    position: relative;
+}
+
+.cart-card i {
+    font-size: 24px;
+    color: #fff; 
+}
+
+.cart-card:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 5px 20px rgba(255, 215, 0, 0.5);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ffd700;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cart-link {
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.cart-link:hover {
+    color: #fff;
 }
