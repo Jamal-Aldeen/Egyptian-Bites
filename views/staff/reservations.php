@@ -12,7 +12,7 @@ try {
 }
 
 // Query to fetch all reservations
-$sql = "SELECT r.id, u.id AS user_id,  r.date, r.time, r.number_of_guests 
+$sql = "SELECT r.id, u.full_name AS full_name,  r.date, r.time, r.number_of_guests 
         FROM Reservations r 
         JOIN Users u ON r.user_id = u.id";
 $stmt = $GLOBALS['pdo']->prepare($sql);
@@ -45,7 +45,7 @@ $reservations = $stmt->fetchAll();
                 <?php foreach ($reservations as $reservation): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($reservation['id']); ?></td>
-                    <td><?php echo htmlspecialchars($reservation['user_id']); ?></td>
+                    <td><?php echo htmlspecialchars($reservation['full_name']); ?></td>
                     <td><?php echo htmlspecialchars($reservation['date']); ?></td>
                     <td><?php echo htmlspecialchars($reservation['time']); ?></td>
                     <td><?php echo htmlspecialchars($reservation['number_of_guests']); ?></td>

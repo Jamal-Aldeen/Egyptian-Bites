@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $_SESSION['end_date'] = $endDate;
 }
 
+
 header("Location: /views/staff/reports.php");
 exit();
 ?>
