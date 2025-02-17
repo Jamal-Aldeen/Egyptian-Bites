@@ -1,0 +1,11 @@
+{
+    "name": "zainab/egyptian-bites",
+    "autoload": {
+        "psr-4": {
+            "Zainab\\EgyptianBites\\": "src/"
+        }
+    },
+    "require": {
+        "stripe/stripe-php": "^16.5"
+    }
+}
