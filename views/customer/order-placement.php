@@ -13,8 +13,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['place_order'])) {
     }
 
     $user_id = $_SESSION['user_id'];
-    $items = json_decode($_POST['cart_data'], true);
-    $total_price = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $items));
+    $item_id = $_POST['item_id'];
+    $item_name = $_POST['item_name'];
+    $item_price = $_POST['item_price'];
+    $quantity = $_POST['quantity'];
+    $customization = $_POST['customization'];
+
+    $total_price = $item_price * $quantity;
+
+    $items = [
+        ['id' => $item_id, 'name' => $item_name, 'price' => $item_price, 'quantity' => $quantity, 'customization' => $customization]
+    ];
 
     if ($orderController->placeOrder($user_id, $items, $total_price)) {
         $_SESSION['success'] = "Your order has been placed successfully!";
@@ -33,62 +42,67 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['place_order'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Placement</title>
-    <link rel="stylesheet" href="/public/css/styles.css">
+    <link rel="stylesheet" href="../../public/css/order-placement.css">
 </head>
 <body>
 
-    <?php include '../layouts/header.php'; ?>
+<?php include '../layouts/header.php'; ?>
 
-    <div class="container">
-        <h2>Place an Order</h2>
+<div class="container">
+    <h2>Place an Order</h2>
 
-        <?php
-        if (isset($_SESSION['success'])) {
-            echo "<p class='success'>" . $_SESSION['success'] . "</p>";
-            unset($_SESSION['success']);
-        }
+    <?php
+    if (isset($_SESSION['success'])) {
+        echo "<p class='success'>" . $_SESSION['success'] . "</p>";
+        unset($_SESSION['success']);
+    }
 
-        if (isset($_SESSION['error'])) {
-            echo "<p class='error'>" . $_SESSION['error'] . "</p>";
-            unset($_SESSION['error']);
-        }
-        ?>
+    if (isset($_SESSION['error'])) {
+        echo "<p class='error'>" . $_SESSION['error'] . "</p>";
+        unset($_SESSION['error']);
+    }
 
-        <div id="menu">
-            <h3>Menu Items</h3>
-            <div id="menu-items">
-                <?php
-                $stmt = $pdo->query("SELECT id, name, description, price FROM MenuItems WHERE availability = 1");
-                $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Fetch item details from URL
+    if (isset($_GET['item_id']) && isset($_GET['name']) && isset($_GET['price'])) {
+        $item_id = htmlspecialchars($_GET['item_id']);
+        $item_name = htmlspecialchars($_GET['name']);
+        $item_price = htmlspecialchars($_GET['price']);
+    } else {
+        echo "<p>No item selected.</p>";
+        exit();
+    }
+    
+    ?>
 
-                foreach ($menuItems as $item) {
-                    echo "
-                    <div class='menu-item'>
-                        <h4>{$item['name']} - \${$item['price']}</h4>
-                        <p>{$item['description']}</p>
-                        <input type='number' class='quantity' id='qty-{$item['id']}' min='1' value='1'>
-                        <input type='text' class='customization' id='custom-{$item['id']}' placeholder='Customizations (optional)'>
-                        <button onclick='addToCart({$item['id']}, \"{$item['name']}\", {$item['price']})'>Add to Cart</button>
-                    </div>";
-                }
-                ?>
-            </div>
+    <form method="POST" action="">
+        <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
+        <input type="hidden" name="item_name" value="<?php echo $item_name; ?>">
+        <input type="hidden" name="item_price" value="<?php echo $item_price; ?>">
+
+        <div class="menu-item">
+            <h3><?php echo $item_name; ?> - $<?php echo $item_price; ?></h3>
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" id="quantity" min="1" value="1">
+            
+            <label for="customization">Customizations (optional):</label>
+            <input type="text" name="customization" id="customization" placeholder="Extra cheese, no onions, etc.">
+
+            <p><strong>Total Price: $<span id="total-price"><?php echo $item_price; ?></span></strong></p>
+
+            <button type="submit" name="place_order" class="btn btn-success">Place Order</button>
         </div>
+    </form>
+</div>
 
-        <form method="POST" action="">
-            <div id="order-summary">
-                <h3>Order Summary</h3>
-                <ul id="cart-list"></ul>
-                <p><strong>Total Price: $<span id="total-price">0.00</span></strong></p>
-                <input type="hidden" name="cart_data" id="cart_data">
-                <button type="submit" name="place_order">Place Order</button>
-            </div>
-        </form>
-    </div>
+<?php include '../layouts/footer.php'; ?>
 
-    <?php include '../layouts/footer.php'; ?>
-
-    <script src="/public/js/order.js"></script>
+<script>
+document.getElementById("quantity").addEventListener("input", function() {
+    let price = <?php echo $item_price; ?>;
+    let quantity = this.value;
+    document.getElementById("total-price").textContent = (price * quantity).toFixed(2);
+});
+</script>
 
 </body>
 </html>
