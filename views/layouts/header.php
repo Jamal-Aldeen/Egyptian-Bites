@@ -97,6 +97,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    document.getElementById('cart-count').textContent = cart.length;
+});
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
