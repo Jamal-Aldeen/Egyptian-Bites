@@ -8,10 +8,30 @@ class Order {
         $this->pdo = $pdo;
     }
 
-    public function createOrder($user_id, $total_price) {
-        $stmt = $this->pdo->prepare("INSERT INTO Orders (user_id, total_price, status) VALUES (?, ?, 'Pending')");
-        $stmt->execute([$user_id, $total_price]);
-        return $this->pdo->lastInsertId();
+    public function createOrder($user_id, $total_price, $items) {
+        $this->pdo->beginTransaction();
+        try {
+
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO Orders (user_id, total_price, status, created_at) 
+                VALUES (?, ?, 'Pending', NOW())"
+            );
+            
+
+            $stmt->execute([$user_id, $total_price]);
+            
+            $order_id = $this->pdo->lastInsertId();
+            
+            if (!empty($items)) {
+                $this->addOrderItems($order_id, $items);
+            }
+            
+            $this->pdo->commit();
+            return $order_id;
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            throw new Exception("Order creation failed: " . $e->getMessage());
+        }
     }
 
     public function addOrderItems($order_id, $items) {
