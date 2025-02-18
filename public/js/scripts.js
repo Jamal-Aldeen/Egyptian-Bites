@@ -86,13 +86,13 @@ function addToCart(id, name, price) {
     const existingItem = cart.find(item => item.id === id);
 
     if (existingItem) {
-        existingItem.quantity += 1; // زيادة الكمية إذا العنصر موجود
+        existingItem.quantity += 1;
     } else {
-        cart.push({ 
+        cart.push({
             id: id,
             name: name,
-            price: parseFloat(price), // تحويل السعر لرقم
-            quantity: 1 
+            price: parseFloat(price),
+            quantity: 1
         });
     }
 
@@ -100,15 +100,23 @@ function addToCart(id, name, price) {
     updateCartCount();
 }
 
+document.querySelectorAll('.cart-actions input').forEach(input => {
+    input.addEventListener('change', function() {
+        let index = this.closest('.cart-item').dataset.index;
+        let newVal = parseInt(this.value);
+        updateQuantity(index, newVal);
+    });
+});
+
 function updateCartCount() {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
     document.getElementById("cart-count").innerText = cartCount;
 
     if (existingItem) {
-        existingItem.quantity += 1; // زيادة الكمية إذا كان العنصر موجودًا
+        existingItem.quantity += 1; 
     } else {
-        cart.push({ id, name, price: parseFloat(price.replace('$', '')), quantity: 1 }); // إضافة العنصر الجديد
+        cart.push({ id, name, price: parseFloat(price.replace('$', '')), quantity: 1 }); 
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -126,8 +134,8 @@ function updateQuantity(index, change) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     if (cart[index]) {
         cart[index].quantity += change;
-        if (cart[index].quantity < 1) cart[index].quantity = 1; // لا تقل عن 1
+        if (cart[index].quantity < 1) cart[index].quantity = 1; 
         localStorage.setItem("cart", JSON.stringify(cart));
-        location.reload(); // إعادة تحميل الصفحة لتحديث البيانات
+        location.reload(); 
     }
 }
