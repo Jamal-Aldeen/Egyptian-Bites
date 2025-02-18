@@ -35,8 +35,8 @@ $items = $inventoryModel->getAllItems();
 </head>
 <body class="bg-light">
     <?php include '../layouts/header.php'; ?>
-
-    <div class="container mt-4">
+    
+    <div class="container col-md-9 ms-sm-auto col-lg-10 px-4">
         <div class="card shadow">
             <div class="card-header bg-dark text-white">
                 <h3 class="mb-0">Inventory Management</h3>
