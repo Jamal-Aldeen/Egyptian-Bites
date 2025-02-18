@@ -1,3 +1,43 @@
+<?php
+session_start();
+require_once __DIR__ . '/../../controllers/OrderController.php';
+
+$error = '';
+$success = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
+    try {
+        if (!isset($_SESSION['user_id'])) {
+            throw new Exception('You must be logged in to place an order');
+        }
+
+        $cart = json_decode($_POST['cart_data'], true);
+        if (empty($cart)) {
+            throw new Exception('Cart is empty');
+        }
+
+        // Server-side total calculation
+        $total = array_reduce($cart, function($sum, $item) {
+            return $sum + ($item['price'] * $item['quantity']);
+        }, 0);
+
+        $orderController = new OrderController();
+        $result = $orderController->placeOrder($_SESSION['user_id'], $cart, $total);
+
+        if ($result) {
+            $success = 'Order placed successfully!';
+            echo '<script>localStorage.removeItem("cart");</script>';
+        } else {
+            throw new Exception('Failed to place order');
+        }
+    } catch (Exception $e) {
+        $error = $e->getMessage();
+    }
+}
+
+// Fetch cart from localStorage for display
+$cart = json_decode($_POST['cart_data'] ?? '[]', true);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +46,6 @@
     <title>Your Cart</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        /* تحسين الأزرار */
         .btn-add-cart {
             background-color: #28a745;
             color: white;
@@ -101,9 +140,8 @@
             font-size: 1.1rem;
         }
 
-        /* إخفاء الكمية من العرض */
         .item-quantity {
-            display: none; /* إخفاء الكمية */
+            display: none; 
         }
 
         .price {
@@ -128,6 +166,15 @@
     </style>
 </head>
 <body>
+    
+<div class="container mt-5">
+        <?php if ($error): ?>
+        <div class="alert alert-danger"><?= $error ?></div>
+        <?php endif; ?>
+        
+        <?php if ($success): ?>
+        <div class="alert alert-success"><?= $success ?></div>
+        <?php endif; ?>
 
 <div class="container mt-5">
     <h2>Your Cart</h2>
@@ -137,21 +184,17 @@
         <?php else: ?>
             <?php foreach ($cart as $index => $item): ?>
                 <li class="list-group-item cart-item d-flex justify-content-between align-items-center">
-                    <!-- تفاصيل العنصر -->
                     <div>
                         <div class="item-name"><?= $item['name'] ?></div>
-                        <!-- تم إخفاء الكمية هنا -->
                         <div class="item-quantity">(x<?= $item['quantity'] ?>)</div>
                         <div class="price">$<?= number_format($item['price'] * $item['quantity'], 2) ?></div>
                     </div>
                     
-                    <!-- أزرار التحكم في الكمية -->
                     <div class="d-flex align-items-center cart-actions">
                         <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(<?= $index ?>, -1)">-</button>
                         <input type="number" class="form-control mx-2 text-center" value="<?= $item['quantity'] ?>" min="1" style="width: 60px;">
                         <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(<?= $index ?>, 1)">+</button>
                         
-                        <!-- زر الإزالة -->
                         <button class="btn btn-danger btn-sm ms-2" onclick="removeFromCart(<?= $index ?>)">Remove</button>
                     </div>
                 </li>
@@ -159,11 +202,9 @@
         <?php endif; ?>
     </ul>
 
-    <!-- المجموع الكلي -->
     <h3 class="total-price">Total: $<span id="total-price">0.00</span></h3>
 
-    <!-- نموذج تأكيد الطلب -->
-    <form method="POST" action="/views/customer/order-placement.php" class="confirm-btn">
+    <form method="POST" action="" class="confirm-btn">
         <input type="hidden" name="cart_data" id="cart_data">
         <button type="submit" class="btn btn-success">Confirm Order</button>
     </form>
