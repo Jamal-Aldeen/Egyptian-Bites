@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateCartCount();
 });
 
-function addToCart(id, name, price) {
+function addToCart(id, name, price, category_id) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existingItem = cart.find(item => item.id === id);
 
@@ -92,13 +92,15 @@ function addToCart(id, name, price) {
             id: id,
             name: name,
             price: parseFloat(price),
-            quantity: 1
+            quantity: 1,
+            category_id: category_id 
         });
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
     updateCartCount();
 }
+
 
 document.querySelectorAll('.cart-actions input').forEach(input => {
     input.addEventListener('change', function() {
