@@ -54,11 +54,13 @@
 
                 <!-- Cart Icon -->
                 <li class="nav-item cart-container">
-                    <a class="nav-link cart-link" href="/views/customer/order-placement.php">
-                        <div class="cart-card">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span class="cart-badge" id="cart-count">0</span>
-                        </div>
+
+                    <a class="nav-link cart-link" href="/views/customer/cart.php">
+                    <div class="cart-card">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-count">0</span>
+                    </div>
+
                     </a>
                 </li>
             </ul>
@@ -85,8 +87,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function updateCartCount() {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    document.getElementById("cart-count").innerText = cart.length;
+    const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+    document.getElementById("cart-count").innerText = cartCount;
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    updateCartCount();
+});
+
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    document.getElementById('cart-count').textContent = cart.length;
+});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,3 +1,5 @@
 **/uploads/*
 /config/database.php
 config/stripe.php
+
+/vendor/
