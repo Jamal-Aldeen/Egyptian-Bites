@@ -35,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
     }
 }
 
-// Fetch cart from localStorage for display
 $cart = json_decode($_POST['cart_data'] ?? '[]', true);
 ?>
 <!DOCTYPE html>
@@ -204,7 +203,7 @@ $cart = json_decode($_POST['cart_data'] ?? '[]', true);
 
     <h3 class="total-price">Total: $<span id="total-price">0.00</span></h3>
 
-    <form method="POST" action="" class="confirm-btn">
+    <form method="POST" action="/views/customer/order-placement.php" class="confirm-btn">
         <input type="hidden" name="cart_data" id="cart_data">
         <button type="submit" class="btn btn-success">Confirm Order</button>
     </form>
@@ -260,6 +259,15 @@ function removeFromCart(index) {
     localStorage.setItem("cart", JSON.stringify(cart));
     location.reload();
 }
+document.querySelector('form').addEventListener('submit', function(e) {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const invalidItems = cart.filter(item => !item.category_id);
+    
+    if (invalidItems.length > 0) {
+        e.preventDefault();
+        alert(' The cart contains invalid items. Please check your order.    .   .');
+    }
+});
 </script>
 
 </body>
