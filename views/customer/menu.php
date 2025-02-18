@@ -50,10 +50,10 @@
     <div class="row g-4" id="menuContainer">
         <?php
 $menuItems = [
-    ["id" => 1, "name" => "Koshari", "price" => 5.99, "rating" => 4.5, "image" => "Egyptian-Koshari-Featured.jpg", "category" => "main-dishes","desc" => "A mix of lentils, rice, pasta, and chickpeas.","discount" => "10% Off"],
-    ["id" => 2, "name" => "Mahshi", "price" => 7.99, "rating" => 4, "image" => "mahshi-plato.jpg", "category" => "main-dishes","discount" => "5% Off" ,"desc" => "Stuffed vegetables with rice & spices." ],
-    ["id" => 3, "name" => "Molokhia", "price" => 6.99, "rating" => 3.5, "image" => "Molokhia-17.webp", "category" => "main-dishes","discount" => "","desc" => "Green soup made from jute leaves."],
-    ["id" => 4, "name" => "Feteer Meshaltet", "price" => 8.50, "rating" => 5, "image" => "th.jpg", "category" => "desserts","discount" => "15% Off","desc" => "Flaky layered pastry with honey, sugar, or cheese."]
+    ["id" => 1, "name" => "Koshari", "price" => 5.99, "rating" => 4.5, "image" => "Egyptian-Koshari-Featured.jpg", "category" => "main-dishes", "category_id" => 1, "desc" => "A mix of lentils, rice, pasta, and chickpeas.", "discount" => "10% Off"],
+    ["id" => 2, "name" => "Mahshi", "price" => 7.99, "rating" => 4, "image" => "mahshi-plato.jpg", "category" => "main-dishes", "category_id" => 1, "discount" => "5% Off", "desc" => "Stuffed vegetables with rice & spices."],
+    ["id" => 3, "name" => "Molokhia", "price" => 6.99, "rating" => 3.5, "image" => "Molokhia-17.webp", "category" => "main-dishes", "category_id" => 1, "desc" => "Green soup made from jute leaves."],
+    ["id" => 4, "name" => "Feteer Meshaltet", "price" => 8.50, "rating" => 5, "image" => "th.jpg", "category" => "desserts", "category_id" => 2, "discount" => "15% Off", "desc" => "Flaky layered pastry with honey, sugar, or cheese."]
 ];
 
         function generateStars($rating) {
@@ -78,14 +78,13 @@ $menuItems = [
                         <div class="rating">' . generateStars($item["rating"]) . '</div>
                         <p class="price text-warning fw-bold">' . $item["price"] . '</p>
                         <p class="text-muted">' . $item["desc"] . '</p>
-        
 
-        
                         <button class="btn btn-warning w-100 btn-add-cart d-flex align-items-center justify-content-center"
                                 onclick="addToCart(
                                     ' . $item['id'] . ',
                                     ' . htmlspecialchars(json_encode($item['name']), ENT_QUOTES, 'UTF-8') . ',
-                                    ' . (float)str_replace('$', '', $item['price']) . '
+                                    ' . (float)str_replace('$', '', $item['price']) . ',
+                                    ' . $item['category_id'] . '
                                 )">
                             <i class="fas fa-shopping-cart me-2"></i> Add to Cart
                         </button>
