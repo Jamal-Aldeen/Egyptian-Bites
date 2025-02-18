@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../controllers/PaymentController.php';
-require_once __DIR__ . '/../controllers/config/stripe.php';
+// require_once __DIR__ . '/../controllers/config/stripe.php';
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['order_id']) || !isset($_SESSION['amount'])) {
     header("Location: /");
