@@ -3,21 +3,6 @@
 include __DIR__ . '/../layouts/header.php';
 ?>
 
-<<<<<<< HEAD
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Table Reservation</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="container mt-5">
-    <h2 class="text-center">Reserve a Table</h2>
-    <form action="../staff/reservations.php" method="POST" class="card p-4 shadow">
-        <div class="mb-3">
-            <label for="date" class="form-label">Date:</label>
-            <input type="date" name="date" class="form-control" required>
-=======
 <!-- Booking Section -->
 <div id="booking" class="container my-5">
     <h2 class="booking-heading">Book Your Table with Us</h2>
@@ -25,7 +10,6 @@ include __DIR__ . '/../layouts/header.php';
         <!-- Left Side Image -->
         <div class="col-md-6 booking-image">
             <img src="../../public/assets/images/image.png" alt="Elegant Egyptian Dining">
->>>>>>> bf82ade92a81d8e40a59d06056c27e13bd4964b7
         </div>
 
         <!-- Right Side Form -->
