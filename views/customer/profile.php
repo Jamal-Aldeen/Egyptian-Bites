@@ -26,18 +26,23 @@ if (isset($_SESSION['error'])) {
 
 <div class="container py-5">
     <div class="row">
-        <!-- Profile Section -->
         <div class="col-md-4">
             <div class="card shadow">
                 <div class="card-body text-center">
-                <img src="/public/uploads/<?= htmlspecialchars($user['profile_picture'] ?? 'default.jpg') ?>"
+                    <img src="/public/uploads/<?= htmlspecialchars($user['profile_picture'] ?? 'default.jpg') ?>"
                         class="rounded-circle mb-3"
                         style="width: 150px; height: 150px; object-fit: cover;">
                     <h4><?= htmlspecialchars($user['full_name']) ?></h4>
                     <p class="text-muted"><?= htmlspecialchars($user['email']) ?></p>
+
+                    <!-- Reserve a Table Button -->
+                    <a href="/views/customer/reservation.php" class="btn btn-primary w-100 mt-3">
+                        <i class="fas fa-calendar-check me-2"></i> Reserve a Table
+                    </a>
                 </div>
             </div>
         </div>
+        
 
         <div class="col-md-8">
             <!-- Update Profile Form -->
@@ -63,7 +68,27 @@ if (isset($_SESSION['error'])) {
                     </form>
                 </div>
             </div>
-
+<!-- Reset Password Form -->
+<div class="card shadow mb-4">
+                <div class="card-body">
+                    <h4>Reset Password</h4>
+                    <form action="/controllers/AuthController.php?action=reset_password" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" name="current_password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" name="new_password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" name="confirm_new_password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Reset Password</button>
+                    </form>
+                </div>
+            </div>
             <!-- Address Management -->
             <div class="card shadow">
                 <div class="card-body">
@@ -124,5 +149,7 @@ if (isset($_SESSION['error'])) {
         </div>
     </div>
 </div>
+
+
 
 <?php include '../layouts/footer.php'; ?>

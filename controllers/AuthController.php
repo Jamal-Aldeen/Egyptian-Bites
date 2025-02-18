@@ -20,31 +20,24 @@ class AuthController
     // User registration
     public function register($full_name, $email, $password, $role)
     {
-        // Validate inputs
         $this->validation->checkEmptyFields([
             "Full Name" => $full_name,
             "Email" => $email,
             "Password" => $password
         ]);
-        $this->validation->validateEmail($email, $this->pdo); // Pass $pdo here
-        $this->validation->validatePassword($password, $password); // Confirm password is the same
+        $this->validation->validateEmail($email, $this->pdo);
+        $this->validation->validatePassword($password, $password);
 
         if (!$this->validation->isValid()) {
             throw new Exception(implode(" ", $this->validation->getErrors()));
         }
 
-        // Check if email already exists
         if ($this->userModel->findByEmail($email)) {
             throw new Exception("Email already registered.");
         }
 
-        // Generate verification token
         $verificationToken = bin2hex(random_bytes(32));
-
-        // Create user
         $userId = $this->userModel->create($full_name, $email, $password, $role, $verificationToken);
-
-        // Send verification email
         $this->sendVerificationEmail($email, $verificationToken);
 
         return $userId;
@@ -63,14 +56,12 @@ class AuthController
             throw new Exception("Please verify your email before logging in.");
         }
 
-        // Set session variables
-        // In login method
+        // Store session data
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['full_name'] = $user['full_name'];
 
-        // Redirect based on role
         if ($user['role'] === 'Staff') {
             header("Location: /views/staff/dashboard.php");
         } else {
@@ -79,18 +70,8 @@ class AuthController
         exit();
     }
 
-    //  logout method
-    public function logout()
-    {
-        session_start();
-        session_unset();
-        session_destroy();
-        header("Location: /login"); // Redirect to login page
-        exit();
-    }
-
-    // Password recovery
-    public function resetPassword($email, $newPassword)
+    // Password reset logic
+    public function resetPassword($email, $currentPassword, $newPassword, $confirmNewPassword)
     {
         $user = $this->userModel->findByEmail($email);
 
@@ -98,17 +79,95 @@ class AuthController
             throw new Exception("Email not found.");
         }
 
-        // Validate new password
+        // Check if the current password matches the one stored in the database
+        if (!password_verify($currentPassword, $user['password'])) {
+            throw new Exception("Current password is incorrect.");
+        }
+
+        // Check if the new passwords match
+        if ($newPassword !== $confirmNewPassword) {
+            throw new Exception("New passwords do not match.");
+        }
+
+        // Validate new password (e.g., length, complexity)
         $this->validation->validateNewPassword($newPassword);
 
         if (!$this->validation->isValid()) {
             throw new Exception(implode(" ", $this->validation->getErrors()));
         }
 
-        return $this->userModel->changePassword($user['id'], $newPassword);
+        // Update password in the database
+        $result = $this->userModel->changePassword($user['id'], $newPassword);
+
+        if ($result) {
+            // After the password is reset successfully, refresh the session data
+            $user = $this->userModel->findById($user['id']); // Get updated user data
+            $_SESSION['full_name'] = $user['full_name'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['profile_picture'] = $user['profile_picture'] ?? null; // Update profile picture if available
+        }
+
+        return $result;
     }
 
-    // Send verification email
+    // Logout method to ensure session is properly cleared if needed
+    public function logout()
+    {
+        session_unset();
+        session_destroy();
+        header("Location: /login");
+        exit();
+    }
+
+    // Add address method
+    public function addAddress($userId, $addressData)
+    {
+        return $this->userModel->addAddress(
+            $userId,
+            $addressData['label'],
+            $addressData['address_line1'],
+            $addressData['address_line2'],
+            $addressData['city']
+        );
+    }
+
+    // Delete address method
+    public function deleteAddress($addressId, $userId)
+    {
+        return $this->userModel->deleteAddress($addressId, $userId);
+    }
+
+    // Private method for handling profile picture upload
+    private function handleProfilePicture($file, $userId)
+    {
+        if ($file && $file['error'] === UPLOAD_ERR_OK) {
+            $targetDir = __DIR__ . "/../public/uploads/";
+
+            if (!is_dir($targetDir)) {
+                if (!mkdir($targetDir, 0777, true)) {
+                    error_log("Failed to create directory: $targetDir");
+                    throw new Exception("Failed to create upload directory.");
+                }
+            }
+
+            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = "user_{$userId}_" . time() . ".$extension";
+            $targetFile = $targetDir . $filename;
+
+            if (!move_uploaded_file($file['tmp_name'], $targetFile)) {
+                error_log("Upload failed. Check permissions for: $targetDir");
+                throw new Exception("Failed to save profile picture.");
+            }
+            return $filename;
+        } elseif ($file['error'] !== UPLOAD_ERR_NO_FILE) {
+            error_log("Upload error code: " . $file['error']);
+            throw new Exception("File upload error: " . $file['error']);
+        }
+        return null;
+    }
+
+    // Private method to send verification email
     private function sendVerificationEmail($email, $token)
     {
         $subject = "Verify Your Email";
@@ -116,6 +175,7 @@ class AuthController
         mail($email, $subject, $message);
     }
 
+    // Update user profile method
     public function updateProfile($userId, $fullName, $email, $profilePicture = null)
     {
         error_log("Updating profile for user ID: $userId");
@@ -153,52 +213,8 @@ class AuthController
         } else {
             error_log("Failed to update profile.");
         }
-        
 
         return $result;
-    }
-    public function addAddress($userId, $addressData)
-    {
-        return $this->userModel->addAddress(
-            $userId,
-            $addressData['label'],
-            $addressData['address_line1'],
-            $addressData['address_line2'],
-            $addressData['city']
-        );
-    }
-
-    public function deleteAddress($addressId, $userId)
-    {
-        return $this->userModel->deleteAddress($addressId, $userId);
-    }
-
-    private function handleProfilePicture($file, $userId)
-    {
-        if ($file && $file['error'] === UPLOAD_ERR_OK) {
-            $targetDir = __DIR__ . "/../public/uploads/";
-
-            if (!is_dir($targetDir)) {
-                if (!mkdir($targetDir, 0777, true)) {
-                    error_log("Failed to create directory: $targetDir");
-                    throw new Exception("Failed to create upload directory.");
-                }
-            }
-
-            $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = "user_{$userId}_" . time() . ".$extension";
-            $targetFile = $targetDir . $filename;
-
-            if (!move_uploaded_file($file['tmp_name'], $targetFile)) {
-                error_log("Upload failed. Check permissions for: $targetDir");
-                throw new Exception("Failed to save profile picture.");
-            }
-            return $filename;
-        } elseif ($file['error'] !== UPLOAD_ERR_NO_FILE) {
-            error_log("Upload error code: " . $file['error']);
-            throw new Exception("File upload error: " . $file['error']);
-        }
-        return null;
     }
 }
 

@@ -31,12 +31,6 @@
     <input type="text" id="searchInput" class="form-control" placeholder="Search for a dish...">
 </div>
 
-<!-- Floating Cart Button
-<a href="/cart.php" class="custom-floating-cart">
-    <i class="fas fa-shopping-cart"></i>
-    <span class="cart-count">3</span>
-</a> -->
-
 <!-- Menu Categories -->
 <ul class="nav nav-pills justify-content-center mb-4">
     <li class="nav-item"><a class="nav-link active filter-btn" data-filter="all">All</a></li>
@@ -49,12 +43,14 @@
 <div class="container">
     <div class="row g-4" id="menuContainer">
         <?php
+
 $menuItems = [
     ["id" => 1, "name" => "Koshari", "price" => 5.99, "rating" => 4.5, "image" => "Egyptian-Koshari-Featured.jpg", "category" => "main-dishes", "category_id" => 1, "desc" => "A mix of lentils, rice, pasta, and chickpeas.", "discount" => "10% Off"],
     ["id" => 2, "name" => "Mahshi", "price" => 7.99, "rating" => 4, "image" => "mahshi-plato.jpg", "category" => "main-dishes", "category_id" => 1, "discount" => "5% Off", "desc" => "Stuffed vegetables with rice & spices."],
     ["id" => 3, "name" => "Molokhia", "price" => 6.99, "rating" => 3.5, "image" => "Molokhia-17.webp", "category" => "main-dishes", "category_id" => 1, "desc" => "Green soup made from jute leaves."],
     ["id" => 4, "name" => "Feteer Meshaltet", "price" => 8.50, "rating" => 5, "image" => "th.jpg", "category" => "desserts", "category_id" => 2, "discount" => "15% Off", "desc" => "Flaky layered pastry with honey, sugar, or cheese."]
 ];
+
 
         function generateStars($rating) {
             $fullStars = floor($rating);
@@ -69,8 +65,8 @@ $menuItems = [
         }
 
         foreach ($menuItems as $item) {
-            
             echo '<div class="col-md-3 menu-item" data-category="' . $item["category"] . '">
+
                 <div class="card text-center border-0 shadow-sm p-3">
                     <img src="/public/assets/images/' . $item["image"] . '" class="card-img-top rounded" alt="' . $item["name"] . '">
                     <div class="card-body">
@@ -91,6 +87,7 @@ $menuItems = [
                     </div>
                 </div>
             </div>';
+
         }
         ?>
     </div>

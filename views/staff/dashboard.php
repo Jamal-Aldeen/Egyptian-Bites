@@ -69,111 +69,117 @@ $upcomingReservations = $reservationModel->getUpcomingReservationCount();
     border-color: #c3e6cb;
     color: #155724;
 }
+.sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #343a40;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            padding: 10px 15px;
+            display: block;
+            color: white;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
     </style>
 </head>
 <body class="bg-light">
-    <?php include '../layouts/header.php'; ?>
 
-    <div class="container mt-4">
-        <h1 class="text-center mb-4">Staff Dashboard</h1>
+    <div class="container-fluid mt-4">
+        <div class="row">
+         <?php
+         require_once "../layouts/sidebar.php";
+         ?>
 
-        <!-- Metrics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card bg-primary text-white">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Total Sales</h5>
-                        <p class="card-text display-6">$<?= number_format($totalSales, 2) ?></p>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-4">
+                <h1 class="text-center mb-4 text-dark">Staff Dashboard</h1>
+                <!-- Metrics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Total Sales</h5>
+                                <p class="card-text display-6">$<?= number_format($totalSales, 2) ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Active Orders</h5>
+                                <p class="card-text display-6"><?= $activeOrders ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Upcoming Reservations</h5>
+                                <p class="card-text display-6"><?= $upcomingReservations ?></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-success text-white">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Active Orders</h5>
-                        <p class="card-text display-6"><?= $activeOrders ?></p>
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0"><i class="fas fa-bell"></i> Notifications</h5>
+                    </div>
+                    <div class="card-body">
+                        <?php
+                        $notificationController = new NotificationController();
+                        $lowStockItems = $notificationController->getLowStockNotifications();
+                        $expiringOffers = $notificationController->getExpiringOfferNotifications();
+                        ?>
+
+                        <!-- Low Stock Notifications -->
+                        <?php if (!empty($lowStockItems)): ?>
+                            <div class="alert alert-danger">
+                                <h6>Low Stock Items</h6>
+                                <ul>
+                                    <?php foreach ($lowStockItems as $item): ?>
+                                        <li>
+                                            <?= htmlspecialchars($item['item_name']) ?> 
+                                            (Stock: <?= $item['quantity'] ?>, Reorder Threshold: <?= $item['reorder_threshold'] ?>)
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Expiring Special Offers -->
+                        <?php if (!empty($expiringOffers)): ?>
+                            <div class="alert alert-warning">
+                                <h6>Expiring Special Offers</h6>
+                                <ul>
+                                    <?php foreach ($expiringOffers as $offer): ?>
+                                        <li>
+                                            <?= htmlspecialchars($offer['menu_item']) ?> 
+                                            (Discount: <?= $offer['discount_value'] ?>, Ends: <?= $offer['end_date'] ?>)
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- No Notifications -->
+                        <?php if (empty($lowStockItems) && empty($expiringOffers)): ?>
+                            <div class="alert alert-success">
+                                <h6>No new notifications.</h6>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-info text-white">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Upcoming Reservations</h5>
-                        <p class="card-text display-6"><?= $upcomingReservations ?></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card shadow mt-4">
-    <div class="card-header bg-warning text-dark">
-        <h5 class="mb-0"><i class="fas fa-bell"></i> Notifications</h5>
-    </div>
-    <div class="card-body">
-        <?php
-        $notificationController = new NotificationController();
-        $lowStockItems = $notificationController->getLowStockNotifications();
-        $expiringOffers = $notificationController->getExpiringOfferNotifications();
-        ?>
-
-        <!-- Low Stock Notifications -->
-        <?php if (!empty($lowStockItems)): ?>
-            <div class="alert alert-danger">
-                <h6>Low Stock Items</h6>
-                <ul>
-                    <?php foreach ($lowStockItems as $item): ?>
-                        <li>
-                            <?= htmlspecialchars($item['item_name']) ?> 
-                            (Stock: <?= $item['quantity'] ?>, Reorder Threshold: <?= $item['reorder_threshold'] ?>)
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
-
-        <!-- Expiring Special Offers -->
-        <?php if (!empty($expiringOffers)): ?>
-            <div class="alert alert-warning">
-                <h6>Expiring Special Offers</h6>
-                <ul>
-                    <?php foreach ($expiringOffers as $offer): ?>
-                        <li>
-                            <?= htmlspecialchars($offer['menu_item']) ?> 
-                            (Discount: <?= $offer['discount_value'] ?>, Ends: <?= $offer['end_date'] ?>)
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
-
-        <!-- No Notifications -->
-        <?php if (empty($lowStockItems) && empty($expiringOffers)): ?>
-            <div class="alert alert-success">
-                <h6>No new notifications.</h6>
-            </div>
-        <?php endif; ?>
-    </div>
-</div>
-        <!-- Admin Tools Navigation -->
-        <div class="card shadow">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">Admin Tools</h5>
-            </div>
-            <div class="card-body">
-                <div class="list-group">
-                    <a href="user-management.php" class="list-group-item list-group-item-action">
-                        <i class="fas fa-users me-2"></i>Manage Users
-                    </a>
-                    <a href="menu-management.php" class="list-group-item list-group-item-action">
-                        <i class="fas fa-utensils me-2"></i>Manage Menu
-                    </a>
-                    <a href="inventory-management.php" class="list-group-item list-group-item-action">
-                        <i class="fas fa-boxes me-2"></i>Manage Inventory
-                    </a>
-                    <a href="reports.php" class="list-group-item list-group-item-action">
-                        <i class="fas fa-chart-bar me-2"></i>Sales Reports
-                    </a>
-                </div>
-            </div>
+            </main>
         </div>
     </div>
 

@@ -18,7 +18,7 @@
     font-size: 0.9rem;
     transition: all 0.4s ease-in-out;
     color: white !important;
-    padding: 8px 10px;
+    padding: 6px 8px;
 }
 
 .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active .w {
@@ -57,7 +57,9 @@ body {
     font-family: 'Poppins', sans-serif;
     background: #f8f9fa;
     margin: 0;
-    padding: 0;
+    
+        padding-top: 60px; 
+    
     color: #333;
 }
 
@@ -71,7 +73,7 @@ body {
     text-align: center;
     color: white;
     position: relative;
-    padding: 20px;
+   padding-top: 70px;
 }
 
 .hero-overlay {
@@ -812,7 +814,7 @@ body {
     align-items: center;
     justify-content: center;
     /* background: linear-gradient(135deg, #ffd700, #ffcc00);  */
-    padding: 10px 15px;
+    padding: 5px 10px;
     border-radius: 12px;
     /* box-shadow: 0px 5px 15px rgba(255, 215, 0, 0.3); */
     transition: all 0.3s ease-in-out;
@@ -824,10 +826,10 @@ body {
     color: #fff; 
 }
 
-.cart-card:hover {
+/* .cart-card:hover {
     transform: scale(1.1);
     box-shadow: 0px 5px 20px rgba(255, 215, 0, 0.5);
-}
+} */
 
 .cart-badge {
     position: absolute;

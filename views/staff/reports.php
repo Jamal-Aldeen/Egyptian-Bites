@@ -38,13 +38,73 @@ unset($_SESSION['end_date']);
             transform: translateY(-5px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .list-group-item {
+            transition: background-color 0.2s;
+        }
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+        .alert {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+.sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #343a40;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            padding: 10px 15px;
+            display: block;
+            color: white;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
     </style>
 </head>
 <body class="bg-light">
-    <?php include '../layouts/header.php'; ?>
 
     <div class="container mt-4">
-        <div class="card shadow">
+        <?php require_once "../layouts/sidebar.php"; ?>
+
+        <div class=" row card shadow col-md-9 ms-sm-auto col-lg-10 px-4">
+
             <div class="card-header bg-dark text-white">
                 <h3 class="mb-0">Sales Reports</h3>
             </div>
@@ -95,10 +155,7 @@ unset($_SESSION['end_date']);
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
-    <!-- Export Buttons -->
-    <div class="row g-3 mb-4">
+            <div class="row g-3 mb-4">
     <div class="col-md-3">
         <a href="../../handlers/sales-handler.php?export=csv&start_date=<?= $startDate ?>&end_date=<?= $endDate ?>"
            class="btn btn-success w-100">
@@ -111,6 +168,10 @@ unset($_SESSION['end_date']);
             <i class="fas fa-file-pdf"></i> Export as PDF
         </a>
     </div>
+        </div>
+    </div>
+    <!-- Export Buttons -->
+   
 </div>
     <!-- Bootstrap 5 JS and FontAwesome -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

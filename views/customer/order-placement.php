@@ -15,8 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
             throw new Exception('You must be logged in to place an order');
         }
 
+
         $cart = json_decode($_POST['cart_data'], true);
         var_dump($cart);  
+
 
         foreach ($cart as $item) {
             if (!isset($item['category_id']) || !is_numeric($item['category_id'])) {
