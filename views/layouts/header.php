@@ -1,5 +1,4 @@
 <?php
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +14,7 @@
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
         <!-- Brand Logo -->
         <a class="navbar-brand" href="../../index.php"><i class="fas fa-utensils"></i> Egyptian Bites</a>
@@ -27,42 +26,41 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <!-- Centered Navigation Links -->
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item on"><a class="nav-link " href="#home">Home</a></li>
-                <li class="nav-item on"><a class="nav-link" href="#about">About</a></li>
-                <li class="nav-item on"><a class="nav-link" href="#menu">Menu</a></li>
-                <li class="nav-item on"><a class="nav-link" href="#booking">Book a Table</a></li>
-
-                 <li class="nav-item">
-                    <a class="nav-link" href="/views/customer/payment.php">Payment</a>
-                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../../index.php">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../../views/customer/menu.php">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../../views/customer/reservation.php">Book a Table</a>
+                </li>
             </ul>
 
             <!-- Right-Aligned Login/Register & Cart -->
             <ul class="navbar-nav">
-          
-
-
                 <?php if (isset($_SESSION['user_id'])) : ?>
                     <li class="nav-item">
                         <a class="nav-link btn btn-outline-warning px-3" href="/logout">Logout</a>
                     </li>
                 <?php else : ?>
-                    <li class="nav-item menu-btn">
-                        <a class="nav-link btn btn-outline-warning px-2 mx-2 w " href="/views/shared/login.php">Login</a>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-warning px-2 mx-2" href="/views/shared/login.php">Login</a>
                     </li>
-                    <li class="nav-item menu-btn">
-                        <a class="nav-link btn btn-outline-warning px-2 mx-2 active-now" style="width:auto;" href="/views/shared/register-form.php">Register</a>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-warning px-2 mx-2 active-now" href="/views/shared/register-form.php">Register</a>
                     </li>
-                     <!-- Order Cart Icon -->
+                <?php endif; ?>
+
+                <!-- Cart Icon -->
                 <li class="nav-item cart-container">
                     <a class="nav-link cart-link" href="/views/customer/order-placement.php">
-                    <div class="cart-card">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-badge" id="cart-count">0</span>
-                    </div>
+                        <div class="cart-card">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-badge" id="cart-count">0</span>
+                        </div>
                     </a>
                 </li>
-                <?php endif; ?>
             </ul>
         </div>
     </div>
@@ -92,5 +90,6 @@ function updateCartCount() {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

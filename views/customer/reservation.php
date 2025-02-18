@@ -1,13 +1,9 @@
 <?php
-session_start();
-require_once __DIR__ . '/../../controllers/ReservationController.php';
-$controller = new ReservationController();
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $controller->bookTable($_POST);
-}
+// Include the header
+include __DIR__ . '/../layouts/header.php';
 ?>
 
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,19 +17,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="mb-3">
             <label for="date" class="form-label">Date:</label>
             <input type="date" name="date" class="form-control" required>
+=======
+<!-- Booking Section -->
+<div id="booking" class="container my-5">
+    <h2 class="booking-heading">Book Your Table with Us</h2>
+    <div class="row align-items-center">
+        <!-- Left Side Image -->
+        <div class="col-md-6 booking-image">
+            <img src="../../public/assets/images/image.png" alt="Elegant Egyptian Dining">
+>>>>>>> bf82ade92a81d8e40a59d06056c27e13bd4964b7
         </div>
 
-        <div class="mb-3">
-            <label for="time" class="form-label">Time:</label>
-            <input type="time" name="time" class="form-control" required>
-        </div>
+        <!-- Right Side Form -->
+        <div class="col-md-6">
+            <div class="booking-section">
+                <form action="/controllers/ReservationController.php" method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="email" class="form-control" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="tel" class="form-control" name="phone" placeholder="Your Phone" required>
+                        </div>
 
-        <div class="mb-3">
-            <label for="guests" class="form-label">Number of Guests:</label>
-            <input type="number" name="guests" class="form-control" min="1" required>
-        </div>
+                        <div class="col-md-4">
+                            <input type="date" class="form-control" name="date" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="time" class="form-control" name="time" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" class="form-control" name="guests" placeholder="# of People" min="1" required>
+                        </div>
 
-        <button type="submit" class="btn btn-primary w-100">Book Now</button>
-    </form>
-</body>
-</html>
+                        <div class="col-12">
+                            <textarea class="form-control" name="requests" rows="4" placeholder="Special Requests"></textarea>
+                        </div>
+
+                        <div class="col-12 text-center mt-3">
+                            <button type="submit" class="btn btn-book w-100">Book a Table</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+// Include the footer
+include __DIR__ . '/../layouts/footer.php';
+?>

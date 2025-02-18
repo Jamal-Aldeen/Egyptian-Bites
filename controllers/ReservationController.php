@@ -1,5 +1,13 @@
 <?php
 require_once __DIR__ . '/../models/Reservation.php';
+require_once __DIR__ . '/../config/db.php';
+
+// Check for form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $controller = new ReservationController();
+    $controller->bookTable($_POST);
+}
+
 
 class ReservationController {
     private $reservationModel;
@@ -23,12 +31,14 @@ class ReservationController {
 
         if ($this->reservationModel->createReservation($userId, $date, $time, $guests)) {
             echo "Reservation successful!";
+            header("Location: /views/customer/confirmation.php");
+            exit;
         } else {
             echo "Failed to reserve.";
         }
     }
 
-    // ✅ Fix: Getter function to access reservations
+    // Getter function to access reservations
     public function getReservations() {
         return $this->reservationModel->getReservations();
     }
