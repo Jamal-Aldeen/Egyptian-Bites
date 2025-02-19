@@ -27,10 +27,12 @@ try {
         $category_id = filter_var($_POST['category_id'], FILTER_VALIDATE_INT);
         $menu_name = sanitize_input($_POST['menu_name']);
         $description = sanitize_input($_POST['description']);
+        $profile_pic = $_FILES['profile_pic'];
         $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
         
         if ($category_id && $menu_name && !empty($menu_name) && $price) {
-            $menuController->addMenuItem($category_id, $menu_name, $description, $price, null, 1);
+            $stmt = $this->pdo->prepare("INSERT INTO menuitems (category_id, name, description, price, image) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$category_id, $menu_name, $description, $price, $profile_pic['name']]);
         } else {
             throw new Exception("Invalid data for menu item.");
         }
