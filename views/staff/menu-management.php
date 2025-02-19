@@ -100,6 +100,10 @@ $specialOffers = $menuController->getSpecialOffers();
                         <div class="col-md-4">
                             <input type="number" name="price" class="form-control" placeholder="Price" step="0.01" required>
                         </div>
+                        <div class="mb-3">
+                <label class="form-label">Profile Picture (Optional)</label>
+                <input type="file" class="form-control" name="profile_pic">
+            </div>
                         <div class="col-md-2">
                             <button type="submit" name="add_menu_item" class="btn btn-primary w-100">
                                 <i class="fas fa-plus"></i> Add Item
