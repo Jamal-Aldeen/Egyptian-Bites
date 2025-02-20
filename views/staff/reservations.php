@@ -1,17 +1,10 @@
 <?php
-define('DB_HOST', 'localhost:3306');
-define('DB_NAME', 'restaurant_db');
-define('DB_USER', 'root');
-define('DB_PASSWORD', '');
-try {
-    $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME;
-    $GLOBALS['pdo'] = new PDO($dsn, DB_USER, DB_PASSWORD);
-    $GLOBALS['pdo']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-}
+session_start();
+
+require_once __DIR__ . '/../../config/db.php';
 
 // Query to fetch all reservations
+$user = "select * from Users WHERE email = :email ";
 $sql = "SELECT r.id,r.user_id, u.full_name AS full_name,  r.date, r.time, r.number_of_guests 
         FROM Reservations r 
         JOIN Users u ON r.user_id = u.id";
@@ -27,15 +20,19 @@ $reservations = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reservations List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
 </head>
 <body>
-    <div class="container-fluid ">
+    <div class="container-fluid mt-4 ">
         <div class="row">
         <?php
          require_once "../layouts/sidebar.php";
          ?>
-         <div class="col-md-9 ms-sm-auto col-lg-10 px-4 mt-4">
+         <div class=" col-md-9 ms-sm-auto col-lg-10 px-4 mt-4">
          <h2 class="text-center">Reservations List</h2>
+        
+
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -60,7 +57,8 @@ $reservations = $stmt->fetchAll();
                 <?php endforeach; ?>
             </tbody>
         </table>
-             </div>
+        </div>
+             
         </div>
    
         </div>

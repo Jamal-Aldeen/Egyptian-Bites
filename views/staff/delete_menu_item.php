@@ -1,14 +1,15 @@
 <?php
 session_start();
 
+require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../../controllers/MenuController.php';
 // Check if the user is logged in and has the Staff role
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Staff') {
     header("Location: /views/shared/login.php");
     exit();
 }
 
-require_once __DIR__ . '/../../config/db.php';
-require_once __DIR__ . '/../../controllers/MenuController.php';
+
 
 // Check if the item id is provided
 if (!isset($_GET['id'])) {
