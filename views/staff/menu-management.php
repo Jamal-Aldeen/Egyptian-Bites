@@ -1,11 +1,24 @@
 <?php
 require_once __DIR__ . '/../../controllers/MenuController.php';
 $menuController = new MenuController();
-$categories    = $menuController->getCategories();
-$menuItems     = $menuController->getMenuItems();
+$categories = $menuController->getCategories();
+$menuItems = $menuController->getMenuItems();
 $specialOffers = $menuController->getSpecialOffers();
-?>
 
+// Build nested menu data from categories and items
+$menuData = [];
+foreach ($categories as $cat) {
+    $menuData[$cat['id']] = [
+        'name' => $cat['name'],
+        'items' => []
+    ];
+}
+foreach ($menuItems as $item) {
+    if (isset($menuData[$item['category_id']])) {
+        $menuData[$item['category_id']]['items'][] = $item;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +31,9 @@ $specialOffers = $menuController->getSpecialOffers();
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <!-- Custom CSS -->
   <style>
+    body {
+      background-color: #f8f9fa;
+    }
     .card {
       transition: transform 0.2s, box-shadow 0.2s;
     }
@@ -29,15 +45,23 @@ $specialOffers = $menuController->getSpecialOffers();
       transition: background-color 0.2s;
     }
     .list-group-item:hover {
-      background-color: #f8f9fa; 
+      background-color: #f8f9fa;
+    }
+    .nested-menu a {
+      text-decoration: none;
+      color: #343a40;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nested-menu a:hover {
+      color: #007bff;
     }
   </style>
 </head>
 <body class="bg-light">
   <?php include '../layouts/header.php'; ?>
-
   <div class="container mt-4">
-    <div class="card shadow">
+    <div class="card shadow mb-4">
       <div class="card-header bg-dark text-white">
         <h3 class="mb-0">Menu Management</h3>
       </div>
@@ -48,9 +72,9 @@ $specialOffers = $menuController->getSpecialOffers();
         <?php elseif (isset($_GET['error'])): ?>
           <div class="alert alert-danger"><?= htmlspecialchars($_GET['error']); ?></div>
         <?php endif; ?>
-
+        
         <!-- Manage Categories -->
-        <h4 class="mt-4">Manage Categories</h4>
+        <h4 class="mt-4">Add New Category</h4>
         <form action="../../handlers/menu-handler.php" method="POST" class="mb-4">
           <div class="row g-3">
             <div class="col-md-6">
@@ -58,20 +82,37 @@ $specialOffers = $menuController->getSpecialOffers();
             </div>
             <div class="col-md-2">
               <button type="submit" name="add_category" class="btn btn-primary w-100">
-                <i class="fas fa-plus"></i> Add Category
+                <i class="fas fa-plus"></i> Add
               </button>
             </div>
           </div>
         </form>
 
-        <!-- Categories List -->
+        <!-- Categories List with Nested Menu Items -->
+        <h4 class="mt-4">Categories & Menu Items</h4>
         <ul class="list-group mb-4">
-          <?php foreach ($categories as $category): ?>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <?= htmlspecialchars($category['name']) ?>
-              <form action="../../handlers/menu-handler.php" method="POST" class="d-inline">
-                <input type="hidden" name="category_id" value="<?= $category['id']; ?>">
-                <button type="submit" name="delete_category" class="btn btn-danger btn-sm">
+          <?php foreach ($menuData as $catId => $data): ?>
+            <li class="list-group-item">
+              <a data-bs-toggle="collapse" href="#collapseCat<?= $catId; ?>" role="button" aria-expanded="false" aria-controls="collapseCat<?= $catId; ?>">
+                <?= htmlspecialchars($data['name']); ?>
+              </a>
+              <?php if (!empty($data['items'])): ?>
+                <div class="collapse nested-menu" id="collapseCat<?= $catId; ?>">
+                  <ul class="list-group ms-3 mt-2">
+                    <?php foreach ($data['items'] as $item): ?>
+                      <li class="list-group-item">
+                        <a href="edit_menu_item.php?id=<?= $item['id']; ?>">
+                          <?= htmlspecialchars($item['name']); ?>
+                        </a>
+                      </li>
+                    <?php endforeach; ?>
+                  </ul>
+                </div>
+              <?php endif; ?>
+              <!-- Delete category button -->
+              <form action="../../handlers/menu-handler.php" method="POST" class="d-inline float-end">
+                <input type="hidden" name="category_id" value="<?= $catId; ?>">
+                <button type="submit" name="delete_category" class="btn btn-danger btn-sm" onclick="return confirm('Delete this category?')">
                   <i class="fas fa-trash"></i>
                 </button>
               </form>
@@ -80,7 +121,7 @@ $specialOffers = $menuController->getSpecialOffers();
         </ul>
 
         <!-- Manage Menu Items -->
-        <h4 class="mt-4">Manage Menu Items</h4>
+        <h4 class="mt-4">Add New Menu Item</h4>
         <form action="../../handlers/menu-handler.php" method="POST" class="mb-4" enctype="multipart/form-data">
           <div class="row g-3">
             <div class="col-md-4">
@@ -140,12 +181,12 @@ $specialOffers = $menuController->getSpecialOffers();
             </div>
           </div>
         </form>
+
       </div>
     </div>
   </div>
-
+  
   <!-- Bootstrap 5 JS and FontAwesome -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>
 </html>
