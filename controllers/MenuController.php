@@ -31,15 +31,15 @@ class MenuController {
     }
 
     // Menu Items Management
-    public function addMenuItem($category_id, $name, $description, $price, $profile_pic, $availability) {
-        $stmt = $this->pdo->prepare("INSERT INTO MenuItems (category_id, name, description, price, profile_pic, availability) 
-                                     VALUES (:category_id, :name, :description, :price, :profile_pic, :availability)");
+    public function addMenuItem($category_id, $name, $description, $price, $image, $availability) {
+        $stmt = $this->pdo->prepare("INSERT INTO MenuItems (category_id, name, description, price, image, availability) 
+                                     VALUES (:category_id, :name, :description, :price, :image, :availability)");
         return $stmt->execute([
             'category_id' => $category_id,
             'name' => $name,
             'description' => $description,
             'price' => $price,
-            'image' => $profile_pic,
+            'image' => $image,
             'availability' => $availability
         ]);
     }
