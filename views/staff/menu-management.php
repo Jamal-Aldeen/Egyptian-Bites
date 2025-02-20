@@ -81,7 +81,7 @@ $specialOffers = $menuController->getSpecialOffers();
 
                 <!-- Manage Menu Items -->
                 <h4 class="mt-4">Manage Menu Items</h4>
-                <form action="../../handlers/menu-handler.php" method="POST" class="mb-4">
+                <form action="../../handlers/menu-handler.php" method="POST" class="mb-4" enctype="multipart/form-data">
                     <div class="row g-3">
                         <div class="col-md-4">
                             <select name="category_id" class="form-select" required>
