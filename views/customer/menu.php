@@ -8,7 +8,6 @@ include('../../config/db.php');
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Restaurant Menu</title>
     
-    <!-- Bootstrap & FontAwesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -29,12 +28,10 @@ include('../../config/db.php');
     </div>
 </section>
 
-<!-- Search Bar -->
 <div class="container my-3">
     <input type="text" id="searchInput" class="form-control" placeholder="Search for a dish...">
 </div>
 
-<!-- Menu Categories -->
 <ul class="nav nav-pills justify-content-center mb-4">
     <li class="nav-item"><a class="nav-link active filter-btn" data-filter="all">All</a></li>
     <li class="nav-item"><a class="nav-link filter-btn" data-filter="piza">piza</a></li>
@@ -46,7 +43,6 @@ include('../../config/db.php');
 <div class="container">
     <div class="row g-4" id="menuContainer">
         <?php
-        // استعلام SQL لسحب البيانات من جدول menuitems مع JOIN
         $sql = "SELECT 
         mi.id AS item_id,
         mi.name AS item_name,
@@ -68,12 +64,10 @@ include('../../config/db.php');
 
         $result = $pdo->query($sql);
 
-        // التحقق من وجود أخطاء في الاستعلام
         if (!$result) {
             die("Query failed: " . $pdo->errorInfo()[2]);
         }
 
-        // تحويل النتيجة إلى مصفوفة
         $menuItems = [];
         if ($result->rowCount() > 0) {
             while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
@@ -98,7 +92,8 @@ include('../../config/db.php');
        foreach ($menuItems as $item) {
     echo '<div class="col-md-3 menu-item" data-category="' . $item["category_name"] . '">
     <div class="card text-center border-0 shadow-sm p-3">
-        <img src="/public/assets/images/' . $item["item_image"] . '" class="card-img-top rounded" alt="' . $item["item_name"] . '">
+    
+        <img src="/public/uploads/' . $item["item_image"] . '" class="card-img-top rounded" alt="' . $item["item_name"] . '">
         <div class="card-body">
             <h5 class="card-title">' . $item["category_name"] . '</h5>
             <p class="price text-warning fw-bold">$' . $item["item_price"] . '</p>
@@ -110,12 +105,12 @@ include('../../config/db.php');
                 <button class="btn btn-sm btn-outline-secondary increase-qty">+</button>
             </div>';
 
-    // زر "Order Now" مع تمرير معرف العنصر
+   
     echo '
            <a href="/views/customer/order-placement.php?item_id=' . $item["item_id"] . '" class="btn btn-success">Order This</a>
           </a>';
 
-    echo '</div></div></div>'; // إغلاق divs بشكل صحيح
+    echo '</div></div></div>';
 }
         ?>
     </div>
