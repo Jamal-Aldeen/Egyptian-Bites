@@ -2,10 +2,10 @@
 // Require the shared database configuration instead of duplicating connection code
 require_once '../../config/db.php';
 
-// Query to fetch all menu items, including the image field
-$sql = "SELECT mi.id, mi.name, mi.availability, mi.description, mi.price, mi.image, mc.name AS category_name 
-        FROM menuitems mi 
-        JOIN menucategories mc ON mi.category_id = mc.id";
+$sql = "SELECT mi.id, mi.name, mi.availability, mi.description, mi.price, mi.image, mc.name AS category_name
+        FROM MenuItems mi
+        JOIN MenuCategories mc ON mi.category_id = mc.id";
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -105,7 +105,9 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
               <tr>
                 <td>
                   <!-- Reference menu-image.php to retrieve the image for this menu item -->
-                  <img src="/views/staff/menu-image.php?id=<?= htmlspecialchars($item['id']) ?>" alt="<?= htmlspecialchars($item['name']) ?>" class="menu-image">
+                  <img src="/views/staff/menu-image.php?id=<?= htmlspecialchars($item['id']) ?>"
+                       alt="<?= htmlspecialchars($item['name']) ?>"
+                       class="menu-image">
                 </td>
                 <td><?= htmlspecialchars($item['id']) ?></td>
                 <td><?= htmlspecialchars($item['name']) ?></td>
@@ -115,7 +117,11 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <td><?= htmlspecialchars($item['category_name']) ?></td>
                 <td>
                   <a href="edit_menu_item.php?id=<?= htmlspecialchars($item['id']) ?>" class="btn btn-warning">Edit</a>
-                  <a href="delete_menu_item.php?id=<?= htmlspecialchars($item['id']) ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
+                  <a href="delete_menu_item.php?id=<?= htmlspecialchars($item['id']) ?>"
+                     class="btn btn-danger"
+                     onclick="return confirm('Are you sure you want to delete this item?');">
+                    Delete
+                  </a>
                 </td>
               </tr>
             <?php endforeach; ?>
