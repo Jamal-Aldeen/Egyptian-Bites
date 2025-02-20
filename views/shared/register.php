@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Store errors in session and redirect back to the registration form
     $_SESSION['errors'] = $errors;
-    header("Location: register-form.php");
+    header("Location: /views/shared/login.php");
     exit();
 }
 ?>
