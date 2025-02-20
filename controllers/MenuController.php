@@ -59,10 +59,12 @@ class MenuController {
     }
 
     public function deleteMenuItem($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM MenuItems WHERE id = :id");
+        global $pdo;
+        $sql = "DELETE FROM MenuItems WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
         return $stmt->execute(['id' => $id]);
     }
-
+    
     public function getMenuItems() {
         $stmt = $this->pdo->query("SELECT * FROM MenuItems");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
