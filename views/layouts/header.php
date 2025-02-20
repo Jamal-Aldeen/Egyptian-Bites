@@ -41,7 +41,7 @@
             <ul class="navbar-nav">
                 <?php if (isset($_SESSION['user_id'])) : ?>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-outline-warning px-3" href="/logout">Logout</a>
+                    <a href="/handlers/logout.php" class="btn btn-outline-warning px-3">Logout</a>
                     </li>
                 <?php else : ?>
                     <li class="nav-item">
