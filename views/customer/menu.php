@@ -114,7 +114,7 @@ include('../../config/db.php');
           </a>';
 
     echo '</div></div></div>';
-]
+       }
         ?>
     </div>
 </div>
