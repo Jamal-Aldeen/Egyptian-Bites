@@ -1,3 +1,6 @@
+<?php
+include('../../config/db.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Restaurant Menu</title>
     
-    <!-- Bootstrap & FontAwesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -26,16 +28,14 @@
     </div>
 </section>
 
-<!-- Search Bar -->
 <div class="container my-3">
     <input type="text" id="searchInput" class="form-control" placeholder="Search for a dish...">
 </div>
 
-<!-- Menu Categories -->
 <ul class="nav nav-pills justify-content-center mb-4">
     <li class="nav-item"><a class="nav-link active filter-btn" data-filter="all">All</a></li>
-    <li class="nav-item"><a class="nav-link filter-btn" data-filter="main-dishes">Main Dishes</a></li>
-    <li class="nav-item"><a class="nav-link filter-btn" data-filter="drinks">Drinks</a></li>
+    <li class="nav-item"><a class="nav-link filter-btn" data-filter="piza">piza</a></li>
+    <li class="nav-item"><a class="nav-link filter-btn" data-filter="crip">crip</a></li>
     <li class="nav-item"><a class="nav-link filter-btn" data-filter="desserts">Desserts</a></li>
 </ul>
 
@@ -44,14 +44,41 @@
     <div class="row g-4" id="menuContainer">
         <?php
 
-$menuItems = [
-    ["id" => 1, "name" => "Koshari", "price" => 5.99, "rating" => 4.5, "image" => "Egyptian-Koshari-Featured.jpg", "category" => "main-dishes", "category_id" => 1, "desc" => "A mix of lentils, rice, pasta, and chickpeas.", "discount" => "10% Off"],
-    ["id" => 2, "name" => "Mahshi", "price" => 7.99, "rating" => 4, "image" => "mahshi-plato.jpg", "category" => "main-dishes", "category_id" => 1, "discount" => "5% Off", "desc" => "Stuffed vegetables with rice & spices."],
-    ["id" => 3, "name" => "Molokhia", "price" => 6.99, "rating" => 3.5, "image" => "Molokhia-17.webp", "category" => "main-dishes", "category_id" => 1, "desc" => "Green soup made from jute leaves."],
-    ["id" => 4, "name" => "Feteer Meshaltet", "price" => 8.50, "rating" => 5, "image" => "th.jpg", "category" => "desserts", "category_id" => 2, "discount" => "15% Off", "desc" => "Flaky layered pastry with honey, sugar, or cheese."]
-];
+        $sql = "SELECT 
+        mi.id AS item_id,
+        mi.name AS item_name,
+        mi.description AS item_description,
+        mi.price AS item_price,
+        mi.image AS item_image,
+        mi.availability AS item_availability,
+        mi.created_at AS item_created_at,
+        mi.updated_at AS item_updated_at,
+        mc.id AS category_id,
+        mc.name AS category_name
+       
+    FROM 
+        MenuItems mi
+    JOIN 
+        MenuCategories mc 
+    ON 
+        mi.category_id = mc.id";
 
 
+        $result = $pdo->query($sql);
+
+        if (!$result) {
+            die("Query failed: " . $pdo->errorInfo()[2]);
+        }
+
+        $menuItems = [];
+        if ($result->rowCount() > 0) {
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                $menuItems[] = $row;
+            }
+        } else {
+            echo "No items found in the menu.";
+        }
+       
         function generateStars($rating) {
             $fullStars = floor($rating);
             $halfStar = ($rating - $fullStars) >= 0.5 ? 1 : 0;
@@ -64,31 +91,30 @@ $menuItems = [
             return $stars;
         }
 
-        foreach ($menuItems as $item) {
-            echo '<div class="col-md-3 menu-item" data-category="' . $item["category"] . '">
 
-                <div class="card text-center border-0 shadow-sm p-3">
-                    <img src="/public/assets/images/' . $item["image"] . '" class="card-img-top rounded" alt="' . $item["name"] . '">
-                    <div class="card-body">
-                        <h5 class="card-title">' . $item["name"] . '</h5>
-                        <div class="rating">' . generateStars($item["rating"]) . '</div>
-                        <p class="price text-warning fw-bold">' . $item["price"] . '</p>
-                        <p class="text-muted">' . $item["desc"] . '</p>
+       foreach ($menuItems as $item) {
+    echo '<div class="col-md-3 menu-item" data-category="' . $item["category_name"] . '">
+    <div class="card text-center border-0 shadow-sm p-3">
+    
+        <img src="/public/uploads/' . $item["item_image"] . '" class="card-img-top rounded" alt="' . $item["item_name"] . '">
+        <div class="card-body">
+            <h5 class="card-title">' . $item["category_name"] . '</h5>
+            <p class="price text-warning fw-bold">$' . $item["item_price"] . '</p>
+            <p class="text-muted">' . $item["item_description"] . '</p>
 
-                        <button class="btn btn-warning w-100 btn-add-cart d-flex align-items-center justify-content-center"
-                                onclick="addToCart(
-                                    ' . $item['id'] . ',
-                                    ' . htmlspecialchars(json_encode($item['name']), ENT_QUOTES, 'UTF-8') . ',
-                                    ' . (float)str_replace('$', '', $item['price']) . ',
-                                    ' . $item['category_id'] . '
-                                )">
-                            <i class="fas fa-shopping-cart me-2"></i> Add to Cart
-                        </button>
-                    </div>
-                </div>
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <button class="btn btn-sm btn-outline-secondary decrease-qty">-</button>
+                <input type="number" class="form-control text-center mx-2 quantity-input" value="1" min="1" style="width: 50px;">
+                <button class="btn btn-sm btn-outline-secondary increase-qty">+</button>
             </div>';
 
-        }
+   
+    echo '
+           <a href="/views/customer/order-placement.php?item_id=' . $item["item_id"] . '" class="btn btn-success">Order This</a>
+          </a>';
+
+    echo '</div></div></div>';
+]
         ?>
     </div>
 </div>

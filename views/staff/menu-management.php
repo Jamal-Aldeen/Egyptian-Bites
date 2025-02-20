@@ -81,7 +81,7 @@ $specialOffers = $menuController->getSpecialOffers();
 
                 <!-- Manage Menu Items -->
                 <h4 class="mt-4">Manage Menu Items</h4>
-                <form action="../../handlers/menu-handler.php" method="POST" class="mb-4">
+                <form action="../../handlers/menu-handler.php" method="POST" class="mb-4" enctype="multipart/form-data">
                     <div class="row g-3">
                         <div class="col-md-4">
                             <select name="category_id" class="form-select" required>
@@ -100,6 +100,10 @@ $specialOffers = $menuController->getSpecialOffers();
                         <div class="col-md-4">
                             <input type="number" name="price" class="form-control" placeholder="Price" step="0.01" required>
                         </div>
+                        <div class="mb-3">
+                <label class="form-label">Profile Picture (Optional)</label>
+                <input type="file" class="form-control" name="profile_pic">
+            </div>
                         <div class="col-md-2">
                             <button type="submit" name="add_menu_item" class="btn btn-primary w-100">
                                 <i class="fas fa-plus"></i> Add Item
