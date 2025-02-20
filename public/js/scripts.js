@@ -78,17 +78,66 @@ document.getElementById("searchInput").addEventListener("keyup", function () {
     });
 });
 document.addEventListener("DOMContentLoaded", function () {
-    const filterButtons = document.querySelectorAll(".filter-btn");
+    updateCartCount();
+});
 
-    filterButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            // Remove 'active' class from all buttons
-            filterButtons.forEach(btn => btn.classList.remove("active"));
+function addToCart(id, name, price, category_id) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingItem = cart.find(item => item.id === id);
 
-            // Add 'active' class to the clicked button
-            this.classList.add("active");
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({
+            id: id,
+            name: name,
+            price: parseFloat(price),
+            quantity: 1,
+            category_id: category_id 
         });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+}
+
+
+document.querySelectorAll('.cart-actions input').forEach(input => {
+    input.addEventListener('change', function() {
+        let index = this.closest('.cart-item').dataset.index;
+        let newVal = parseInt(this.value);
+        updateQuantity(index, newVal);
     });
 });
 
+function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+    document.getElementById("cart-count").innerText = cartCount;
 
+    if (existingItem) {
+        existingItem.quantity += 1; 
+    } else {
+        cart.push({ id, name, price: parseFloat(price.replace('$', '')), quantity: 1 }); 
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+}
+
+function removeFromCart(index) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    location.reload();
+}
+
+function updateQuantity(index, change) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (cart[index]) {
+        cart[index].quantity += change;
+        if (cart[index].quantity < 1) cart[index].quantity = 1; 
+        localStorage.setItem("cart", JSON.stringify(cart));
+        location.reload(); 
+    }
+}

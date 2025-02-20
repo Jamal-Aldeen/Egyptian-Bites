@@ -43,6 +43,7 @@ include('../../config/db.php');
 <div class="container">
     <div class="row g-4" id="menuContainer">
         <?php
+
         $sql = "SELECT 
         mi.id AS item_id,
         mi.name AS item_name,
@@ -61,6 +62,7 @@ include('../../config/db.php');
         MenuCategories mc 
     ON 
         mi.category_id = mc.id";
+
 
         $result = $pdo->query($sql);
 
@@ -89,6 +91,7 @@ include('../../config/db.php');
             return $stars;
         }
 
+
        foreach ($menuItems as $item) {
     echo '<div class="col-md-3 menu-item" data-category="' . $item["category_name"] . '">
     <div class="card text-center border-0 shadow-sm p-3">
@@ -111,7 +114,7 @@ include('../../config/db.php');
           </a>';
 
     echo '</div></div></div>';
-}
+]
         ?>
     </div>
 </div>
