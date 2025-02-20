@@ -10,7 +10,7 @@ if (!isset($_GET['id'])) {
 $menu_item_id = intval($_GET['id']);
 
 // Query the database to get the image filename for this menu item
-$sql = "SELECT image FROM menuitems WHERE id = :id";
+$sql = "SELECT image FROM MenuItems WHERE id = :id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(['id' => $menu_item_id]);
 $menuItem = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -22,7 +22,7 @@ if ($menuItem && !empty($menuItem['image'])) {
 }
 
 // Define the correct folder path for menu images
-$path = __DIR__ . '/../../../public/uploads/menu-image/' . $imageFile;
+$path = __DIR__ . '/../../public/uploads/menu-image/' . $imageFile;
 
 // If the image file does not exist, return a 404 error
 if (!file_exists($path)) {
