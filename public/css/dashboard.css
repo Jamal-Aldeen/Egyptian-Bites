@@ -1,73 +1,60 @@
-.card {
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  }
-  .table-hover tbody tr:hover {
-    background-color: #f1f1f1;
-  }
-  .menu-image {
-    width: 80px;
-    height: auto;
-    border-radius: 5px;
-  }
-  .card {
-          transition: transform 0.2s, box-shadow 0.2s;
-      }
-      .card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      }
-      .list-group-item {
-          transition: background-color 0.2s;
-      }
-      .list-group-item:hover {
-          background-color: #f8f9fa;
-      }
-      .alert {
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border-radius: 0.5rem;
-}
-
-.alert-danger {
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-  color: #721c24;
-}
-
-.alert-warning {
-  background-color: #fff3cd;
-  border-color: #ffeeba;
-  color: #856404;
-}
-
-.alert-success {
-  background-color: #d4edda;
-  border-color: #c3e6cb;
-  color: #155724;
-}
+/* Sidebar Styling */
 .sidebar {
-          height: 100vh;
-          width: 250px;
-          position: fixed;
-          top: 0;
-          left: 0;
-          background-color: #343a40;
-          padding-top: 20px;
-      }
-      .sidebar a {
-          padding: 10px 15px;
-          display: block;
-          color: white;
-          text-decoration: none;
-      }
-      .sidebar a:hover {
-          background-color: #495057;
-      }
-      .content {
-          margin-left: 250px;
-          padding: 20px;
-      }
+  height: 100vh;
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #343a40;
+  padding-top: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar a {
+  padding: 10px 15px;
+  display: block;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar a:hover {
+  background-color: #495057;
+}
+
+.sidebar a.active {
+  background-color: #007bff;
+  color: #fff !important;
+}
+
+.sidebar .user-info {
+  border-bottom: 1px solid #495057;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.sidebar .sidebar-heading {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* Logout Button Styling */
+.sidebar .mt-auto {
+  margin-top: auto; /* Push the logout button to the bottom */
+  padding: 10px;
+  border-top: 1px solid #495057; /* Optional: Add a border above the logout button */
+}
+
+.sidebar .btn-danger {
+  background-color: #dc3545;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar .btn-danger:hover {
+  background-color: #c82333;
+}
