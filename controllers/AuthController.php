@@ -176,18 +176,20 @@ class AuthController
     }
 
     // Update user profile method
-    public function updateProfile($userId, $fullName, $email, $profilePicture = null)
+    public function updateProfile($userId, $fullName=null, $email=null
+    
+    , $profilePicture = null)
     {
-        error_log("Updating profile for user ID: $userId");
-        error_log("Full Name: $fullName, Email: $email");
+        // error_log("Updating profile for user ID: $userId");
+        // error_log("Full Name: $fullName, Email: $email");
 
         // Validate inputs
-        $this->validation->checkEmptyFields(["Full Name" => $fullName, "Email" => $email]);
-        $this->validation->validateEmail($email, $this->pdo, $userId);
+        // $this->validation->checkEmptyFields(["Full Name" => $fullName, "Email" => $email]);
+        // $this->validation->validateEmail($email, $this->pdo, $userId);
 
-        if (!$this->validation->isValid()) {
-            throw new Exception(implode(" ", $this->validation->getErrors()));
-        }
+        // if (!$this->validation->isValid()) {
+        //     throw new Exception(implode(" ", $this->validation->getErrors()));
+        // }
 
         // Handle profile picture upload
         $profilePictureName = $this->handleProfilePicture($profilePicture, $userId);
