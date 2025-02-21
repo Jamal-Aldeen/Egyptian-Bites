@@ -82,9 +82,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Menu Item</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+<?php
+    require_once "../../public/css/dashboard.css";
+    ?>
+</style>
 </head>
 <body>
     <div class="container mt-5">
+        <div class="row">
+        <?php
+         require_once "../layouts/sidebar.php";
+         ?>
+    
          <div class="col-md-9 ms-sm-auto col-lg-10 px-4">
          <h2>Edit Menu Item</h2>
          <!-- Display current image if available -->
@@ -113,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit" class="btn btn-primary">Update Item</button>
             <a href="menu_items.php" class="btn btn-secondary">Cancel</a>
         </form>
+         </div>
          </div>
     </div>
        

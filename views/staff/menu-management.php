@@ -1,5 +1,9 @@
 <?php
+session_start();
+
 require_once __DIR__ . '/../../controllers/MenuController.php';
+require_once '../../config/db.php';
+
 $menuController = new MenuController();
 $categories = $menuController->getCategories();
 $menuItems = $menuController->getMenuItems();
@@ -31,36 +35,19 @@ foreach ($menuItems as $item) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <!-- Custom CSS -->
   <style>
-    body {
-      background-color: #f8f9fa;
-    }
-    .card {
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    .list-group-item {
-      transition: background-color 0.2s;
-    }
-    .list-group-item:hover {
-      background-color: #f8f9fa;
-    }
-    .nested-menu a {
-      text-decoration: none;
-      color: #343a40;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-    .nested-menu a:hover {
-      color: #007bff;
-    }
-  </style>
+<?php
+    require_once "../../public/css/dashboard.css";
+    ?>
+</style>
 </head>
 <body class="bg-light">
-  <?php include '../layouts/header.php'; ?>
-  <div class="container mt-4">
+<div class="container-fluid mt-4">
+    <div class="row">
+  
+   
+  <?php include '../layouts/sidebar.php'; ?>
+  
+  <div class=" col-md-9 ms-sm-auto col-lg-10 px-4">
     <div class="card shadow mb-4">
       <div class="card-header bg-dark text-white">
         <h3 class="mb-0">Menu Management</h3>
@@ -185,6 +172,9 @@ foreach ($menuItems as $item) {
       </div>
     </div>
   </div>
+  </div>
+
+</div>
   
   <!-- Bootstrap 5 JS and FontAwesome -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

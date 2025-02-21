@@ -1,6 +1,10 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../models/Inventory.php';
+require_once '../../config/db.php';
+
+
+
 
 // Authorization check
 if (!isset($_SESSION['user_id'])) {
@@ -27,20 +31,19 @@ $items = $inventoryModel->getAllItems();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Custom CSS -->
     <style>
-        .card {
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+<?php
+    require_once "../../public/css/dashboard.css";
+    ?>
+</style>
 </head>
-<body class="bg-light">
-    <?php include '../layouts/header.php'; ?>
+<body class=" bg-light">
     
-    <div class="container col-md-9 ms-sm-auto col-lg-10 px-4">
-        <div class="card shadow">
+    <div class="container-fluid mt-4 ">
+        <div class="row">
+        <?php include '../layouts/sidebar.php'; ?>
+
+        </div>
+        <div class=" row card shadow col-md-6 ms-sm-auto col-lg-10 px-4">
             <div class="card-header bg-dark text-white">
                 <h3 class="mb-0">Inventory Management</h3>
             </div>
