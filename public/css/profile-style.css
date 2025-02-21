@@ -1,0 +1,176 @@
+/* Global Reset and Base Styles */
+* {
+    margin-top: 0px;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: url("../../public/assets/images/egypt-food.jpg") no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Arial', sans-serif;
+    height: 120vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    position: relative;
+}
+.container{
+    z-index: 1000;
+}
+/* Darker Overlay for background */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+}
+
+/* Container for registration form */
+.register-form-container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 450px;
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    z-index: 2;
+    animation: fadeIn 1s ease-out;
+}
+
+/* Logo Image Styling */
+.rounded-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Heading Style */
+h3 {
+    text-align: center;
+    font-size: 32px;
+    color: #ffffff;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.text-center a {
+    text-decoration: none;
+    color: #ffffff;
+    /* transition: color 0.3sease; */
+    transition: border-color 0.3s, box-shadow 0.3s ease-in-out;
+
+}
+
+
+
+/* Input Fields Styling */
+.input-field {
+    width: 100%;
+    padding: 15px;
+    margin: 15px 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    transition: border-color 0.3s, box-shadow 0.3s ease-in-out;
+}
+
+.input-field:focus .manage {
+    outline: none;
+    border-color: #d4a017;
+    background-color: #e0a200;
+    box-shadow: 0 0 8px rgba(212, 160, 23, 0.6);
+}
+.btn-primary {
+    background-color: #d4a017; /* Your preferred color */
+    color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 30px;
+}
+
+.btn-primary:hover {
+    background-color: #e0a200; /* Hover effect */
+}
+
+/* Submit Button Styling */
+button[type="submit"]  {
+    width: 100%;
+    padding: 12px;
+    background-color: #d4a017;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.fas {
+    background-color: #d4a017;
+    color: #ffffff;
+}
+button[type="submit"]:hover {
+    background-color: #e0a200;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Forgot Password Text */
+.text-center a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s ease;
+}
+h5{
+    color: black;
+}
+label{
+    color: black;
+}
+
+.text-center a:hover {
+    color: #d4a017;
+}
+
+/* Animation for form appearance */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 480px) {
+    .register-form-container {
+        width: 90%;
+        padding: 25px;
+        max-width: 360px;
+    }
+
+    h3 {
+        font-size: 26px;
+    }
+
+    button[type="submit"] {
+        font-size: 16px;
+    }
+}
