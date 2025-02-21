@@ -9,6 +9,10 @@ class MenuController {
         $this->pdo = $pdo;
     }
 
+        public function getLastInsertId() {
+        return $this->pdo->lastInsertId();
+    }
+
     // Categories Management
     public function addCategory($name) {
         $stmt = $this->pdo->prepare("INSERT INTO MenuCategories (name) VALUES (:name)");
