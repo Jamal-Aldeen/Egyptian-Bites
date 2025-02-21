@@ -2,6 +2,7 @@
 session_start();
 require_once __DIR__ . '/../../models/Order.php';
 
+// Authorization check
 if (!isset($_SESSION['user_id'])) {
     header("Location: /views/shared/login.php"); // Not logged in → login page
     exit();
@@ -10,17 +11,13 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$salesData = $_SESSION['sales_data'] ?? [];
-$totalRevenue = $_SESSION['total_revenue'] ?? 0;
-$startDate = $_SESSION['start_date'] ?? date('Y-m-01');
-$endDate = $_SESSION['end_date'] ?? date('Y-m-d');
-
-// Clear session data after use
-unset($_SESSION['sales_data']);
-unset($_SESSION['total_revenue']);
-unset($_SESSION['start_date']);
-unset($_SESSION['end_date']);
+// Initialize variables
+$salesData = [];
+$totalRevenue = 0;
+$startDate = date('Y-m-01');
+$endDate = date('Y-m-d');
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,13 +37,6 @@ unset($_SESSION['end_date']);
             transform: translateY(-5px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
-        .card {
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
         .list-group-item {
             transition: background-color 0.2s;
         }
@@ -54,29 +44,26 @@ unset($_SESSION['end_date']);
             background-color: #f8f9fa;
         }
         .alert {
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border-radius: 0.5rem;
-}
-
-.alert-danger {
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-    color: #721c24;
-}
-
-.alert-warning {
-    background-color: #fff3cd;
-    border-color: #ffeeba;
-    color: #856404;
-}
-
-.alert-success {
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-    color: #155724;
-}
-.sidebar {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .sidebar {
             height: 100vh;
             width: 250px;
             position: fixed;
@@ -101,18 +88,16 @@ unset($_SESSION['end_date']);
     </style>
 </head>
 <body class="bg-light">
-
     <div class="container mt-4">
         <?php require_once "../layouts/sidebar.php"; ?>
 
-        <div class=" row card shadow col-md-9 ms-sm-auto col-lg-10 px-4">
-
+        <div class="row card shadow col-md-9 ms-sm-auto col-lg-10 px-4">
             <div class="card-header bg-dark text-white">
                 <h3 class="mb-0">Sales Reports</h3>
             </div>
             <div class="card-body">
                 <!-- Date Range Filter -->
-                <form method="GET" action="../../handlers/sales-handler.php" class="mb-4">
+                <form id="report-filter-form" class="mb-4">
                     <div class="row g-3">
                         <div class="col-md-4">
                             <input type="date" name="start_date" class="form-control" value="<?= $startDate ?>">
@@ -128,11 +113,9 @@ unset($_SESSION['end_date']);
                     </div>
                 </form>
 
-                
-
                 <!-- Total Revenue -->
                 <div class="alert alert-success">
-                    <h5>Total Revenue: $<?= number_format($totalRevenue, 2) ?></h5>
+                    <h5>Total Revenue: $<span id="total-revenue"><?= number_format($totalRevenue, 2) ?></span></h5>
                 </div>
 
                 <!-- Sales Data Table -->
@@ -145,7 +128,7 @@ unset($_SESSION['end_date']);
                                 <th>Revenue</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="sales-table-body">
                             <?php foreach ($salesData as $data): ?>
                             <tr>
                                 <td><?= $data['date'] ?></td>
@@ -156,27 +139,119 @@ unset($_SESSION['end_date']);
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Export Buttons -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <button class="btn btn-success w-100 export-btn" data-export-type="csv">
+                            <i class="fas fa-file-csv"></i> Export as CSV
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-danger w-100 export-btn" data-export-type="pdf">
+                            <i class="fas fa-file-pdf"></i> Export as PDF
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <a href="../../handlers/sales-handler.php?export=csv&start_date=<?= $startDate ?>&end_date=<?= $endDate ?>"
-           class="btn btn-success w-100">
-            <i class="fas fa-file-csv"></i> Export as CSV
-        </a>
-    </div>
-    <div class="col-md-3">
-        <a href="../../handlers/sales-handler.php?export=pdf&start_date=<?= $startDate ?>&end_date=<?= $endDate ?>"
-           class="btn btn-danger w-100">
-            <i class="fas fa-file-pdf"></i> Export as PDF
-        </a>
-    </div>
         </div>
     </div>
-    <!-- Export Buttons -->
-   
-</div>
+
     <!-- Bootstrap 5 JS and FontAwesome -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterForm = document.getElementById('report-filter-form');
+        const salesTableBody = document.getElementById('sales-table-body');
+        const totalRevenueElement = document.getElementById('total-revenue');
+
+        // Handle filter form submission
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('../../handlers/sales-handler.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateSalesTable(data.salesData);
+                    updateRevenue(data.totalRevenue);
+                } else {
+                    showError(data.error || 'Failed to fetch data');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('An error occurred while fetching data');
+            });
+        });
+
+        // Handle export buttons
+        document.querySelectorAll('.export-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const type = this.dataset.exportType;
+                const startDate = filterForm.querySelector('[name="start_date"]').value;
+                const endDate = filterForm.querySelector('[name="end_date"]').value;
+
+                fetch(`../../handlers/sales-handler.php?export=${type}&start_date=${startDate}&end_date=${endDate}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `sales_report_${new Date().toISOString()}.${type}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    console.error('Export error:', error);
+                    showError('Failed to generate export');
+                });
+            });
+        });
+
+        // Update sales table
+        function updateSalesTable(data) {
+            salesTableBody.innerHTML = '';
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.date}</td>
+                    <td>${row.total_orders}</td>
+                    <td>$${parseFloat(row.revenue).toFixed(2)}</td>
+                `;
+                salesTableBody.appendChild(tr);
+            });
+        }
+
+        // Update total revenue
+        function updateRevenue(amount) {
+            totalRevenueElement.textContent = parseFloat(amount).toFixed(2);
+        }
+
+        // Show error message
+        function showError(message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger mt-3';
+            alertDiv.textContent = message;
+            document.querySelector('.card-body').prepend(alertDiv);
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+    });
+    </script>
 </body>
 </html>
