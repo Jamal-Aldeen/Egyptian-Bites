@@ -3,9 +3,12 @@ session_start();
 
 require_once __DIR__ . '/../../config/db.php';
 require_once __DIR__ . '/../../controllers/MenuController.php';
-// Check if the user is logged in and has the Staff role
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Staff') {
-    header("Location: /views/shared/login.php");
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /views/shared/login.php"); // Not logged in → login page
+    exit();
+} elseif ($_SESSION['role'] !== 'Staff') {
+    header("Location: /index.php"); // Logged in but not staff → index
     exit();
 }
 
