@@ -1,34 +1,36 @@
 <?php
 session_start();
-
 require_once __DIR__ . '/../../config/db.php';
 require_once __DIR__ . '/../../controllers/MenuController.php';
 
+header('Content-Type: application/json'); // Ensure JSON response
+
+// Authorization check
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /views/shared/login.php"); // Not logged in → login page
+    echo json_encode(['error' => 'Not logged in']);
     exit();
 } elseif ($_SESSION['role'] !== 'Staff') {
-    header("Location: /index.php"); // Logged in but not staff → index
+    echo json_encode(['error' => 'Unauthorized access']);
     exit();
 }
 
-
-
-// Check if the item id is provided
+// Check if the item ID is provided
 if (!isset($_GET['id'])) {
-    header("Location: menu_items.php?error=No item id provided");
+    echo json_encode(['error' => 'No item ID provided']);
     exit();
 }
 
 $itemId = intval($_GET['id']);
 $menuController = new MenuController();
 
-// Attempt to delete the menu item using the controller
-if ($menuController->deleteMenuItem($itemId)) {
-    header("Location: menu_items.php?success=Item deleted successfully");
-    exit();
-} else {
-    header("Location: menu_items.php?error=Failed to delete item");
-    exit();
+try {
+    // Attempt to delete the menu item
+    if ($menuController->deleteMenuItem($itemId)) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['error' => 'Failed to delete item']);
+    }
+} catch (Exception $e) {
+    echo json_encode(['error' => $e->getMessage()]);
 }
 ?>
