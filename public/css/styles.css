@@ -50,7 +50,40 @@
     color: #d4a017; /* Gold color */
     display: block;
 }
+/* .Profile Link  */
+.nav-item .nav-link i {
+    font-size: 1.2rem;
+    color: #d4a017; /* Gold color for profile icon */
+}
 
+/* Notification Icon */
+.nav-item .nav-link .fa-bell {
+    font-size: 1.3rem;
+    color: #d4a017;
+}
+
+/* Notification Badge */
+.nav-item .nav-link .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color:#d4a017;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Adjusting for active link */
+.navbar-nav .nav-link.active-now {
+    background-color: #d4a017; /* Highlight active link */
+}
 
 /* Global Styling */
 body {
