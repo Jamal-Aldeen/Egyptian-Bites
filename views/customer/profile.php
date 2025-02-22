@@ -114,7 +114,7 @@ if (count($_POST) > 0) {
 
                             <!-- Reserve a Table Button -->
                             <a href="/views/customer/reservation.php" class="btn btn-primary w-100 manage">
-                                <i class="fas fa-calendar-check me-2 text-center">   Reserve a Table   </i> 
+                                <i class="fas fa-calendar-check me-2 text-center">   Reserve a Table </i> 
                             </a>
                         </div>
                     </div>
