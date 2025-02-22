@@ -20,5 +20,6 @@ class UserController {
     public function deleteUser($userId) {
         return $this->userModel->delete($userId);
     }
+    
 }
 ?>
