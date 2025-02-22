@@ -317,6 +317,11 @@ UNLOCK TABLES;
 --
 -- Table structure for table `Users`
 --
+-- CREATE TABLE `password_reset_temp` (
+--   `email` varchar(250) NOT NULL,
+--   `key` varchar(250) NOT NULL,
+--   `expDate` datetime NOT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `Users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -336,6 +341,23 @@ CREATE TABLE `Users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+-- CREATE TABLE password_reset_tokens (
+--     user_id VARCHAR(36) NOT NULL,
+--     token VARCHAR(128) NOT NULL UNIQUE,
+--     token_expiry BIGINT UNSIGNED NOT NULL,
+--     PRIMARY KEY (user_id, token)
+-- );
+
+CREATE TABLE addresses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    label VARCHAR(255) NOT NULL,
+    address_line1 VARCHAR(255) NOT NULL,
+    address_line2 VARCHAR(255) NULL,
+    city VARCHAR(100) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+);
 
 --
 -- Dumping data for table `Users`
