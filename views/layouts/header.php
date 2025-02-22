@@ -49,6 +49,7 @@ if (isset($_SESSION['user_id'])) {
                         <a class="nav-link" href="../../index.php">Home</a>
                     </li>
                     <li class="nav-item">
+
                         <a class="nav-link" href="../../views/customer/menu.php">Menu</a>
                     </li>
                     <li class="nav-item">
@@ -60,7 +61,7 @@ if (isset($_SESSION['user_id'])) {
                 <ul class="navbar-nav">
                     <?php if (isset($_SESSION['user_id'])) : ?>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-outline-warning px-3" href="/logout">Logout</a>
+                    <a href="/handlers/logout.php" class="btn btn-outline-warning px-3">Logout</a>
                         </li>
                     <?php else : ?>
                         <li class="nav-item">
@@ -123,18 +124,18 @@ if (isset($_SESSION['user_id'])) {
             const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
             document.getElementById("cart-count").innerText = cartCount;
         }
+function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-        document.addEventListener("DOMContentLoaded", function() {
-            updateCartCount();
-        });
-    </script>
+    const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-            document.getElementById('cart-count').textContent = cart.length;
-        });
-    </script>
+    document.getElementById("cart-count").innerText = cartCount;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    updateCartCount();
+});
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

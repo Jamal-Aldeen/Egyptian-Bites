@@ -3,9 +3,11 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/db.php';
 
 class RestaurantDB {
-    private $pdo=$GLOBALS['pdo'];
+    private $pdo;
     
-   
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
+    }
     
     public function addMenuItem($category_id, $name, $description, $price, $image = null, $available = 1) {
         $sql = "INSERT INTO menu_items (category_id, name, description, price, image, available) 

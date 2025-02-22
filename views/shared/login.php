@@ -21,13 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['name'] = $user['full_name'];
+
+           
             $_SESSION['role'] = $user['role'];
 
-            // Redirect based on role
-            if ($user['role'] == 'Staff') {
+            if ($user['role'] == 'Staff') { // Ensure case sensitivity matches your DB
                 header('Location: /views/staff/dashboard.php'); 
             } else {
-                header('Location: /views/customer/profile.php'); // Redirect customers to index
+                header('Location: /index.php'); // Redirect customers to index
             }
             exit;
         } else {
