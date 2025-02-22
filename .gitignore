@@ -3,3 +3,10 @@
 config/stripe.php
 
 /vendor/
+register-handler.php
+
+
+
+views/shared/verify-code.php
+
+views/shared/request-reset.php   
