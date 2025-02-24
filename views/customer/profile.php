@@ -50,7 +50,7 @@ if (isset($_SESSION['error'])) {
                 <div class="card-body">
                     <h4>Update Profile</h4>
                     <form action="/controllers/AuthController.php?action=update_profile" method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label class="form-label">Full Name</label>
                             <input type="text" name="full_name" class="form-control"
                                 value="<?= htmlspecialchars($user['full_name']) ?>" required>
@@ -59,7 +59,7 @@ if (isset($_SESSION['error'])) {
                             <label class="form-label">Email</label>
                             <input type="email" name="email" class="form-control"
                                 value="<?= htmlspecialchars($user['email']) ?>" required>
-                        </div>
+                        </div> -->
                         <div class="mb-3">
                             <label class="form-label">Profile Picture</label>
                             <input type="file" name="profile_picture" class="form-control">
