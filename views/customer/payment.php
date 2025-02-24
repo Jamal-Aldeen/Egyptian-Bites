@@ -22,6 +22,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     if ($result['status'] == 'success') {
+        $user_id = $_SESSION['user_id'];  // Assuming the user is logged in
+$title = "New Order Confirmation";
+$message = "Your order has been successfully placed! We will notify you once it's ready.";
+
+// Insert the notification into the database
+$notification_query = "INSERT INTO notifications (user_id, title, message) VALUES (:user_id, :title, :message)";
+$stmt = $pdo->prepare($notification_query);
+$stmt->bindParam(':user_id', $user_id);
+$stmt->bindParam(':title', $title);
+$stmt->bindParam(':message', $message);
+$stmt->execute();
         header("Location: /views/customer/order-tracking.php"); 
         exit();
     } else {
