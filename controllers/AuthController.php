@@ -46,22 +46,30 @@ class AuthController
     // User login
     public function login($email, $password)
     {
+        // Sanitize the email input
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
+        
+        // Fetch user by email
         $user = $this->userModel->findByEmail($email);
-
+    
         if (!$user || !password_verify($password, $user['password'])) {
             throw new Exception("Invalid email or password.");
         }
-
+    
         if (!$user['verified']) {
             throw new Exception("Please verify your email before logging in.");
         }
-
+    
+        // Regenerate session ID to prevent session fixation
+        session_regenerate_id(true);
+    
         // Store session data
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['full_name'] = $user['full_name'];
-
+    
+        // Redirect based on user role
         if ($user['role'] === 'Staff') {
             header("Location: /views/staff/dashboard.php");
         } else {
