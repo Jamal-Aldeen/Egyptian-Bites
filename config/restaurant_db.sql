@@ -371,3 +371,14 @@ CREATE TABLE Payments (
     FOREIGN KEY (user_id) REFERENCES Users(id),
     FOREIGN KEY (order_id) REFERENCES Orders(id)
 );
+
+
+CREATE TABLE addresses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    label VARCHAR(255) NOT NULL,
+    address_line1 VARCHAR(255) NOT NULL,
+    address_line2 VARCHAR(255) NULL,
+    city VARCHAR(100) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+);
