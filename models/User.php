@@ -37,12 +37,27 @@ class User
     }
 
     // Change password
-    public function changePassword($id, $newPassword)
+    public function changePassword($userId, $newPassword)
     {
-        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT); // Hash the password before saving
-        $stmt = $this->pdo->prepare("UPDATE Users SET password = ? WHERE id = ?");
-        return $stmt->execute([$hashedPassword, $id]); // Ensure the password is saved correctly
+        try {
+            $stmt = $this->pdo->prepare("UPDATE Users SET password = :password WHERE id = :user_id");
+            $result = $stmt->execute([
+                'password' => $newPassword,
+                'user_id' => $userId
+            ]);
+            if ($result) {
+                error_log("Password updated successfully for user ID: $userId");
+            } else {
+                error_log("Failed to update password for user ID: $userId");
+            }
+            return $result;
+        } catch (Exception $e) {
+            error_log("Error updating password: " . $e->getMessage());
+            return false;
+        }
     }
+    
+    
 
     // Verify email
     public function verifyEmail($token)
