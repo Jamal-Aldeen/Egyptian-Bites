@@ -1,4 +1,9 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+// require_once '../../config/db.php';
+// include '../layouts/header.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,22 +58,41 @@
                             <a class="nav-link btn btn-outline-warning px-2 mx-2 active-now" href="/views/shared/register-form.php">Register</a>
                         </li>
                     <?php endif; ?>
+
                     <!-- Notifications Icon -->
+                    // Notifications Icon
                     <li class="nav-item">
                         <a class="nav-link" href="/views/customer/notifications.php">
                             <i class="fas fa-bell"></i>
-                            <span class="badge bg-danger" id="notification-count"><?php echo $notification_count; ?></span>
+                            <?php
+                            // Get the notification count for the current user
+                            if (isset($_SESSION['user_id'])) {
+                                $userId = $_SESSION['user_id'];
+                                // Fetch notification count dynamically if required
+                                $notificationCount = 5; // Replace this with actual dynamic code if needed
+                                if ($notificationCount > 0) {
+                                    echo '<span class="badge bg-danger" id="notification-count">' . $notificationCount . '</span>';
+                                }
+                            }
+                            ?>
                         </a>
                     </li>
+
+
+                    <!-- Profile Icon -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/views/customer/profile.php">
+                            <i class="fas fa-user-circle"></i> Profile
+                        </a>
+                    </li>
+
                     <!-- Cart Icon -->
                     <li class="nav-item cart-container">
-
                         <a class="nav-link cart-link" href="/views/customer/cart.php">
                             <div class="cart-card">
                                 <i class="fas fa-shopping-cart"></i>
                                 <span class="cart-badge" id="cart-count">0</span>
                             </div>
-
                         </a>
                     </li>
                 </ul>
@@ -98,18 +122,25 @@
             const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
             document.getElementById("cart-count").innerText = cartCount;
         }
+        // JavaScript to update notification count dynamically
+        function updateNotificationCount() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/controllers/notification_count.php', true); // Path to notification_count.php
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Update the notification count in the page
+                    document.getElementById('notification-count').textContent = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
 
-        // document.addEventListener("DOMContentLoaded", function () {
-        //     updateCartCount();
-        // });
+        // Call the function to update the notification count
+        updateNotificationCount();
+
+        // Optionally, you can refresh the count every few seconds
+        setInterval(updateNotificationCount, 5000); // Update every 5 seconds
     </script>
-
-    <!-- <script>
-document.addEventListener("DOMContentLoaded", function() {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    document.getElementById('cart-count').textContent = cart.length;
-});
-</script> -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
