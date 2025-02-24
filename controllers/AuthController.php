@@ -119,14 +119,14 @@ class AuthController
         return $result;
     }
 
-    // Logout method to ensure session is properly cleared if needed
-    public function logout()
-    {
-        session_unset();
-        session_destroy();
-        header("Location: /login");
-        exit();
-    }
+    //  logout method
+public function logout() {
+    session_start();
+    session_unset();
+    session_destroy();
+    header("Location: /login"); // Redirect to login page
+    exit();
+}
 
     // Add address method
     public function addAddress($userId, $addressData)
