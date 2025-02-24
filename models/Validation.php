@@ -94,6 +94,14 @@ class Validation {
             $this->errors[] = "Password must contain at least one number!";
         }
     }
+// In your Validation.php file
+public function validatePasswordStrength($password)
+{
+    // Check if password meets the regex criteria
+    if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $password)) {
+        $this->errors[] = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+    }
+}
 
     // Check if there are no errors
     public function isValid() {
