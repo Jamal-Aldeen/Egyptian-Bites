@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($user['role'] == 'Staff') { // Ensure case sensitivity matches your DB
                 header('Location: /views/staff/dashboard.php'); 
             } else {
-                header('Location: /index.php'); // Redirect customers to index
+                header('Location: /views/customer/profile.php'); // Redirect customers to index
             }
             exit;
         } else {

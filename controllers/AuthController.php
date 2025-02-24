@@ -232,6 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_SESSION['user_id'];
 
     try {
+        // Perform the action based on the 'action' parameter
         switch ($_GET['action']) {
             case 'update_profile':
                 $authController->updateProfile(
@@ -241,16 +242,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_FILES['profile_picture']
                 );
                 break;
+                
+            case 'reset_password':  // Add this case for resetting the password
+                $authController->resetPassword(
+                    $userId,
+                    $_POST['current_password'],
+                    $_POST['new_password'],
+                    $_POST['confirm_new_password']
+                );
+                break;
+
             case 'add_address':
                 $authController->addAddress($userId, $_POST);
                 break;
+                
             case 'delete_address':
                 $authController->deleteAddress($_POST['address_id'], $userId);
                 break;
+
+            // Handle any unrecognized action
+            default:
+                throw new Exception("Unknown action: " . $_GET['action']);
         }
+
+        // Redirect after successful execution of the action
         header("Location: /views/customer/profile.php");
         exit();
     } catch (Exception $e) {
+        // If an exception occurs, store the error message in the session and redirect
         $_SESSION['error'] = $e->getMessage();
         header("Location: /views/customer/profile.php");
         exit();
