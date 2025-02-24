@@ -88,7 +88,8 @@ class AuthController
     // Password reset logic
     
     
-    public function resetPassword($userId, $currentPassword, $newPassword, $confirmNewPassword)
+   // In your AuthController.php file
+public function resetPassword($userId, $currentPassword, $newPassword, $confirmNewPassword)
 {
     $user = $this->userModel->findById($userId);
 
@@ -104,8 +105,8 @@ class AuthController
         throw new Exception("New passwords do not match.");
     }
 
-    // Validate the new password (ensure it meets your password policies)
-    $this->validation->validateNewPassword($newPassword);
+    // Use the validation method to check password strength
+    $this->validation->validatePasswordStrength($newPassword);
 
     if (!$this->validation->isValid()) {
         throw new Exception(implode(" ", $this->validation->getErrors()));
@@ -117,10 +118,9 @@ class AuthController
     // Now, ensure that the password is being updated correctly in the database
     $result = $this->userModel->changePassword($userId, $newPasswordHashed);
 
-    // After updating the password, verify it
     if ($result) {
         $user = $this->userModel->findById($userId);
-        
+
         // Verify the password in the database using password_verify()
         if (password_verify($newPassword, $user['password'])) {
             // If password hash matches, update the session and success message
@@ -140,6 +140,7 @@ class AuthController
     header("Location: /views/customer/profile.php");
     exit();
 }
+
 
    
 public function sendVerificationCode($email) {
