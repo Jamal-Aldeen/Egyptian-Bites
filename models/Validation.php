@@ -11,7 +11,28 @@ class Validation {
             }
         }
     }
+// Validate new password strength
+public function validateNewPassword($password) {
+    if (strlen($password) < 8) {
+        $this->errors[] = "Password must be at least 8 characters long.";
+    }
 
+    if (!preg_match('/[A-Z]/', $password)) {
+        $this->errors[] = "Password must contain at least one uppercase letter.";
+    }
+
+    if (!preg_match('/[a-z]/', $password)) {
+        $this->errors[] = "Password must contain at least one lowercase letter.";
+    }
+
+    if (!preg_match('/\d/', $password)) {
+        $this->errors[] = "Password must contain at least one number.";
+    }
+
+    if (!preg_match('/[^\w]/', $password)) {
+        $this->errors[] = "Password must contain at least one special character.";
+    }
+}
     public function validateEmail($email, $pdo, $currentUserId = null) {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->errors[] = "Invalid email format.";
@@ -51,11 +72,11 @@ class Validation {
         }
     }
 
-    public function validateNewPassword($password) {
-        if (strlen($password) < 8 || !preg_match("/[A-Za-z]/", $password) || !preg_match("/\d/", $password)) {
-            $this->errors[] = "New Password must be at least 8 characters long and contain at least one letter and one number.";
-        }
-    }
+    // public function validateNewPassword($password) {
+    //     if (strlen($password) < 8 || !preg_match("/[A-Za-z]/", $password) || !preg_match("/\d/", $password)) {
+    //         $this->errors[] = "New Password must be at least 8 characters long and contain at least one letter and one number.";
+    //     }
+    // }
 
     public function validateProfilePic($profile_pic) {
         if (!empty($profile_pic['name'])) {
