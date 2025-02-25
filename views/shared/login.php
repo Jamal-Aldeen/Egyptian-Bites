@@ -1,32 +1,38 @@
 <?php
-session_start();
+session_start();  // Always start the session at the very beginning of the file
+
 include('../../config/db.php');
-include '../layouts/header.php';
+// include '../layouts/header.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
+    // Sanitize inputs to avoid XSS
+    $email = htmlspecialchars($_POST['email']);
     $password = $_POST['password'];
 
     if (empty($email) || empty($password)) {
         $error = "Please fill in all fields.";
     } else {
+        // Prepare the SQL statement
         $stmt = $pdo->prepare("SELECT * FROM Users WHERE email = :email");
         $stmt->execute(['email' => $email]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
+            // Password is correct, start session and set session variables
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['name'] = $user['full_name'];
-           
             $_SESSION['role'] = $user['role'];
 
-            if ($user['role'] == 'Staff') { // Ensure case sensitivity matches your DB
+            // Redirect based on role
+            if ($user['role'] == 'Staff') {
                 header('Location: /views/staff/dashboard.php'); 
             } else {
-                header('Location: /views/customer/profile.php'); // Redirect customers to index
+                header('Location: /views/customer/profile.php'); // Redirect customers to their profile page
             }
-            exit;
+            exit;  // Make sure to exit after header to stop further script execution
         } else {
+            // If login fails, show error message
             $error = "Invalid email or password";
         }
     }
@@ -44,16 +50,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <div class="login-form-container">
-        <!-- Logo Image (Rounded) -->
         <img src="../../public/assets/images/profile-icon-design-free-vector.jpg" alt="Logo" class="rounded-image">
-        
+
         <div class="login-form">
             <h3>Login</h3>
-            
+
             <?php if (isset($error)): ?>
                 <div class="alert alert-danger"><?php echo $error; ?></div>
             <?php endif; ?>
-            
+
             <form action="" method="POST">
                 <input type="email" class="input-field" name="email" placeholder="Email Address" required>
                 <input type="password" class="input-field" name="password" placeholder="Password" required>
@@ -61,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
 
             <div class="text-center">
-                <a href="#">Forgot password?</a>
+                <a href="password-reset.php">Forgot password?</a>
             </div>
         </div>
     </div>
