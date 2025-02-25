@@ -137,39 +137,34 @@ if (count($_POST) > 0) {
                     </div>
 
                     <!-- Password Update Section -->
-                    <!-- Password Update Section -->
-<div class="card shadow-lg mb-4">
-    <div class="card-body">
-        <h4 class="fw-bold mb-4">Change Password</h4>
-        <form method="post" action="" name="frmChange" onsubmit="return validatePassword()">
-            <div class="validation-message text-center">
-                <?php if (isset($message)) {
-                    echo $message;
-                } ?>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Current Password</label>
-                <input type="password" name="currentPassword" class="form-control" required>
-                <span id="currentPasswordMessage" class="text-danger"></span> <!-- Display validation message -->
-            </div>
+                    <div class="card shadow-lg mb-4">
+                        <div class="card-body">
+                            <h4 class="fw-bold mb-4">Change Password</h4>
+                            <form method="post" action="" onsubmit="return validatePassword()">
+                                <div class="validation-message text-center">
+                                    <?php if (isset($message)) {
+                                        echo $message;
+                                    } ?>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" name="currentPassword" class="form-control" required>
+                                </div>
 
-            <div class="mb-3">
-                <label class="form-label">New Password</label>
-                <input type="password" name="newPassword" class="form-control" id="newPassword" required>
-                <span id="newPasswordMessage" class="text-danger"></span> <!-- Display validation message -->
-            </div>
+                                <div class="mb-3">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" name="newPassword" class="form-control" required>
+                                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Confirm New Password</label>
-                <input type="password" name="confirmPassword" class="form-control" id="confirmPassword" required>
-                <span id="confirmPasswordMessage" class="text-danger"></span> <!-- Display validation message -->
-            </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" name="confirmPassword" class="form-control" required>
+                                </div>
 
-            <button type="submit" class="btn btn-primary w-100 manage">Submit</button>
-        </form>
-    </div>
-</div>
-
+                                <button type="submit" class="btn btn-primary w-100 manage">Submit</button>
+                            </form>
+                        </div>
+                    </div>
 
                     <!-- Address Management Section -->
                     <div class="card shadow input-field">
@@ -240,66 +235,46 @@ if (count($_POST) > 0) {
 
 
         <script>
-      
-      function validatePassword() {
-    var currentPassword, newPassword, confirmPassword, output = true;
+            // Function to validate the password change form
+            function validatePassword() {
+                var currentPassword, newPassword, confirmPassword, output = true;
 
-    // Get the values of the form fields
-    currentPassword = document.frmChange.currentPassword;
-    newPassword = document.frmChange.newPassword;
-    confirmPassword = document.frmChange.confirmPassword;
+                // Get the values of the form fields
+                currentPassword = document.frmChange.currentPassword;
+                newPassword = document.frmChange.newPassword;
+                confirmPassword = document.frmChange.confirmPassword;
 
-    // Clear any previous error messages
-    document.getElementById("currentPasswordMessage").innerHTML = "";
-    document.getElementById("newPasswordMessage").innerHTML = "";
-    document.getElementById("confirmPasswordMessage").innerHTML = "";
+                // Check if current password is empty
+                if (!currentPassword.value) {
+                    currentPassword.focus();
+                    document.getElementById("currentPassword").innerHTML = "Required";
+                    output = false;
+                }
+                // Check if new password is empty
+                else if (!newPassword.value) {
+                    newPassword.focus();
+                    document.getElementById("newPassword").innerHTML = "Required";
+                    output = false;
+                }
+                // Check if confirm password is empty
+                else if (!confirmPassword.value) {
+                    confirmPassword.focus();
+                    document.getElementById("confirmPassword").innerHTML = "Required";
+                    output = false;
+                }
 
-    // Check if current password is empty
-    if (!currentPassword.value) {
-        currentPassword.focus();
-        document.getElementById("currentPasswordMessage").innerHTML = "Current Password is required.";
-        output = false;
-    }
-    // Check if new password is empty
-    else if (!newPassword.value) {
-        newPassword.focus();
-        document.getElementById("newPasswordMessage").innerHTML = "New Password is required.";
-        output = false;
-    }
-    // Check if confirm password is empty
-    else if (!confirmPassword.value) {
-        confirmPassword.focus();
-        document.getElementById("confirmPasswordMessage").innerHTML = "Confirm Password is required.";
-        output = false;
-    }
+                // Check if new password and confirm password match
+                if (newPassword.value != confirmPassword.value) {
+                    newPassword.value = "";
+                    confirmPassword.value = "";
+                    newPassword.focus();
+                    document.getElementById("confirmPassword").innerHTML = "Passwords do not match";
+                    output = false;
+                }
 
-    // Check if new password and confirm password match
-    if (newPassword.value != confirmPassword.value) {
-        newPassword.value = "";
-        confirmPassword.value = "";
-        newPassword.focus();
-        document.getElementById("confirmPasswordMessage").innerHTML = "Passwords do not match.";
-        output = false;
-    }
-
-    // Password strength check: at least 8 characters, one uppercase, one lowercase, one number, and one special character
-    var passwordRegex = /^[A-Za-z\d]{8,}$/;
-
-
-
-
-    if (!passwordRegex.test(newPassword.value)) {
-        newPassword.focus();
-        document.getElementById("newPasswordMessage").innerHTML = "Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, one number, and one special character.";
-        output = false;
-    }
-
-    // Return false if there is any validation error
-    return output;
-}
-
-</script>
-
+                return output;
+            }
+        </script>
 
     </body>
 
