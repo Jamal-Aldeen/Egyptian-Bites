@@ -32,6 +32,7 @@ $orderStages = [
 
 $currentStage = $order ? $order['status'] : 'pending';
 ?>
+<?php include '../layouts/header.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -99,7 +100,7 @@ $currentStage = $order ? $order['status'] : 'pending';
         </div>
     <?php endif; ?>
 </div>
-
+<?php include '../layouts/footer.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
