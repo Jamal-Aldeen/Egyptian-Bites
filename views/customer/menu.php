@@ -2,7 +2,6 @@
 session_start();
 require_once '../../config/db.php';
 include '../layouts/header.php';
-// include_once('../../controllers/Notification.php'); 
 
 // --- Pagination Setup ---
 $limit = 8; // Increased limit for better user experience
@@ -23,6 +22,7 @@ $categoryQuery = "SELECT id, name FROM MenuCategories ORDER BY name";
 $categoryStmt = $pdo->prepare($categoryQuery);
 $categoryStmt->execute();
 $categories = $categoryStmt->fetchAll(PDO::FETCH_ASSOC);
+
 // --- Fetch paginated menu items with active offers ---
 $menuQuery = "SELECT mi.id, mi.name, mi.description, mi.price, mi.image, mi.category_id,
                      so.discount_type, so.discount_value, so.end_date,
@@ -43,10 +43,11 @@ $menuStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $menuStmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $menuStmt->execute();
 $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Our Menu</title>
@@ -55,9 +56,10 @@ $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="/public/css/menu.css">
-
 </head>
+
 <body>
+
   <!-- Hero Section -->
   <section class="hero d-flex align-items-center justify-content-center">
     <div class="hero-overlay"></div>
@@ -66,14 +68,14 @@ $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
       <p class="lead">Explore our variety of authentic Egyptian dishes!</p>
     </div>
   </section>
-  
+
   <!-- Search Bar -->
   <div class="container">
     <div class="search-bar">
       <input type="text" id="searchInput" class="form-control" placeholder="Search menu items...">
     </div>
   </div>
-  
+
   <!-- Category Navigation -->
   <div class="container mb-4">
     <ul class="nav nav-pills justify-content-center" id="categoryNav">
@@ -89,15 +91,15 @@ $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
       <?php endforeach; ?>
     </ul>
   </div>
-  
+
   <!-- Product Grid -->
   <div class="container">
     <div class="row" id="menuItemsContainer">
       <?php foreach ($menuItems as $item): ?>
-        <div class="col-md-3 col-sm-6 menu-item">
+        <div class="col-md-3 col-sm-6 menu-item" data-category="<?= htmlspecialchars($item['category_id']) ?>">
           <div class="menu-card">
-            <img src="<?= !empty($item['image']) ? '/public/uploads/menu-image/' . htmlspecialchars($item['image']) : '/public/uploads/menu-image/default-menu.jpg'; ?>" 
-                 alt="<?= htmlspecialchars($item['name']) ?>" class="card-img">
+            <img src="<?= !empty($item['image']) ? '/public/uploads/menu-image/' . htmlspecialchars($item['image']) : '/public/uploads/menu-image/default-menu.jpg'; ?>"
+              alt="<?= htmlspecialchars($item['name']) ?>" class="card-img">
             <div class="card-body">
               <h5 class="card-title"><?= htmlspecialchars($item['name']) ?></h5>
               <p class="card-desc"><?= htmlspecialchars($item['description']) ?></p>
@@ -105,14 +107,16 @@ $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
                 <span class="card-price">
                   <?php if (!empty($item['discount_type'])): ?>
                     <span style="text-decoration: line-through; color: red;">$<?= number_format($item['price'], 2) ?></span>
-                    <span style="color: green; font-weight: bold;">$<?= number_format($item['final_price'], 2) ?></span>
+                    <span style="color: green; font-weight: bold;" id="final-price-<?= $item['id'] ?>">
+                      $<?= number_format($item['final_price'], 2) ?>
+                    </span>
                     <span class="offer-badge">🔥 <?= $item['discount_value'] . ($item['discount_type'] === 'Percentage' ? '%' : '$') ?> Off!</span>
                   <?php else: ?>
-                    $<?= number_format($item['price'], 2) ?>
+                    <span id="final-price-<?= $item['id'] ?>">$<?= number_format($item['price'], 2) ?></span>
                   <?php endif; ?>
                 </span>
-                <button class="btn-add-cart" 
-                        onclick="addToCart(<?= $item['id'] ?>, '<?= htmlspecialchars(addslashes($item['name'])) ?>', <?= $item['price'] ?>, <?= $item['category_id'] ?>, '<?= $item['discount_type'] ?>', <?= $item['discount_value'] ?? 0 ?>)">
+                <button class="btn-add-cart"
+                  onclick="addToCart(<?= $item['id'] ?>, '<?= htmlspecialchars(addslashes($item['name'])) ?>', <?= $item['price'] ?>, <?= $item['category_id'] ?>, '<?= $item['discount_type'] ?>', <?= $item['discount_value'] ?? 0 ?>)">
                   <i class="fa fa-cart-plus"></i> Add to Cart
                 </button>
               </div>
@@ -121,40 +125,38 @@ $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
       <?php endforeach; ?>
     </div>
-</div>
-
-    
-    <!-- Pagination Navigation -->
-    <nav aria-label="Menu pagination">
-      <ul class="pagination justify-content-center">
-        <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-          <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-          <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-          </li>
-        <?php endfor; ?>
-        <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
-          <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
   </div>
-  
+
+  <!-- Pagination Navigation -->
+  <nav aria-label="Menu pagination">
+    <ul class="pagination justify-content-center">
+      <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+        <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+        <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+          <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+        </li>
+      <?php endfor; ?>
+      <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
+        <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // Category Filtering
       const navLinks = document.querySelectorAll('#categoryNav .nav-link');
       navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
           e.preventDefault();
           navLinks.forEach(l => l.classList.remove('active'));
           this.classList.add('active');
@@ -164,10 +166,10 @@ $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
           });
         });
       });
-      
+
       // Search Functionality
       const searchInput = document.getElementById('searchInput');
-      searchInput.addEventListener('input', function() {
+      searchInput.addEventListener('input', function () {
         const query = this.value.toLowerCase();
         document.querySelectorAll('.menu-item').forEach(item => {
           const title = item.querySelector('.card-title').textContent.toLowerCase();
@@ -178,142 +180,30 @@ $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
     });
 
     // Add to Cart Functionality
-    
     function addToCart(id, name, price, category_id, discount_type = '', discount_value = 0) {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        let existingItem = cart.find(item => item.id === id);
-
-        let finalPrice = price; // السعر الافتراضي
-        let discountMessage = '';
-
-        // التحقق مما إذا كان هناك عرض خاص وتطبيقه
-        if (discount_type) {
-            if (discount_type === 'Percentage') {
-                finalPrice = price - (price * discount_value / 100);
-                discountMessage = `<span style="color: red; font-weight: bold;">Special Offer: ${discount_value}% OFF!</span>`;
-            } else if (discount_type === 'Fixed') {
-                finalPrice = price - discount_value;
-                discountMessage = `<span style="color: red; font-weight: bold;">Discount: -$${discount_value}</span>`;
-            }
-        }
-
-        if (existingItem) {
-            existingItem.quantity += 1;
-        } else {
-            cart.push({
-                id: id,
-                name: name,
-                price: parseFloat(price),
-                finalPrice: parseFloat(finalPrice),
-                quantity: 1,
-                category_id: category_id,
-                discount_type: discount_type,
-                discount_value: discount_value
-            });
-        }
-
-        localStorage.setItem("cart", JSON.stringify(cart));
-        updateCartCount();
-
-        // عرض رسالة SweetAlert عند الإضافة للسلة
-        Swal.fire({
-            title: "Item Added!",
-            html: `
-                <strong>${name}</strong> has been added to your cart.<br>
-                <p><strong>Price:</strong> <span style="text-decoration: ${discountMessage ? 'line-through' : 'none'};">$${price}</span>
-                ${discountMessage ? `<span style="color: green; font-size: 1.2em;">$${finalPrice.toFixed(2)}</span>` : ''}</p>
-                ${discountMessage ? `<p>${discountMessage}</p>` : ''}
-            `,
-            icon: "success",
-            confirmButtonText: "OK",
-            confirmButtonColor: "#d4a017"
-        });
-    }
-
-    function updateCartCount() {
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
-        const count = cart.reduce((acc, item) => acc + item.quantity, 0);
-        document.getElementById('cart-count').textContent = count;
-    }
-
-    updateCartCount();
-
-
-
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-      
-      // Show added feedback
-      const btn = event.target;
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = '<i class="fa fa-check"></i> Added!';
-      btn.style.backgroundColor = '#28a745';
-      
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
-        btn.style.backgroundColor = '#d4a017';
-      }, 2000);
-    
-
-    // Update cart count in header
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const count = cart.reduce((acc, item) => acc + item.quantity, 0);
-      document.getElementById('cart-count').textContent = count;
-    }
-    
-
-    function showMenuItemDetails(item) {
-        let discountHTML = '';
-        let finalPrice = item.price;
-
-        // التحقق مما إذا كان هناك عرض خاص
-        if (item.discount_type) {
-            if (item.discount_type === 'Percentage') {
-                finalPrice = item.price - (item.price * item.discount_value / 100);
-                discountHTML = `<p style="color: red; font-weight: bold;">Special Offer: ${item.discount_value}% OFF!</p>`;
-            } else if (item.discount_type === 'Fixed') {
-                finalPrice = item.price - item.discount_value;
-                discountHTML = `<p style="color: red; font-weight: bold;">Special Offer: -$${item.discount_value} OFF!</p>`;
-            }
-        }
-
-        Swal.fire({
-            title: item.name,
-            html: `
-                <img src="/public/uploads/menu-image/${item.image || 'default-menu.jpg'}" 
-                     alt="${item.name}" style="width: 100%; border-radius: 10px; margin-bottom: 10px;">
-                <p><strong>Description:</strong> ${item.description}</p>
-                ${discountHTML}
-                <p><strong>Price:</strong> <span style="text-decoration: ${discountHTML ? 'line-through' : 'none'};">$${item.price}</span> 
-                ${discountHTML ? `<span style="color: green; font-size: 1.2em;">$${finalPrice.toFixed(2)}</span>` : ''}</p>
-                <p><strong>Availability:</strong> ${item.availability ? 'Available' : 'Not Available'}</p>
-            `,
-            showCloseButton: true,
-            confirmButtonText: 'Close',
-            confirmButtonColor: '#d4a017'
-        });
-        function addToCart(id, name, price, category_id, discount_type = '', discount_value = 0) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     let existingItem = cart.find(item => item.id === id);
 
-    let finalPrice = price; 
+    let finalPrice = price;  // Default final price is the base price
     let discountMessage = '';
 
-    // Apply discount logic
+    // Check if there is a special offer and apply it
     if (discount_type) {
         if (discount_type === 'Percentage') {
-            finalPrice = price - (price * discount_value / 100);
+            finalPrice = price - (price * discount_value / 100); // Apply percentage discount
             discountMessage = `<span style="color: red; font-weight: bold;">Special Offer: ${discount_value}% OFF!</span>`;
         } else if (discount_type === 'Fixed') {
-            finalPrice = price - discount_value;
+            finalPrice = price - discount_value;  // Apply fixed amount discount
             discountMessage = `<span style="color: red; font-weight: bold;">Discount: -$${discount_value}</span>`;
         }
     }
 
     if (existingItem) {
+        // If item already in cart, just update quantity and price
         existingItem.quantity += 1;
+        existingItem.finalPrice = finalPrice;  // Update final price in cart
     } else {
+        // If new item, add it to the cart with the calculated final price
         cart.push({
             id: id,
             name: name,
@@ -326,33 +216,46 @@ $menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
         });
     }
 
+    // Save the updated cart to localStorage
     localStorage.setItem("cart", JSON.stringify(cart));
-    updateCartCount();
+    updateCartCount();  // Update the cart count in the UI
 
-    // Show success alert
+    // Display SweetAlert notification when item is added
     Swal.fire({
         title: "Item Added!",
         html: `
             <strong>${name}</strong> has been added to your cart.<br>
             <p><strong>Price:</strong> <span style="text-decoration: ${discountMessage ? 'line-through' : 'none'};">$${price}</span>
             ${discountMessage ? `<span style="color: green; font-size: 1.2em;">$${finalPrice.toFixed(2)}</span>` : ''}</p>
-            ${discountMessage ? `<p>${discountMessage}</p>` : ''}
-        `,
+            ${discountMessage ? `<p>${discountMessage}</p>` : ''}`
+        ,
         icon: "success",
         confirmButtonText: "OK",
         confirmButtonColor: "#d4a017"
     });
+
+    // Update the final price in the cart page view
+    updateCartTotal();
 }
 
-    }
+function updateCartTotal() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const total = cart.reduce((acc, item) => acc + item.finalPrice * item.quantity, 0);
+    document.getElementById('cart-total').textContent = `$${total.toFixed(2)}`; // Update total with discount
+}
 
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+    document.getElementById('cart-count').textContent = count;
+}
 
-
-    // Initialize cart count on page load
-    updateCartCount();
+// Initialize cart count and total on page load
+updateCartCount();
+updateCartTotal();
 
   </script>
-  
-  <?php include '../layouts/footer.php'; ?>
+
 </body>
+
 </html>
