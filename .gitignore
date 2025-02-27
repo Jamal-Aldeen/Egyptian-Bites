@@ -1,5 +1,6 @@
 **/uploads/*
 /config/database.php
 config/stripe.php
-
+**/images/*
 /vendor/
+git 
