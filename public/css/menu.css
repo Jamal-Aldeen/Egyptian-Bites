@@ -1,16 +1,218 @@
-.menu-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
+/* General Page Styling */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
-.menu-item {
-    background: #fff;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
+
+/* Hero Section */
+.hero {
+    background: url('/public/assets/images/egypt-food.jpg') no-repeat center center/cover;
+    height: 50vh;
+    position: relative;
+    color: #fff;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
 }
-.menu-item:hover {
+
+.hero-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Search Bar */
+.search-bar {
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.search-bar input {
+    border-radius: 20px;
+    padding: 10px 20px;
+    border: 1px solid #ced4da;
+    transition: 0.3s ease-in-out;
+}
+
+.search-bar input:focus {
+    border-color: #d4a017;
+    box-shadow: 0 0 10px rgba(212, 160, 23, 0.4);
+}
+
+/* Category Navigation */
+.nav-pills .nav-link {
+    border-radius: 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #d4a017;
+    color: white;
+}
+
+.nav-pills .nav-link:hover {
+    background-color: rgba(212, 160, 23, 0.1);
+    color: #d4a017;
     transform: scale(1.05);
+}
+
+/* 🔥 Menu Card Styling */
+.menu-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    animation: slideUp 0.5s ease-in-out;
+    position: relative;
+}
+
+/* Glow Effect on Hover */
+.menu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), 0px 0px 10px rgba(212, 160, 23, 0.6);
+    animation: bounce 0.3s ease-in-out;
+}
+
+/* Menu Item Image */
+.card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+    transition: transform 0.3s ease-in-out;
+}
+
+.menu-card:hover .card-img {
+    transform: scale(1.05);
+}
+
+/* Card Content */
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    transition: color 0.3s ease-in-out;
+}
+
+.menu-card:hover .card-title {
+    color: #d4a017;
+}
+
+.card-desc {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    height: 60px;
+    overflow: hidden;
+}
+
+/* Price & Add to Cart */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+}
+
+.card-price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #d4a017;
+}
+
+.btn-add-cart {
+    background: #d4a017;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.btn-add-cart:hover {
+    background: #b58900;
+    transform: scale(1.1);
+}
+
+/* 🔥 Fire Effect for Special Offers */
+.offer-badge {
+    background: red;
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    box-shadow: 0 0 15px rgba(255, 69, 0, 0.7);
+    animation: fireEffect 1.5s infinite alternate;
+}
+
+/* Fire Animation */
+@keyframes fireEffect {
+    0% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 69, 0, 0.5); }
+    50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(255, 140, 0, 0.8); }
+    100% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 69, 0, 0.5); }
+}
+
+/* 🔥 Subtle Bounce Animation */
+@keyframes bounce {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0px); }
+}
+
+/* 🔥 Slide Up Effect */
+@keyframes slideUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* 🔥 Pagination */
+.pagination {
+    margin-top: 20px;
+}
+
+.page-link {
+    color: #d4a017;
+}
+
+.page-item.active .page-link {
+    background-color: #d4a017;
+    border-color: #d4a017;
+}
+
+/* 🔥 Responsive Design */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .card-img {
+        height: 150px;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .btn-add-cart {
+        padding: 6px 12px;
+    }
 }
