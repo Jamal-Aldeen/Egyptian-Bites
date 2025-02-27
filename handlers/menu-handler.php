@@ -9,6 +9,7 @@ function sanitize_input($data) {
 }
 
 try {
+    // 📌 Add Category
     if (isset($_POST['add_category'])) {
         $categoryName = sanitize_input($_POST['category_name']);
         if (empty($categoryName)) throw new Exception("Category name cannot be empty.");
@@ -19,31 +20,36 @@ try {
             'categoryId' => $menuController->getLastInsertId(),
             'categoryName' => $categoryName
         ]);
+        exit();
+    }
 
-    } elseif (isset($_POST['delete_category'])) {
-        $categoryId = filter_var($_POST['category_id'], FILTER_VALIDATE_INT);
+    // 📌 Delete Category
+    elseif (isset($_POST['delete_category'])) {
+        $categoryId = filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT);
         if (!$categoryId) throw new Exception("Invalid category ID.");
         
         $menuController->deleteCategory($categoryId);
         echo json_encode(['success' => true]);
+        exit();
+    }
 
-    } elseif (isset($_POST['add_menu_item'])) {
-        // Validate inputs
-        $categoryId = filter_var($_POST['category_id'], FILTER_VALIDATE_INT);
+    // 📌 Add Menu Item
+    elseif (isset($_POST['add_menu_item'])) {
+        $categoryId = filter_input(INPUT_POST, 'category_id', FILTER_VALIDATE_INT);
         $menuName = sanitize_input($_POST['menu_name']);
         $description = sanitize_input($_POST['description']);
-        $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
-        
+        $price = filter_input(INPUT_POST, 'price', FILTER_VALIDATE_FLOAT);
+
         if (!$categoryId || empty($menuName) || $price === false) {
-            throw new Exception("Invalid menu item data");
+            throw new Exception("Invalid menu item data.");
         }
 
-        // Handle image upload
+        // Handle Image Upload
         $menuImageName = null;
         if (!empty($_FILES['menu_image']['name'])) {
             $targetDir = __DIR__ . "/../public/uploads/menu-image/";
             if (!is_dir($targetDir) && !mkdir($targetDir, 0755, true)) {
-                throw new Exception("Failed to create upload directory");
+                throw new Exception("Failed to create upload directory.");
             }
 
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -51,30 +57,23 @@ try {
             $allowedMimes = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif'];
 
             if (!array_key_exists($mimeType, $allowedMimes)) {
-                throw new Exception("Invalid file type. Allowed: JPG, PNG, GIF");
+                throw new Exception("Invalid file type. Allowed: JPG, PNG, GIF.");
             }
 
             if ($_FILES['menu_image']['size'] > 2 * 1024 * 1024) {
-                throw new Exception("File size exceeds 2MB limit");
+                throw new Exception("File size exceeds 2MB limit.");
             }
 
             $extension = $allowedMimes[$mimeType];
             $menuImageName = time() . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
-            
+
             if (!move_uploaded_file($_FILES['menu_image']['tmp_name'], $targetDir . $menuImageName)) {
-                throw new Exception("Failed to save uploaded file");
+                throw new Exception("Failed to save uploaded file.");
             }
         }
 
-        // Add to database
-        $itemId = $menuController->addMenuItem(
-            $categoryId,
-            $menuName,
-            $description,
-            $price,
-            $menuImageName,
-            1
-        );
+        // Add to Database
+        $itemId = $menuController->addMenuItem($categoryId, $menuName, $description, $price, $menuImageName, 1);
 
         echo json_encode([
             'success' => true,
@@ -82,38 +81,65 @@ try {
             'itemName' => $menuName,
             'categoryId' => $categoryId
         ]);
+        exit();
+    }
 
-    } elseif (isset($_POST['add_special_offer'])) {
-        // Validate inputs
-        $menuItemId = filter_var($_POST['menu_item_id'], FILTER_VALIDATE_INT);
+    // 📌 Add Special Offer
+    elseif (isset($_POST['add_special_offer'])) {
+        $menuItemId = filter_input(INPUT_POST, 'menu_item_id', FILTER_VALIDATE_INT);
         $discountType = sanitize_input($_POST['discount_type']);
-        $discountValue = filter_var($_POST['discount_value'], FILTER_VALIDATE_FLOAT);
+        $discountValue = filter_input(INPUT_POST, 'discount_value', FILTER_VALIDATE_FLOAT);
         $startDate = sanitize_input($_POST['start_date']);
         $endDate = sanitize_input($_POST['end_date']);
 
         if (!$menuItemId || !in_array($discountType, ['Percentage', 'Fixed']) || 
             $discountValue === false || empty($startDate) || empty($endDate)) {
-            throw new Exception("Invalid special offer data");
+            throw new Exception("Invalid special offer data.");
         }
 
-        // Validate dates
+        // Validate Date Range
         $start = new DateTime($startDate);
         $end = new DateTime($endDate);
-        if ($end < $start) throw new Exception("End date must be after start date");
+        if ($end < $start) throw new Exception("End date must be after start date.");
 
-        // Add to database
-        $menuController->addSpecialOffer(
-            $menuItemId,
-            $discountType,
-            $discountValue,
-            $startDate,
-            $endDate
-        );
+        // Prevent Duplicate Offers
+        $existingOffers = $menuController->getSpecialOffers();
+        foreach ($existingOffers as $offer) {
+            if ($offer['menu_item'] == $menuItemId && $offer['end_date'] >= date('Y-m-d')) {
+                throw new Exception("An active special offer already exists for this item.");
+            }
+        }
 
-        echo json_encode(['success' => true]);
+        // Add Offer to Database
+        $response = $menuController->addSpecialOffer($menuItemId, $discountType, $discountValue, $startDate, $endDate);
+        echo json_encode($response);
+        exit();
+    }
 
-    } else {
-        throw new Exception("Invalid action");
+    // 📌 Get Special Offers
+    elseif (isset($_GET['get_special_offers'])) {
+        echo json_encode([
+            'success' => true,
+            'offers' => $menuController->getSpecialOffers()
+        ]);
+        exit();
+    }
+
+    // 📌 Delete Special Offer
+    elseif (isset($_POST['delete_special_offer'])) {
+        $offerId = filter_input(INPUT_POST, 'offer_id', FILTER_VALIDATE_INT);
+        if (!$offerId) throw new Exception("Invalid offer ID.");
+
+        if ($menuController->deleteSpecialOffer($offerId)) {
+            echo json_encode(['success' => true]);
+        } else {
+            throw new Exception("Failed to delete the special offer.");
+        }
+        exit();
+    }
+
+    else {
+        throw new Exception("Invalid action.");
     }
 } catch (Exception $e) {
     http_response_code(400);
@@ -122,5 +148,5 @@ try {
         'error' => $e->getMessage()
     ]);
 }
-
 exit();
+?>
