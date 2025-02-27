@@ -277,6 +277,7 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
   </div>
   
   <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -307,21 +308,67 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     });
 
     // Add to Cart Functionality
-    function addToCart(id, name, price, category_id) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const existingItem = cart.find(item => item.id === id);
+    
+    function addToCart(id, name, price, category_id, discount_type = '', discount_value = 0) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let existingItem = cart.find(item => item.id === id);
 
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cart.push({
-          id: id,
-          name: name,
-          price: parseFloat(price),
-          quantity: 1,
-          category_id: category_id
+        let finalPrice = price; // السعر الافتراضي
+        let discountMessage = '';
+
+        // التحقق مما إذا كان هناك عرض خاص وتطبيقه
+        if (discount_type) {
+            if (discount_type === 'Percentage') {
+                finalPrice = price - (price * discount_value / 100);
+                discountMessage = `<span style="color: red; font-weight: bold;">Special Offer: ${discount_value}% OFF!</span>`;
+            } else if (discount_type === 'Fixed') {
+                finalPrice = price - discount_value;
+                discountMessage = `<span style="color: red; font-weight: bold;">Discount: -$${discount_value}</span>`;
+            }
+        }
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                id: id,
+                name: name,
+                price: parseFloat(price),
+                finalPrice: parseFloat(finalPrice),
+                quantity: 1,
+                category_id: category_id,
+                discount_type: discount_type,
+                discount_value: discount_value
+            });
+        }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartCount();
+
+        // عرض رسالة SweetAlert عند الإضافة للسلة
+        Swal.fire({
+            title: "Item Added!",
+            html: `
+                <strong>${name}</strong> has been added to your cart.<br>
+                <p><strong>Price:</strong> <span style="text-decoration: ${discountMessage ? 'line-through' : 'none'};">$${price}</span>
+                ${discountMessage ? `<span style="color: green; font-size: 1.2em;">$${finalPrice.toFixed(2)}</span>` : ''}</p>
+                ${discountMessage ? `<p>${discountMessage}</p>` : ''}
+            `,
+            icon: "success",
+            confirmButtonText: "OK",
+            confirmButtonColor: "#d4a017"
         });
-      }
+    }
+
+    function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+        document.getElementById('cart-count').textContent = count;
+    }
+
+    updateCartCount();
+
+
 
       localStorage.setItem("cart", JSON.stringify(cart));
       updateCartCount();
@@ -336,7 +383,7 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
         btn.innerHTML = originalHTML;
         btn.style.backgroundColor = '#d4a017';
       }, 2000);
-    }
+    
 
     // Update cart count in header
     function updateCartCount() {
@@ -344,9 +391,44 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
       const count = cart.reduce((acc, item) => acc + item.quantity, 0);
       document.getElementById('cart-count').textContent = count;
     }
+    
+
+    function showMenuItemDetails(item) {
+        let discountHTML = '';
+        let finalPrice = item.price;
+
+        // التحقق مما إذا كان هناك عرض خاص
+        if (item.discount_type) {
+            if (item.discount_type === 'Percentage') {
+                finalPrice = item.price - (item.price * item.discount_value / 100);
+                discountHTML = `<p style="color: red; font-weight: bold;">Special Offer: ${item.discount_value}% OFF!</p>`;
+            } else if (item.discount_type === 'Fixed') {
+                finalPrice = item.price - item.discount_value;
+                discountHTML = `<p style="color: red; font-weight: bold;">Special Offer: -$${item.discount_value} OFF!</p>`;
+            }
+        }
+
+        Swal.fire({
+            title: item.name,
+            html: `
+                <img src="/public/uploads/menu-image/${item.image || 'default-menu.jpg'}" 
+                     alt="${item.name}" style="width: 100%; border-radius: 10px; margin-bottom: 10px;">
+                <p><strong>Description:</strong> ${item.description}</p>
+                ${discountHTML}
+                <p><strong>Price:</strong> <span style="text-decoration: ${discountHTML ? 'line-through' : 'none'};">$${item.price}</span> 
+                ${discountHTML ? `<span style="color: green; font-size: 1.2em;">$${finalPrice.toFixed(2)}</span>` : ''}</p>
+                <p><strong>Availability:</strong> ${item.availability ? 'Available' : 'Not Available'}</p>
+            `,
+            showCloseButton: true,
+            confirmButtonText: 'Close',
+            confirmButtonColor: '#d4a017'
+        });
+    }
+
 
     // Initialize cart count on page load
     updateCartCount();
+
   </script>
   
   <?php include '../layouts/footer.php'; ?>
