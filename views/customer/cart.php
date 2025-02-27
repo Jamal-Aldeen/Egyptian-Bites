@@ -243,31 +243,78 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("cart_data").value = JSON.stringify(cart);
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let cartList = document.getElementById("cart-items");
+    let totalPrice = 0;
+
+    if (cart.length === 0) {
+        cartList.innerHTML = '<li class="list-group-item text-danger empty-cart-message">Your cart is empty.</li>';
+    } else {
+        cartList.innerHTML = "";
+        cart.forEach((item, index) => {
+            // Ensure that the final price is calculated with discount applied
+            let itemPrice = item.price;
+            if (item.discount_type === 'Percentage') {
+                itemPrice -= (item.price * item.discount_value / 100);
+            } else if (item.discount_type === 'Fixed') {
+                itemPrice -= item.discount_value;
+            }
+            
+            totalPrice += parseFloat(itemPrice) * item.quantity;
+            cartList.innerHTML += `
+                <li class="list-group-item cart-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-quantity">(x${item.quantity})</div>
+                        <div class="price">$${(itemPrice * item.quantity).toFixed(2)}</div>
+                    </div>
+                    <div class="d-flex align-items-center cart-actions">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${index}, -1)">-</button>
+                        <input type="number" class="form-control mx-2 text-center" value="${item.quantity}" min="1" style="width: 60px;">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${index}, 1)">+</button>
+                        <button class="btn btn-danger btn-sm ms-2" onclick="removeFromCart(${index})">Remove</button>
+                    </div>
+                </li>
+            `;
+        });
+    }
+
+    // Update the cart total display
+    document.getElementById("total-price").innerText = totalPrice.toFixed(2);
+    document.getElementById("cart_data").value = JSON.stringify(cart); // Update the hidden cart data input
+});
+
+// Update quantity in the cart
 function updateQuantity(index, change) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     if (cart[index]) {
         cart[index].quantity += change;
-        if (cart[index].quantity < 1) cart[index].quantity = 1;
+        if (cart[index].quantity < 1) cart[index].quantity = 1; // Prevent quantity from going below 1
         localStorage.setItem("cart", JSON.stringify(cart));
-        location.reload();
+        location.reload(); // Refresh the page to reflect updated cart
     }
 }
 
+// Remove an item from the cart
 function removeFromCart(index) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.splice(index, 1);
+    cart.splice(index, 1); // Remove the item at the specified index
     localStorage.setItem("cart", JSON.stringify(cart));
-    location.reload();
+    location.reload(); // Refresh the page to reflect updated cart
 }
+
+// When confirming the order, check for invalid items
 document.querySelector('form').addEventListener('submit', function(e) {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const invalidItems = cart.filter(item => !item.category_id);
-    
+    const invalidItems = cart.filter(item => !item.category_id); // Assuming category_id must exist
+
     if (invalidItems.length > 0) {
-        e.preventDefault();
-        alert(' The cart contains invalid items. Please check your order.    .   .');
+        e.preventDefault(); // Prevent form submission
+        alert('The cart contains invalid items. Please check your order.');
     }
 });
+
 </script>
 
 </body>
