@@ -43,47 +43,47 @@ Welcome to **Egyptian-Bites**, a comprehensive web-based restaurant management s
 
 ## Screenshots 
 
-### Core Functionality
-- **Dashboard Overview:**  
-  ![Dashboard Overview](documentation/dashboard.gif)
-- **User Management:**  
-  ![User Management](documentation/user-management.gif)
-- **Menu Management:**  
-  ![Menu Management](documentation/menu-management.gif)
-- **Inventory & Reports:**  
-  ![Inventory & Reports](documentation/inventory-reports.gif)
-
 ### Extended Gallery
 - **Home Page:**  
-  ![Home Page](documentation/home-page.jpg)
+  ![Home Page](documentation/home-page.jpeg)
 - **Login Screen:**  
-  ![Login Screen](documentation/login-screen.jpg)
+  ![Login Screen](documentation/login-screen.jpeg)
+  - **User Registration Page:**  
+  ![User Registration](documentation/user-registration.jpeg)
 - **Detailed Menu View:**  
-  ![Detailed Menu View](documentation/detailed-menu.jpg)
-- **Reservation Management:**  
-  ![Reservation Management](documentation/reservation-management.jpg)
+  ![Detailed Menu View](documentation/detailed-menu.jpeg)
+- **Reservation Generation Page:**  
+  ![Reservation Generation](documentation/Reservation-generation.jpeg)
 - **Order Processing:**  
-  ![Order Processing](documentation/order-processing.jpg)
+  ![Order Processing](documentation/order-processing.jpeg)
 - **Special Offers Display:**  
-  ![Special Offers](documentation/special-offers.jpg)
-- **Inventory Update Screen:**  
-  ![Inventory Update](documentation/inventory-update.jpg)
-- **Staff Dashboard:**  
-  ![Staff Dashboard](documentation/staff-dashboard.jpg)
-- **Report Generation Page:**  
-  ![Report Generation](documentation/report-generation.jpg)
-- **User Registration Page:**  
-  ![User Registration](documentation/user-registration.jpg)
+  ![Special Offers](documentation/special-offers.jpeg)
+- **Items Update Screen:**  
+  ![Items Update](documentation/Items-update.jpeg)
+- **User Profile:**  
+  ![User Dashboard](documentation/user-profile.jpeg)
+  - **Reservation Management:**  
+  ![Reservation Management](documentation/reservation-management.jpeg)
+
+### Core Functionality
+- **Dashboard Overview:**  
+  ![Dashboard Overview](documentation/dashboard.jpeg)
+- **User Management:**  
+  ![User Management](documentation/user-management.jpeg)
+- **Menu Management:**  
+  ![Menu Management](documentation/menu-management.jpeg)
+- **Inventory & Reports:**  
+  ![Inventory & Reports](documentation/inventory-reports.jpeg)
 
 ## Installation 🛠️
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/Egyptian-Bites.git
+   git clone https://github.com/Jamal-Aldeen/Egyptian-Bites.git
    cd Egyptian-Bites
    ```
 2. **Setup the Environment:**
-   - Ensure you have PHP, MySQL, and a web server (Apache/Nginx) installed.
+   - Ensure you have PHP, MySQL, and a web server (Apache) installed.
    - Import the provided SQL schema to initialize your database.
 3. **Configuration:**
    - Update the database credentials in the `/config/db.php` file.
