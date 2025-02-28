@@ -58,13 +58,13 @@ session_start(); // Start the session
                 <input type="password" class="form-control input-field" name="confirm_password" required>
             </div>
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
                 <label class="form-label">User Type</label>
                 <select class="form-select input-field" name="user_type" required>
                     <option value="customer">Customer</option>
                     <option value="staff">Staff</option>
                 </select>
-            </div>
+            </div> -->
 
             <div class="mb-3">
                 <label class="form-label">Profile Picture (Optional)</label>
