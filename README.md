@@ -45,25 +45,25 @@ Welcome to **Egyptian-Bites**, a comprehensive web-based restaurant management s
 
 ### Extended Gallery
 - **Home Page:**  
-  ![Home Page](documentation/home-page.jpg)
+  ![Home Page](documentation/home-page.jpeg)
 - **Login Screen:**  
-  ![Login Screen](documentation/login-screen.jpg)
+  ![Login Screen](documentation/login-screen.jpeg)
   - **User Registration Page:**  
-  ![User Registration](documentation/user-registration.jpg)
+  ![User Registration](documentation/user-registration.jpeg)
 - **Detailed Menu View:**  
-  ![Detailed Menu View](documentation/detailed-menu.jpg)
+  ![Detailed Menu View](documentation/detailed-menu.jpeg)
 - **Reservation Generation Page:**  
-  ![Reservation Generation](documentation/Reservation-generation.jpg)
+  ![Reservation Generation](documentation/Reservation-generation.jpeg)
 - **Order Processing:**  
-  ![Order Processing](documentation/order-processing.jpg)
+  ![Order Processing](documentation/order-processing.jpeg)
 - **Special Offers Display:**  
-  ![Special Offers](documentation/special-offers.jpg)
+  ![Special Offers](documentation/special-offers.jpeg)
 - **Items Update Screen:**  
-  ![Items Update](documentation/Items-update.jpg)
+  ![Items Update](documentation/Items-update.jpeg)
 - **User Profile:**  
-  ![User Dashboard](documentation/user-profile.jpg)
+  ![User Dashboard](documentation/user-profile.jpeg)
   - **Reservation Management:**  
-  ![Reservation Management](documentation/reservation-management.jpg)
+  ![Reservation Management](documentation/reservation-management.jpeg)
 
 ### Core Functionality
 - **Dashboard Overview:**  
