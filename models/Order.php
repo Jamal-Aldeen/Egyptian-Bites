@@ -8,11 +8,10 @@ class Order {
         $this->pdo = $pdo;
     }
 
-    // إنشاء طلب جديد
     public function createOrder($user_id, $total_price, $items) {
         $this->pdo->beginTransaction();
         try {
-            // تحقق من وجود العناصر في قائمة الطعام
+
             foreach ($items as $item) {
                 $checkStmt = $this->pdo->prepare("SELECT id FROM MenuItems WHERE id = ?");
                 $checkStmt->execute([$item['id']]);
@@ -21,20 +20,20 @@ class Order {
                 }
             }
     
-            // إدخال الطلب في جدول Orders
+
             $stmt = $this->pdo->prepare(
                 "INSERT INTO Orders (user_id, total_price, status, created_at, items) 
                 VALUES (?, ?, 'Pending', NOW(), ?)"
             );
             
-            // تحويل items إلى JSON
+
             $items_json = json_encode($items);
             
             $stmt->execute([$user_id, $total_price, $items_json]);
             
             $order_id = $this->pdo->lastInsertId();
     
-            // إضافة العناصر إلى الطلب
+
             if (!empty($items)) {
                 $this->addOrderItems($order_id, $items);
             }
@@ -48,7 +47,7 @@ class Order {
     }
     
 
-    // إضافة العناصر إلى الطلب
+
     public function addOrderItems($order_id, $items) {
         $stmt = $this->pdo->prepare("INSERT INTO OrderItems (order_id, menu_item_id, quantity) VALUES (?, ?, ?)");
         
@@ -59,14 +58,14 @@ class Order {
         }
     }
 
-    // الحصول على تاريخ الطلبات
+
     public function getOrderHistory($user_id) {
         $stmt = $this->pdo->prepare("SELECT * FROM Orders WHERE user_id = ?");
         $stmt->execute([$user_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // تحديث حالة الطلب
+
 
 
     public function updateOrderStatus($order_id, $status) {
@@ -77,7 +76,7 @@ class Order {
         return $stmt->execute();
     }
 
-    // الحصول على جميع الطلبات (للموظفين)
+
     public function getAllOrders($limit, $offset) {
         $query = "SELECT o.*, u.name as customer_name 
                   FROM Orders o
@@ -93,7 +92,7 @@ class Order {
         return $stmt;
     }
 
-    // جلب إجمالي المبيعات
+
     public function getTotalSales() {
         $stmt = $this->pdo->prepare("SELECT SUM(total_price) as total_sales FROM Orders");
         $stmt->execute();
@@ -101,7 +100,7 @@ class Order {
         return $result['total_sales'] ? $result['total_sales'] : 0;
     }
 
-    // جلب عدد الطلبات النشطة (الطلبات المعلقة)
+
     public function getActiveOrderCount() {
         $stmt = $this->pdo->prepare("SELECT COUNT(*) as active_orders FROM Orders WHERE status = 'Pending'");
         $stmt->execute();
@@ -109,7 +108,7 @@ class Order {
         return $result['active_orders'] ? $result['active_orders'] : 0;
     }
 
-    // تقرير المبيعات حسب التاريخ
+
     public function getSalesReport($startDate, $endDate) {
         $stmt = $this->pdo->prepare("
             SELECT DATE(created_at) AS date, COUNT(*) AS total_orders, SUM(total_price) AS revenue 
@@ -121,7 +120,7 @@ class Order {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // جلب إجمالي الإيرادات للطلبات المنجزة (Delivered)
+
     public function getTotalRevenue() {
         $stmt = $this->pdo->query("SELECT SUM(total_price) AS total FROM Orders WHERE status = 'Delivered'");
         return $stmt->fetchColumn() ?? 0;
@@ -133,13 +132,13 @@ class Order {
     }
 
 
-       public function getByCustomer($user_id) {  // استخدام user_id هنا بدلاً من customer_id
-        $query = "SELECT * FROM Orders WHERE user_id = :user_id";  // استخدام user_id في الاستعلام
+       public function getByCustomer($user_id) {  
+        $query = "SELECT * FROM Orders WHERE user_id = :user_id";  
         $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);  // ربط المتغير user_id
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);  
         $stmt->execute();
 
-        return $stmt;  // Returns the statement object
+        return $stmt;  
     }
 
     public function create() {
@@ -151,10 +150,10 @@ class Order {
         $stmt->bindParam(':total_price', $this->total, PDO::PARAM_STR);
     
         if ($stmt->execute()) {
-            // الحصول على ID الطلب الذي تم إنشاؤه حديثًا
+
             $order_id = $this->pdo->lastInsertId();
     
-            // إدخال العناصر المرتبطة بالطلب في جدول OrderItems
+
             foreach ($this->items as $item) {
                 $itemQuery = "INSERT INTO OrderItems (order_id, menu_item_id, quantity, customizations) 
                               VALUES (:order_id, :menu_item_id, :quantity, :customizations)";
@@ -171,8 +170,8 @@ class Order {
     
         return false;
     }
-    // داخل Order.php
-public function getByOrderId($order_id) {
+
+    public function getByOrderId($order_id) {
     $query = "SELECT o.id, o.total_price, o.status, o.created_at, oi.menu_item_id, oi.quantity, oi.customizations,
                      m.name AS product_name, m.price, m.category_id
               FROM Orders o
@@ -184,7 +183,7 @@ public function getByOrderId($order_id) {
     $stmt->bindParam(':order_id', $order_id, PDO::PARAM_INT);
     $stmt->execute();
 
-    return $stmt;  // تُعيد الكائن الاستعلام الذي يحتوي على تفاصيل الطلب
+    return $stmt;  
 }
 
 }
