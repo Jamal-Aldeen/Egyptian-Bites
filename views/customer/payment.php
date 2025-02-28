@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['order_id']) || !isset($_SE
 $paymentController = new PaymentController();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $payment_method = $_POST['payment_method'];
+    $payment_method = $_POST['payment_method']?? null;
     
     if ($payment_method == 'card' && isset($_POST['stripeToken'])) {
 
@@ -19,34 +19,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else if ($payment_method == 'cash') {
 
         $result = $paymentController->processPayment($_SESSION['order_id'], $_SESSION['user_id'], $payment_method, $_SESSION['amount']);
+    }else {
+        $result = ['status' => 'error', 'message' => 'Invalid payment method'];
     }
     
-    if ($result['status'] == 'success') {
-        $user_id = $_SESSION['user_id'];  // Assuming the user is logged in
-$title = "New Order Confirmation";
-$message = "Your order has been successfully placed! We will notify you once it's ready.";
+    if (is_array($result) && isset($result['status']) && $result['status'] === 'success') {
+        $user_id = $_SESSION['user_id'];
+        $title = "New Order Confirmation";
+        $message = "Your order has been successfully placed! We will notify you once it's ready.";
 
-// Insert the notification into the database
-$notification_query = "INSERT INTO notifications (user_id, title, message) VALUES (:user_id, :title, :message)";
-$stmt = $pdo->prepare($notification_query);
-$stmt->bindParam(':user_id', $user_id);
-$stmt->bindParam(':title', $title);
-$stmt->bindParam(':message', $message);
-$stmt->execute();
-        header("Location: /views/customer/order-tracking.php"); 
+        $notification_query = "INSERT INTO notifications (user_id, title, message) VALUES (:user_id, :title, :message)";
+        $stmt = $pdo->prepare($notification_query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':title', $title);
+        $stmt->bindParam(':message', $message);
+        $stmt->execute();
+
+        header("Location: /views/customer/order-tracking.php");
         exit();
     } else {
-        $error = $result['message'];
-    }
+        $error = isset($result['message']) ? $result['message'] : "An unexpected error occurred. Please try again.";    }
 }
-?>
 
+
+?>
+<?php include '../layouts/header.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment</title>
+    <link rel="stylesheet" href="/public/css/order-payment.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -78,7 +82,7 @@ $stmt->execute();
         <button type="submit" class="btn btn-success mt-3">Proceed to Payment</button>
     </form>
 </div>
-
+<?php include '../layouts/footer.php'; ?>
 <script src="https://js.stripe.com/v3/"></script>
 <script>
 document.querySelectorAll('input[name="payment_method"]').forEach(input => {
