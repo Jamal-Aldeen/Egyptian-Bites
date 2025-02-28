@@ -61,8 +61,8 @@ class OrderController {
         return $this->orderModel->updateOrderStatus($order_id, $status);
     }
 
-    public function getOrderHistory($user_id) {
-        return $this->orderModel->getOrderHistory($user_id);
+    public function getOrderHistory($user_id, $sortOrder = 'DESC') {
+        return $this->orderModel->getOrderHistory($user_id, $sortOrder);
     }
 
     // public function getOrderDetails($order_id) {
