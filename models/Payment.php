@@ -14,6 +14,7 @@ class Payment {
     
 
     public function savePayment($user_id, $order_id, $payment_method, $status, $transaction_id, $amount) {
+        $validStatuses = ['pending', 'completed', 'failed'];
         $status = trim($status); 
         error_log("Attempting to insert payment with status: " . $status);
         error_log("Payment method: " . $payment_method);
@@ -25,17 +26,19 @@ class Payment {
             $transaction_id = null;
         }
         error_log("Attempting to insert payment with status: " . $status);
-        if (!in_array($status, ['pending', 'completed', 'failed'])) {
-            throw new Exception("Invalid status value: " . $status);
-        }
+
+        if (!in_array($status, $validStatuses)) {
+        error_log("Invalid status value received: " . $status);
+        throw new Exception("Invalid status value: " . $status);
+    }
+    try {
+        error_log("Attempting to insert payment with status: " . $status);
+
         $stmt = $this->pdo->prepare("
-            INSERT INTO Payments 
-                (user_id, order_id, payment_method, amount, status, transaction_id) 
-            VALUES 
-                (?, ?, ?, ?, ?, ?)
+            INSERT INTO Payments (user_id, order_id, payment_method, amount, status, transaction_id) 
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
-        error_log("Status being saved: " . $status); 
-        error_log("ALl : " . print_r([$user_id, $order_id, $payment_method, $amount, $status, $transaction_id], true));
+
         $stmt->execute([
             $user_id, 
             $order_id, 
@@ -44,9 +47,14 @@ class Payment {
             $status, 
             $transaction_id ?? null
         ]);
-        return $stmt->rowCount(); 
-        
+
+        return ['status' => 'success'];
+    } catch (PDOException $e) {
+        error_log("SQL Error: " . $e->getMessage());
+        return ['status' => 'error', 'message' => $e->getMessage()];
     }
+}
+
 
 
 //     public function savePayment($user_id, $order_id, $payment_method, $status, $transaction_id, $amount) {
