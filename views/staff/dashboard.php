@@ -7,9 +7,9 @@ require_once __DIR__ . '/../../controllers/NotificationController.php';
 
 // Authorization check
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /views/shared/login.php"); // Not logged in → login page
+    header("Location: /views/staff/admin-login.php"); // Not logged in → login page
     exit();
-} elseif ($_SESSION['role'] !== 'Staff') {
+} elseif ($_SESSION['user_role'] !== 'Staff') {
     header("Location: /index.php"); // Logged in but not staff → index
     exit();
 }
