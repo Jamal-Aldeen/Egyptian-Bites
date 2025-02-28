@@ -1,18 +1,16 @@
 <?php
 session_start();
-require_once '../../config/db.php'; // Include database connection
+require_once '../../config/db.php'; 
 
-// Check if the user is authorized as 'Staff'
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Staff') {
     header("Location: /views/shared/login.php");
     exit();
 }
 
-// Query to fetch all orders using PDO from the "Orders" table (uppercase)
-$query = "SELECT * FROM Orders ORDER BY created_at DESC"; // Table name is Orders
-$stmt = $GLOBALS['pdo']->prepare($query);  // Prepare the query using PDO
-$stmt->execute();  // Execute the query
-$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);  // Fetch the results
+$query = "SELECT * FROM Orders ORDER BY created_at DESC"; 
+$stmt = $GLOBALS['pdo']->prepare($query);  
+$stmt->execute();  
+$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);  
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,10 +46,10 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);  // Fetch the results
                     <tbody>
                         <?php
                         foreach ($orders as $order) {
-                            // Decode the items from JSON
-                            $order_items = json_decode($order['items'], true);  // Use 'items' instead of 'order_details'
+
+                            $order_items = json_decode($order['items'], true);  
                             echo "<tr>";
-                            echo "<td>" . $order['id'] . "</td>";  // Use 'id' instead of 'order_id'
+                            echo "<td>" . $order['id'] . "</td>";  
                             echo "<td>" . $order['user_id'] . "</td>";
                             echo "<td>";
                             foreach ($order_items as $item) {
@@ -60,8 +58,8 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);  // Fetch the results
                             echo "</td>";
                             echo "<td>" . $order['created_at'] . "</td>";
                             echo "<td>" . $order['status'] . "</td>";
-                            // echo "<td>
-echo '<td>
+
+                            echo '<td>
 <form method="POST" action="/views/staff/update_order_status.php">
     <select name="status" class="form-control">
         <option value="Pending" ' . (($order['status'] == 'Pending') ? 'selected' : '') . '>Pending</option>
@@ -73,9 +71,6 @@ echo '<td>
     <button type="submit" class="btn btn-primary mt-2">Update</button>
 </form>
 </td>';
-
-
-                                //   </td>";
                             echo "</tr>";
                         }
                         ?>
