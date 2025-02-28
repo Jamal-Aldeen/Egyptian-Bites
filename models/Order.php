@@ -59,8 +59,10 @@ class Order {
     }
 
 
-    public function getOrderHistory($user_id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM Orders WHERE user_id = ?");
+    public function getOrderHistory($user_id, $sortOrder = 'DESC') {
+        $sortOrder = ($sortOrder == 'ASC' || $sortOrder == 'DESC') ? $sortOrder : 'DESC'; 
+
+        $stmt = $this->pdo->prepare("SELECT * FROM Orders WHERE user_id = ? ORDER BY created_at $sortOrder");
         $stmt->execute([$user_id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
