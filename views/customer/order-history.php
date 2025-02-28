@@ -8,8 +8,10 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
+$sortOrder = isset($_GET['sort']) && $_GET['sort'] == 'asc' ? 'ASC' : 'DESC';  
+
 $orderController = new OrderController($pdo);
-$orders = $orderController->getOrderHistory($_SESSION['user_id']);
+$orders = $orderController->getOrderHistory($_SESSION['user_id'], $sortOrder); 
 ?>
 
 <?php include '../layouts/header.php'; ?>
@@ -26,6 +28,11 @@ $orders = $orderController->getOrderHistory($_SESSION['user_id']);
 
 <div class="container mt-5">
     <h2 class="text-center">Order History</h2>
+
+    <div class="text-center mb-3">
+        <a href="?sort=asc" class="btn btn-info">Sort: Oldest First</a>
+        <a href="?sort=desc" class="btn btn-info">Sort: Newest First</a>
+    </div>
 
     <?php if (empty($orders)) : ?>
         <div class="alert alert-warning">You have no past orders.</div>
