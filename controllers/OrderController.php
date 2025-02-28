@@ -3,12 +3,29 @@ require_once __DIR__ . '/../models/Order.php';
 require_once __DIR__ . '/../config/db.php';
 
 class OrderController {
+    private $pdo;
     private $orderModel;
 
-    public function __construct() {
-        global $pdo;
+    public function __construct($pdo) {
+        $this->pdo = $pdo;
         $this->orderModel = new Order($pdo);
     }
+
+    public function getOrderDetails($order_id) {
+        $query = "SELECT * FROM Orders WHERE id = :order_id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':order_id', $order_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $orderDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($orderDetails && isset($orderDetails['items'])) {
+            $orderDetails['items'] = json_decode($orderDetails['items'], true);
+        }
+
+        return $orderDetails;
+    }
+
 
     public function placeOrder($user_id, $items, $total_price) {
         try {
@@ -31,7 +48,7 @@ class OrderController {
             }
     
             $order_id = $this->orderModel->createOrder($user_id, $total_price, $items);
-            return $order_id; // return order ID
+            return $order_id; 
         } catch (PDOException $e) {
             error_log("Order Error: " . $e->getMessage());
             return false;
@@ -48,21 +65,21 @@ class OrderController {
         return $this->orderModel->getOrderHistory($user_id);
     }
 
-    public function getOrderDetails($order_id) {
-        $query = "SELECT * FROM Orders WHERE id = :order_id";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(':order_id', $order_id, PDO::PARAM_INT);
-        $stmt->execute();
+    // public function getOrderDetails($order_id) {
+    //     $query = "SELECT * FROM Orders WHERE id = :order_id";
+    //     $stmt = $this->pdo->prepare($query);
+    //     $stmt->bindParam(':order_id', $order_id, PDO::PARAM_INT);
+    //     $stmt->execute();
     
-        $orderDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+    //     $orderDetails = $stmt->fetch(PDO::FETCH_ASSOC);
     
-        // تأكد من أن items يتم فك تشفيرها بشكل صحيح إذا كانت JSON
-        if ($orderDetails && isset($orderDetails['items'])) {
-            $orderDetails['items'] = json_decode($orderDetails['items'], true);
-        }
+    //     // تأكد من أن items يتم فك تشفيرها بشكل صحيح إذا كانت JSON
+    //     if ($orderDetails && isset($orderDetails['items'])) {
+    //         $orderDetails['items'] = json_decode($orderDetails['items'], true);
+    //     }
     
-        return $orderDetails;
-    }
+    //     return $orderDetails;
+    // }
     
     
 }
