@@ -60,7 +60,7 @@ if (session_status() == PHP_SESSION_NONE) {
                     <?php endif; ?>
 
                     <!-- Notifications Icon -->
-                    // Notifications Icon
+
                     <li class="nav-item">
                         <a class="nav-link" href="/views/customer/notifications.php">
                             <i class="fas fa-bell"></i>
@@ -71,7 +71,7 @@ if (session_status() == PHP_SESSION_NONE) {
                                 // Fetch notification count dynamically if required
                                 $notificationCount = 5; // Replace this with actual dynamic code if needed
                                 if ($notificationCount > 0) {
-                                    echo '<span class="badge bg-danger" id="notification-count">' . $notificationCount . '</span>';
+                                    echo '<span class="badge bg-danger" id="notification-count" style="background-color: #d4a017;">' . $notificationCount . '</span>';
                                 }
                             }
                             ?>
@@ -79,12 +79,17 @@ if (session_status() == PHP_SESSION_NONE) {
                     </li>
 
 
+
                     <!-- Profile Icon -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="/views/customer/profile.php">
-                            <i class="fas fa-user-circle"></i> Profile
-                        </a>
-                    </li>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <!-- Profile Icon -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="/views/customer/profile.php">
+                                <i class="fas fa-user-circle"></i> Profile
+                            </a>
+                        </li>
+                    <?php endif; ?>
+
 
                     <!-- Cart Icon -->
                     <li class="nav-item cart-container">
