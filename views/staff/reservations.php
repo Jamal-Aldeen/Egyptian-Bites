@@ -56,13 +56,6 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 </span>
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-primary edit-btn"
-                                                        data-id="<?= $reservation['id'] ?>"
-                                                        data-date="<?= $reservation['date'] ?>"
-                                                        data-time="<?= $reservation['time'] ?>"
-                                                        data-guests="<?= $reservation['number_of_guests'] ?>">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
                                                 <button class="btn btn-sm btn-danger cancel-btn"
                                                         data-id="<?= $reservation['id'] ?>">
                                                     <i class="fas fa-times"></i>
@@ -84,74 +77,10 @@ $reservations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <!-- Edit Reservation Modal -->
-    <div class="modal fade" id="editReservationModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Reservation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form id="editReservationForm">
-                    <div class="modal-body">
-                        <input type="hidden" name="reservation_id" id="editReservationId">
-                        <div class="mb-3">
-                            <label>Date</label>
-                            <input type="date" name="date" id="editDate" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Time</label>
-                            <input type="time" name="time" id="editTime" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Number of Guests</label>
-                            <input type="number" name="guests" id="editGuests" class="form-control" min="1" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Bootstrap JS and FontAwesome -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Edit Reservation
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modal = new bootstrap.Modal(document.getElementById('editReservationModal'));
-                    document.getElementById('editReservationId').value = this.dataset.id;
-                    document.getElementById('editDate').value = this.dataset.date;
-                    document.getElementById('editTime').value = this.dataset.time;
-                    document.getElementById('editGuests').value = this.dataset.guests;
-                    modal.show();
-                });
-            });
-
-            // Handle Edit Form Submission
-            document.getElementById('editReservationForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                
-                fetch('../../handlers/reservation-handler.php?action=update', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload(); // Refresh to show changes
-                    } else {
-                        alert(data.error || 'Failed to update reservation');
-                    }
-                });
-            });
-
             // Cancel Reservation
             document.querySelectorAll('.cancel-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
