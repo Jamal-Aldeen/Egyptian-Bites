@@ -116,6 +116,10 @@ if (count($_POST) > 0) {
                             <a href="/views/customer/reservation.php" class="btn btn-primary w-100 manage">
                                 <i class="fas fa-calendar-check me-2 text-center">   Reserve a Table </i> 
                             </a>
+                            <!-- Order History Button -->
+                            <a href="/views/customer/order-history.php" class="btn btn-secondary w-100 mt-2">
+                                <i class="fas fa-history me-2 text-center"> Order History </i>
+                            </a>
                         </div>
                     </div>
                 </div>
