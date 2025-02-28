@@ -1,105 +1,81 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../controllers/OrderController.php'; 
-require_once __DIR__ . '/../../controllers/PaymentController.php'; 
+require_once __DIR__ . '/../../config/db.php';  
+require_once __DIR__ . '/../../controllers/OrderController.php';
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['order_id'])) {
     header("Location: /");
     exit();
 }
 
-$orderController = new OrderController();
-$paymentController = new PaymentController();
+$orderController = new OrderController($pdo);
+$order = $orderController->getOrderDetails($_SESSION['order_id']);
 
-$orderDetails = $orderController->getOrderHistory($_SESSION['user_id']);
-$order = null;
-foreach ($orderDetails as $o) {
-    if ($o['id'] == $_SESSION['order_id']) {
-        $order = $o;
-        break;
-    }
+if (!$order) {
+    echo "<div class='alert alert-danger text-center'>Order not found.</div>";
+    exit();
 }
 
-$paymentStatus = 'Pending'; 
-if ($order) {
-    $paymentStatus = $order['status']; 
-}
-
-$orderStages = [
-    'pending' => ' pending',
-    'completed' => ' Delivered '
-];
-
-$currentStage = $order ? $order['status'] : 'pending';
+$statuses = ['pending', 'processing', 'shipped', 'delivered'];
+$currentStage = array_search($order['status'], $statuses);
 ?>
-<?php include '../layouts/header.php'; ?>
 
+<?php include '../layouts/header.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Status</title>
+    <title>Order Tracking</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/order-payment.css">
     <style>
-        .status-btn {
-            width: 100%;
-            padding: 10px;
-            margin: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+        .progress {
+            height: 30px;
+            font-size: 16px;
+            border-radius: 15px;
         }
-        .status-btn.active {
-            background-color: #28a745;
-            color: white;
+        .progress-bar {
+            transition: width 0.6s ease;
+            font-weight: bold;
         }
-        .status-btn.inactive {
-            background-color: #ccc;
-            color: #fff;
+        .status-label {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
 <div class="container mt-5">
-    <h2 class="text-center">Order Status</h2>
-    
-    <?php if ($order): ?>
-        <div class="alert alert-success">
-            <p><strong>Thank you for your order!</strong></p>
-            <p><strong>Order Number:</strong> #<?= $order['id'] ?></p>
-            <p><strong>Total Amount:</strong> $<?= number_format($order['total_price'], 2) ?></p>
-            <p><strong>Payment Status:</strong> <?= $paymentStatus == 'Paid' ? 'Paid' : 'Pending' ?></p>
-            <p><strong>Payment Method:</strong> <?= $paymentStatus == 'Paid' ? 'Credit/Debit Card' : 'Cash on Delivery' ?></p>
+    <h2 class="text-center">Order Tracking</h2>
+
+    <div class="alert alert-info text-center">
+        <p><strong>Order Number:</strong> #<?= $order['id'] ?></p>
+        <p><strong>Total Amount:</strong> $<?= number_format($order['total_price'], 2) ?></p>
+        <p><strong>Payment Status:</strong> <?= ucfirst($order['status']) ?></p>
+    </div>
+
+    <div class="mt-4">
+        <h4 class="text-center">Order Progress</h4>
+        <div class="progress">
+            <?php foreach ($statuses as $index => $status): ?>
+                <div class="progress-bar <?= $index <= $currentStage ? 'bg-success' : 'bg-light text-dark' ?>" 
+                     style="width: <?= 100 / count($statuses) ?>%;">
+                    <?= ucfirst($status) ?>
+                </div>
+            <?php endforeach; ?>
         </div>
 
-        <div class="mt-4">
-            <h4>Tracking Information</h4>
-            <ul class="list-group">
-                <?php foreach ($orderStages as $stageKey => $stageName): ?>
-                    <li class="list-group-item <?= $stageKey == $currentStage ? 'active' : '' ?>">
-                        <strong><?= $stageName ?></strong>
-                        <?php if ($stageKey == 'Placed' && $currentStage == 'Placed'): ?>
-                            <span class="badge bg-secondary float-end">In Progress</span>
-                        <?php elseif ($stageKey == 'Shipped' && $currentStage == 'Shipped'): ?>
-                            <span class="badge bg-info float-end">In Progress</span>
-                        <?php elseif ($stageKey == 'Out for Delivery' && $currentStage == 'Out for Delivery'): ?>
-                            <span class="badge bg-warning float-end">In Progress</span>
-                        <?php elseif ($stageKey == 'Delivered' && $currentStage == 'Delivered'): ?>
-                            <span class="badge bg-success float-end">Completed</span>
-                        <?php endif; ?>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+        <div class="status-label">
+            Current Status: <strong><?= ucfirst($statuses[$currentStage]) ?></strong>
         </div>
+    </div>
 
-        <a href="/views/customer/order-history.php" class="btn btn-primary mt-3">View Order History</a>
-    <?php else: ?>
-        <div class="alert alert-danger">
-            <p>Sorry, we could not find the order details. Please try again later.</p>
-        </div>
-    <?php endif; ?>
+    <a href="/views/customer/order-history.php" class="btn btn-primary mt-4">View Order History</a>
 </div>
+
 <?php include '../layouts/footer.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
