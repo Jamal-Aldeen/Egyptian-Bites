@@ -60,18 +60,32 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             echo "<td>" . $order['status'] . "</td>";
 
                             echo '<td>
-<form method="POST" action="/views/staff/update_order_status.php">
-    <select name="status" class="form-control">
-        <option value="Pending" ' . (($order['status'] == 'Pending') ? 'selected' : '') . '>Pending</option>
-        <option value="Preparing" ' . (($order['status'] == 'Preparing') ? 'selected' : '') . '>Preparing</option>
-        <option value="Ready" ' . (($order['status'] == 'Ready') ? 'selected' : '') . '>Ready</option>
-        <option value="Delivered" ' . (($order['status'] == 'Delivered') ? 'selected' : '') . '>Delivered</option>
-    </select>
-    <input type="hidden" name="order_id" value="' . $order['id'] . '">
-    <button type="submit" class="btn btn-primary mt-2">Update</button>
-</form>
-</td>';
-                            echo "</tr>";
+                            <form method="POST" action="/views/staff/update_order_status.php">
+                                <div class="form-group">
+                                    <label for="status">Order Status</label>
+                                    <select name="status" class="form-control" required>
+                                        <option value="Pending" '.($order['status'] == 'Pending' ? 'selected' : '').'>Pending</option>
+                                        <option value="Preparing" '.($order['status'] == 'Preparing' ? 'selected' : '').'>Preparing</option>
+                                        <option value="Ready" '.($order['status'] == 'Ready' ? 'selected' : '').'>Ready</option>
+                                        <option value="Delivered" '.($order['status'] == 'Delivered' ? 'selected' : '').'>Delivered</option>
+                                    </select>
+                                </div>
+                            
+                                <div class="form-group">
+                                    <label for="payment_status">Payment Status</label>
+                                    <select name="payment_status" class="form-control" required>
+                                        <option value="Pending" '.($order['payment_status'] == 'Pending' ? 'selected' : '').'>Pending</option>
+                                        <option value="Completed" '.($order['payment_status'] == 'Completed' ? 'selected' : '').'>Completed</option>
+                                        <option value="Failed" '.($order['payment_status'] == 'Failed' ? 'selected' : '').'>Failed</option>
+                                    </select>
+                                </div>
+                            
+                                <input type="hidden" name="order_id" value="'.htmlspecialchars($order['id']).'">
+                            
+                                <button type="submit" class="btn btn-primary mt-2">Update</button>
+                            </form>
+                            </td>';
+                            // echo "</tr>";
                         }
                         ?>
                     </tbody>
