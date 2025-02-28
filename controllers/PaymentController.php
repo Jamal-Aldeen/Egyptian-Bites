@@ -18,6 +18,7 @@ class PaymentController {
         $this->orderModel = new Order($pdo); 
     }
     public function processPayment($order_id, $user_id, $payment_method, $amount) {
+        error_log("Processing payment for Order ID: $order_id, User ID: $user_id, Method: $payment_method, Amount: $amount");
         if ($payment_method == 'card') {
             if (isset($_POST['stripeToken'])) {
                 error_log("Stripe Token: " . $_POST['stripeToken']);
@@ -30,18 +31,12 @@ class PaymentController {
                         'description' => "Payment for Order #$order_id"
                     ]);
                     $transaction_id = $charge->id;
-                    if (strlen($transaction_id) > 255) {
-                        throw new Exception("Transaction ID exceeds the maximum length of 255 characters.");
-                    }
+                    error_log("Transaction ID: " . $transaction_id);
+                    
                     if ($charge->status == 'succeeded') {
-                        $this->paymentModel->savePayment($user_id, $order_id, 'card', 'completed', $transaction_id, $amount);
-                        $this->orderModel->updateOrderStatus($order_id, 'completed');
-                        return ['status' => 'success'];
+                        return $this->paymentModel->savePayment($user_id, $order_id, 'card', 'completed', $transaction_id, $amount);
                     } else {
-
-                        $this->paymentModel->savePayment($user_id, $order_id, 'card', 'failed', $transaction_id, $amount);
-                        $this->orderModel->updateOrderStatus($order_id, 'failed');
-                        return ['status' => 'error', 'message' => 'Payment failed'];
+                        return $this->paymentModel->savePayment($user_id, $order_id, 'card', 'failed', $transaction_id, $amount);
                     }
                 } catch (\Exception $e) {
                     return ['status' => 'error', 'message' => $e->getMessage()];
@@ -50,12 +45,11 @@ class PaymentController {
                 return ['status' => 'error', 'message' => 'Stripe token missing'];
             }
         } else if ($payment_method == 'cash') {
-            $this->paymentModel->savePayment($user_id, $order_id, 'cash', 'pending', null, $amount);
-            $this->orderModel->updateOrderStatus($order_id, 'pending');
-            return ['status' => 'success'];
+            return $this->paymentModel->savePayment($user_id, $order_id, 'cash', 'pending', null, $amount);
         } else {
             return ['status' => 'error', 'message' => 'Invalid payment method'];
         }
+
     }
     // public function processPayment($order_id, $user_id, $payment_method, $amount) {
 
