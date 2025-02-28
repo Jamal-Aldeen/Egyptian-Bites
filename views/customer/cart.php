@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
             throw new Exception('Cart is empty');
         }
 
-        // Server-side total calculation
         $total = array_reduce($cart, function($sum, $item) {
             return $sum + ($item['price'] * $item['quantity']);
         }, 0);
@@ -37,12 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
 
 $cart = json_decode($_POST['cart_data'] ?? '[]', true);
 ?>
+<?php include '../layouts/header.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Your Cart</title>
+    <link rel="stylesheet" href="/public/css/order-payment.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         .btn-add-cart {
@@ -208,7 +209,7 @@ $cart = json_decode($_POST['cart_data'] ?? '[]', true);
         <button type="submit" class="btn btn-success">Confirm Order</button>
     </form>
 </div>
-
+<?php include '../layouts/footer.php'; ?>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
