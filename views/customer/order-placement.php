@@ -4,6 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
+require_once __DIR__ . '/../../config/db.php'; 
 require_once __DIR__ . '/../../controllers/OrderController.php';
 
 $error = '';
@@ -15,10 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
             throw new Exception('You must be logged in to place an order');
         }
 
-
         $cart = json_decode($_POST['cart_data'], true);
         var_dump($cart);  
-
 
         foreach ($cart as $item) {
             if (!isset($item['category_id']) || !is_numeric($item['category_id'])) {
@@ -26,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
                 exit;
             }
         }
-        
+
         if (empty($cart)) {
             throw new Exception('Cart is empty');
         }
@@ -35,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
             return $sum + ($item['price'] * $item['quantity']);
         }, 0);
 
-        $orderController = new OrderController();
+        $orderController = new OrderController($pdo);
         $order_id = $orderController->placeOrder($_SESSION['user_id'], $cart, $total); 
 
         if ($order_id) {
@@ -57,6 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Confirmation</title>
 </head>
 <body>
