@@ -9,44 +9,66 @@ class Order {
     }
 
     public function createOrder($user_id, $total_price, $items) {
-        $this->pdo->beginTransaction();
         try {
 
+            $this->pdo->beginTransaction();
+
+            $query = "INSERT INTO Orders (user_id, total_price, status, payment_status, created_at)
+                      VALUES (:user_id, :total_price, 'Pending', 'Pending', NOW())";
+            $stmt = $this->pdo->prepare($query);
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':total_price', $total_price);
+            $stmt->execute();
+            $order_id = $this->pdo->lastInsertId(); 
+
             foreach ($items as $item) {
-                $checkStmt = $this->pdo->prepare("SELECT id FROM MenuItems WHERE id = ?");
-                $checkStmt->execute([$item['id']]);
-                if (!$checkStmt->fetch()) {
-                    throw new Exception("Item not exist: #" . $item['id']);
-                }
+                $query = "INSERT INTO OrderItems (order_id, menu_item_id, quantity)
+                          VALUES (:order_id, :menu_item_id, :quantity)";
+                $stmt = $this->pdo->prepare($query);
+                $stmt->bindParam(':order_id', $order_id);
+                $stmt->bindParam(':menu_item_id', $item['id']);
+                $stmt->bindParam(':quantity', $item['quantity']);
+                $stmt->execute();
             }
-    
 
-            $stmt = $this->pdo->prepare(
-                "INSERT INTO Orders (user_id, total_price, status, created_at, items) 
-                VALUES (?, ?, 'Pending', NOW(), ?)"
-            );
-            
-
-            $items_json = json_encode($items);
-            
-            $stmt->execute([$user_id, $total_price, $items_json]);
-            
-            $order_id = $this->pdo->lastInsertId();
-    
-
-            if (!empty($items)) {
-                $this->addOrderItems($order_id, $items);
-            }
-    
             $this->pdo->commit();
             return $order_id;
+
         } catch (Exception $e) {
+
             $this->pdo->rollBack();
+            error_log("Order creation failed: " . $e->getMessage());
             throw new Exception("Order creation failed: " . $e->getMessage());
         }
     }
     
 
+
+
+    public function updateOrderStatusAndPaymentStatus($order_id, $status, $payment_status) {
+        $validStatuses = ['Pending', 'Preparing', 'Ready', 'Delivered']; 
+        $validPaymentStatuses = ['Pending', 'Completed', 'Failed']; 
+    
+        if (!in_array($status, $validStatuses)) {
+            throw new Exception("Invalid order status: " . $status);
+        }
+    
+        if (!in_array($payment_status, $validPaymentStatuses)) {
+            throw new Exception("Invalid payment status: " . $payment_status); 
+        }
+    
+        $query = "UPDATE Orders SET status = :status, payment_status = :payment_status WHERE id = :order_id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':payment_status', $payment_status);
+        $stmt->bindParam(':order_id', $order_id);
+    
+        if ($stmt->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     public function addOrderItems($order_id, $items) {
         $stmt = $this->pdo->prepare("INSERT INTO OrderItems (order_id, menu_item_id, quantity) VALUES (?, ?, ?)");
@@ -70,13 +92,17 @@ class Order {
 
 
 
-    public function updateOrderStatus($order_id, $status) {
-        $query = "UPDATE Orders SET status = :status WHERE id = :order_id";
+    public function updateOrderStatus($order_id, $status, $payment_status) {
+        $query = "UPDATE Orders SET status = :status, payment_status = :payment_status WHERE id = :order_id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':payment_status', $payment_status);
         $stmt->bindParam(':order_id', $order_id);
-        return $stmt->execute();
+        $stmt->execute();
     }
+    
+    
+    
 
 
     public function getAllOrders($limit, $offset) {
