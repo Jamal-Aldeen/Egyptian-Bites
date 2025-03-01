@@ -1,0 +1,82 @@
+/* === Order & Payment Pages Styles === */
+.order-container {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 20px;
+}
+
+/* Buttons */
+.btn-main {
+    background-color: #d4af37;
+    color: #fff;
+    padding: 12px 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn-main:hover {
+    background-color: #b08a2e;
+}
+
+.btn-checkout {
+    width: 100%;
+    background-color: #28a745;
+    color: #fff;
+    padding: 14px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.btn-checkout:hover {
+    background-color: #218838;
+}
+
+/* Order Summary */
+.order-summary {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-summary h3 {
+    font-size: 1.6rem;
+    color: #d4af37;
+    font-weight: bold;
+}
+
+/* Progress Bar */
+.progress {
+    height: 20px;
+    border-radius: 10px;
+    background-color: #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 20px;
+    transition: width 0.4s ease;
+}
+
+/* Payment Section */
+.payment-method {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.payment-method h3 {
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: bold;
+}
