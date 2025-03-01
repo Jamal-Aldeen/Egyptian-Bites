@@ -209,6 +209,14 @@ if (count($_POST) > 0) {
                             <a href="/views/customer/reservation.php" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Book New Reservation
                             </a>
+                            <!-- Order History Button -->
+                            <a href="/views/customer/order-history.php" class="btn btn-secondary w-100 mt-2">
+                                <i class="fas fa-history me-2 text-center"> Order History </i>
+                            </a>
+                            <!-- Order Tracking Button -->
+                            <a href="/views/customer/order-tracking.php" class="btn btn-secondary w-100 mt-2">
+                                <i class="fas fa-truck me-2 text-center"> Order Tracking </i>
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -35,17 +35,8 @@ CREATE TABLE `Feedback` (
   CONSTRAINT `Feedback_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`),
   CONSTRAINT `Feedback_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `Orders` (`id`),
   CONSTRAINT `Feedback_chk_1` CHECK ((`rating` between 1 and 5))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Feedback`
---
-
-LOCK TABLES `Feedback` WRITE;
-/*!40000 ALTER TABLE `Feedback` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Feedback` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `Inventory`
@@ -62,17 +53,8 @@ CREATE TABLE `Inventory` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Inventory`
---
-
-LOCK TABLES `Inventory` WRITE;
-/*!40000 ALTER TABLE `Inventory` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Inventory` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `MenuCategories`
@@ -87,17 +69,8 @@ CREATE TABLE `MenuCategories` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `MenuCategories`
---
-
-LOCK TABLES `MenuCategories` WRITE;
-/*!40000 ALTER TABLE `MenuCategories` DISABLE KEYS */;
-/*!40000 ALTER TABLE `MenuCategories` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `MenuItems`
@@ -108,7 +81,7 @@ DROP TABLE IF EXISTS `MenuItems`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `MenuItems` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `category_id` int NOT NULL,
+  `category_id` int DEFAULT NULL,
   `name` varchar(100) NOT NULL,
   `description` text,
   `price` decimal(10,2) NOT NULL,
@@ -117,19 +90,10 @@ CREATE TABLE `MenuItems` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `category_id` (`category_id`),
-  CONSTRAINT `MenuItems_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `MenuCategories` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `MenuItems_ibfk_1` (`category_id`),
+  CONSTRAINT `MenuItems_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `MenuCategories` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `MenuItems`
---
-
-LOCK TABLES `MenuItems` WRITE;
-/*!40000 ALTER TABLE `MenuItems` DISABLE KEYS */;
-/*!40000 ALTER TABLE `MenuItems` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `OrderItems`
@@ -148,20 +112,11 @@ CREATE TABLE `OrderItems` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`),
-  KEY `menu_item_id` (`menu_item_id`),
+  KEY `OrderItems_ibfk_2` (`menu_item_id`),
   CONSTRAINT `OrderItems_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `Orders` (`id`),
-  CONSTRAINT `OrderItems_ibfk_2` FOREIGN KEY (`menu_item_id`) REFERENCES `MenuItems` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `OrderItems_ibfk_2` FOREIGN KEY (`menu_item_id`) REFERENCES `MenuItems` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `OrderItems`
---
-
-LOCK TABLES `OrderItems` WRITE;
-/*!40000 ALTER TABLE `OrderItems` DISABLE KEYS */;
-/*!40000 ALTER TABLE `OrderItems` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `Orders`
@@ -178,19 +133,10 @@ CREATE TABLE `Orders` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `Orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `Orders_ibfk_1` (`user_id`),
+  CONSTRAINT `Orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Orders`
---
-
-LOCK TABLES `Orders` WRITE;
-/*!40000 ALTER TABLE `Orders` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Orders` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `Payments`
@@ -209,17 +155,8 @@ CREATE TABLE `Payments` (
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`),
   CONSTRAINT `Payments_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `Orders` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Payments`
---
-
-LOCK TABLES `Payments` WRITE;
-/*!40000 ALTER TABLE `Payments` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Payments` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `Reservations`
@@ -238,19 +175,10 @@ CREATE TABLE `Reservations` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  CONSTRAINT `Reservations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `Reservations_ibfk_1` (`user_id`),
+  CONSTRAINT `Reservations_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Reservations`
---
-
-LOCK TABLES `Reservations` WRITE;
-/*!40000 ALTER TABLE `Reservations` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Reservations` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `SpecialOffers`
@@ -269,19 +197,10 @@ CREATE TABLE `SpecialOffers` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `menu_item_id` (`menu_item_id`),
-  CONSTRAINT `SpecialOffers_ibfk_1` FOREIGN KEY (`menu_item_id`) REFERENCES `MenuItems` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `SpecialOffers_ibfk_1` (`menu_item_id`),
+  CONSTRAINT `SpecialOffers_ibfk_1` FOREIGN KEY (`menu_item_id`) REFERENCES `MenuItems` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `SpecialOffers`
---
-
-LOCK TABLES `SpecialOffers` WRITE;
-/*!40000 ALTER TABLE `SpecialOffers` DISABLE KEYS */;
-/*!40000 ALTER TABLE `SpecialOffers` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `UserAddresses`
@@ -302,17 +221,8 @@ CREATE TABLE `UserAddresses` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `UserAddresses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `UserAddresses`
---
-
-LOCK TABLES `UserAddresses` WRITE;
-/*!40000 ALTER TABLE `UserAddresses` DISABLE KEYS */;
-/*!40000 ALTER TABLE `UserAddresses` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `Users`
@@ -332,20 +242,31 @@ CREATE TABLE `Users` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `verified` tinyint(1) DEFAULT '0',
   `verification_token` varchar(255) DEFAULT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_expiry` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `Users`
+-- Table structure for table `notifications`
 --
 
-LOCK TABLES `Users` WRITE;
-/*!40000 ALTER TABLE `Users` DISABLE KEYS */;
-INSERT INTO `Users` VALUES (1,'gamal','gamal@gmail.com','$2y$10$K0RXY88mxCBbmEl4QB8LqOWxXvpLE2qsFjqABe2szA0K9hhzMCGPW','Customer','1739061897_277c997872.jpg','2025-02-09 00:44:57','2025-02-09 00:44:57',0,'425998e5afec4553d0d184ac178e5cb2'),(2,'jamal','jamal@gmail.com','$2y$10$VW7fZeMfLbubXEfbA.OJaeiXLC92OsJWYDzF5qB/c/KstIgs67WyW','Customer','1739329757_3a28d2b17a.png','2025-02-12 03:09:17','2025-02-12 03:09:17',0,'8083e2866b0ad0a5352d9219cecc5e4d');
-/*!40000 ALTER TABLE `Users` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `notifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notifications` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `message` text COLLATE utf8mb4_general_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -356,37 +277,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-12  6:43:12
-
-
-CREATE TABLE Payments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    order_id INT NOT NULL,
-    payment_method ENUM('card', 'cash') NOT NULL,
-    status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
-    transaction_id VARCHAR(255) NULL,
-    amount DECIMAL(10,2) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES Users(id),
-    FOREIGN KEY (order_id) REFERENCES Orders(id)
-);
-
-
-CREATE TABLE addresses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    label VARCHAR(255) NOT NULL,
-    address_line1 VARCHAR(255) NOT NULL,
-    address_line2 VARCHAR(255) NULL,
-    city VARCHAR(100) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
-);
-CREATE TABLE notifications (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    title VARCHAR(255),
-    message TEXT,
-    status VARCHAR(255) DEFAULT 'unread',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- Dump completed on 2025-02-22 20:47:49

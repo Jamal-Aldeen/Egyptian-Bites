@@ -102,6 +102,12 @@ if (isset($_SESSION['error'])) {
                                 <i class="fas fa-chart-bar"></i> Sales Reports
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white <?= basename($_SERVER['PHP_SELF']) == 'order-management.php' ? 'active' : '' ?>"
+                                href="/views/staff/order-management.php">
+                                <i class="fas fa-cogs"></i> Order Management
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Logout Button at the Bottom -->
