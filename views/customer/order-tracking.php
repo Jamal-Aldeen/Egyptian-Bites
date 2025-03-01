@@ -3,21 +3,28 @@ session_start();
 require_once __DIR__ . '/../../config/db.php';  
 require_once __DIR__ . '/../../controllers/OrderController.php';
 
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['order_id'])) {
+$order_id = $_GET['order_id'] ?? null;
+if (!$order_id) {
     header("Location: /");
     exit();
 }
 
 $orderController = new OrderController($pdo);
-$order = $orderController->getOrderDetails($_SESSION['order_id']);
+$order = $orderController->getOrderDetails($order_id);
 
-if (!$order) {
-    echo "<div class='alert alert-danger text-center'>Order not found.</div>";
+if (empty($order) || !isset($order['status'])) {
+    echo "<div class='alert alert-danger text-center'>Order status not available.</div>";
     exit();
 }
 
-$statuses = ['pending', 'processing', 'shipped', 'delivered'];
+$statuses = ['Pending', 'Preparing', 'Ready', 'Delivered'];
 $currentStage = array_search($order['status'], $statuses);
+
+if ($currentStage === false) {
+    echo "<div class='alert alert-danger text-center'>Invalid order status: " . htmlspecialchars($order['status']) . "</div>";
+    exit();
+}
+
 ?>
 
 <?php include '../layouts/header.php'; ?>
@@ -48,33 +55,35 @@ $currentStage = array_search($order['status'], $statuses);
 </head>
 <body>
 
-<div class="container mt-5">
-    <h2 class="text-center">Order Tracking</h2>
+<div class="container">
+    <h2>Order Tracking</h2>
+    <p>Order Number: #<?= htmlspecialchars($order['id']) ?></p>
+    <p>Total Amount: $<?= number_format($order['total_price'], 2) ?></p>
+    <p>Payment Status: <?= ucfirst(htmlspecialchars($order['payment_status'])) ?></p>
 
-    <div class="alert alert-info text-center">
-        <p><strong>Order Number:</strong> #<?= $order['id'] ?></p>
-        <p><strong>Total Amount:</strong> $<?= number_format($order['total_price'], 2) ?></p>
-        <p><strong>Payment Status:</strong> <?= ucfirst($order['status']) ?></p>
+    <h4>Items in Your Order:</h4>
+    <ul>
+        <?php foreach ($order['items'] as $item): ?>
+            <li><?= htmlspecialchars($item['name']) ?> (x<?= $item['quantity'] ?>)</li>
+        <?php endforeach; ?>
+    </ul>
+
+    <h4>Order Progress</h4>
+    <div class="progress">
+        <?php foreach ($statuses as $index => $status): ?>
+            <div class="progress-bar <?= $index <= $currentStage ? 'bg-success' : 'bg-light text-dark' ?>" 
+                 style="width: <?= 100 / count($statuses) ?>%;">
+                <?= ucfirst($status) ?>
+            </div>
+        <?php endforeach; ?>
     </div>
 
-    <div class="mt-4">
-        <h4 class="text-center">Order Progress</h4>
-        <div class="progress">
-            <?php foreach ($statuses as $index => $status): ?>
-                <div class="progress-bar <?= $index <= $currentStage ? 'bg-success' : 'bg-light text-dark' ?>" 
-                     style="width: <?= 100 / count($statuses) ?>%;">
-                    <?= ucfirst($status) ?>
-                </div>
-            <?php endforeach; ?>
-        </div>
-
-        <div class="status-label">
-            Current Status: <strong><?= ucfirst($statuses[$currentStage]) ?></strong>
-        </div>
+    <div class="status-label">
+        Current Status: <strong><?= ucfirst($statuses[$currentStage]) ?></strong>
     </div>
-
-    <a href="/views/customer/order-history.php" class="btn btn-primary mt-4">View Order History</a>
 </div>
+
+<a href="/views/customer/order-history.php" class="btn btn-primary mt-4">View Order History</a>
 
 <?php include '../layouts/footer.php'; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
