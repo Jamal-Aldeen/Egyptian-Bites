@@ -1,5 +1,4 @@
 <?php
-
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -7,6 +6,8 @@ require_once __DIR__ . '/../config/stripe.php';
 require_once __DIR__ . '/../models/Payment.php';
 require_once __DIR__ . '/../models/Order.php'; 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php'; 
+use setasign\Fpdi\Fpdi;
 
 class PaymentController {
     private $paymentModel;
@@ -17,124 +18,109 @@ class PaymentController {
         $this->paymentModel = new Payment($pdo);
         $this->orderModel = new Order($pdo); 
     }
+
     public function processPayment($order_id, $user_id, $payment_method, $amount) {
-        error_log("Processing payment for Order ID: $order_id, User ID: $user_id, Method: $payment_method, Amount: $amount");
+        $payment_status = '';
+        $order_status = '';
+        $transaction_id = null; 
         if ($payment_method == 'card') {
-            if (isset($_POST['stripeToken'])) {
-                error_log("Stripe Token: " . $_POST['stripeToken']);
-                \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
-                try {
-                    $charge = \Stripe\Charge::create([
-                        'amount' => $amount * 100, 
-                        'currency' => 'usd',
-                        'source' => $_POST['stripeToken'], 
-                        'description' => "Payment for Order #$order_id"
-                    ]);
-                    $transaction_id = $charge->id;
-                    error_log("Transaction ID: " . $transaction_id);
-                    
-                    if ($charge->status == 'succeeded') {
-                        return $this->paymentModel->savePayment($user_id, $order_id, 'card', 'completed', $transaction_id, $amount);
-                    } else {
-                        return $this->paymentModel->savePayment($user_id, $order_id, 'card', 'failed', $transaction_id, $amount);
-                    }
-                } catch (\Exception $e) {
-                    return ['status' => 'error', 'message' => $e->getMessage()];
-                }
-            } else {
+            if (!isset($_POST['stripeToken'])) {
                 return ['status' => 'error', 'message' => 'Stripe token missing'];
             }
+
+            \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
+            try {
+                $charge = \Stripe\Charge::create([
+                    'amount' => $amount * 100, 
+                    'currency' => 'usd',
+                    'source' => $_POST['stripeToken'],
+                    'description' => "Payment for Order #$order_id"
+                ]);
+
+                $transaction_id = $charge->id;
+
+                if ($charge->status == 'succeeded') {
+                    $payment_status = 'Completed'; 
+                    $order_status = 'Preparing';
+                    $this->sendNotification($user_id, "Payment completed for Order #$order_id");
+                } else {
+                    $payment_status = 'Failed'; 
+                    $order_status = 'Pending'; 
+                }
+
+                if (strlen($transaction_id) > 255) {
+                    throw new Exception("Transaction ID exceeds maximum length");
+                }
+
+            } catch (\Exception $e) {
+                $this->paymentModel->savePayment(
+                    $user_id, 
+                    $order_id, 
+                    'card', 
+                    'Failed', 
+                    null, 
+                    $amount
+                );
+                return ['status' => 'error', 'message' => $e->getMessage()];
+            }
+
         } else if ($payment_method == 'cash') {
-            return $this->paymentModel->savePayment($user_id, $order_id, 'cash', 'pending', null, $amount);
+            $payment_status = 'Pending'; 
+            $order_status = 'Pending'; 
         } else {
             return ['status' => 'error', 'message' => 'Invalid payment method'];
         }
 
+        if (!in_array($payment_status, ['Pending', 'Completed', 'Failed'])) {
+            return ['status' => 'error', 'message' => "Invalid payment status: $payment_status"];
+        }
+
+        if (!in_array($order_status, ['Pending', 'Preparing', 'Ready', 'Delivered'])) {
+            return ['status' => 'error', 'message' => "Invalid order status: $order_status"];
+        }
+
+        $this->paymentModel->savePayment(
+            $user_id, 
+            $order_id, 
+            $payment_method, 
+            $payment_status, 
+            $transaction_id, 
+            $amount
+        );
+
+        $this->orderModel->updateOrderStatusAndPaymentStatus(
+            $order_id, 
+            $order_status, 
+            $payment_status
+        );
+
+        session_write_close();
+        header("Location: /views/customer/order-tracking.php?order_id=$order_id");
+        exit();
     }
-    // public function processPayment($order_id, $user_id, $payment_method, $amount) {
 
-    //     if ($payment_method == 'card') {
-    //         if (isset($_POST['stripeToken'])) {
-    //             \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
-    //             try {
-
-    //                 $charge = \Stripe\Charge::create([
-    //                     'amount' => $amount * 100, 
-    //                     'currency' => 'usd',
-    //                     'source' => $_POST['stripeToken'], 
-    //                     'description' => "Payment for Order #$order_id"
-    //                 ]);
-    //                 $transaction_id = $charge->id;
-    //                 if (strlen($transaction_id) > 255) {
-    //                     throw new Exception("Transaction ID exceeds the maximum length of 255 characters.");
-    //                 }
-                    
-    //                 if ($charge->status == 'succeeded') {
-    //                     $this->paymentModel->savePayment($user_id, $order_id, 'card', 'completed', $transaction_id, $amount);
-    //                     $this->orderModel->updateOrderStatus($order_id, 'completed'); 
-    //                     return ['status' => 'success'];
-
-
-    //                 } else {
-    //                     $this->paymentModel->savePayment($user_id, $order_id, 'card', 'failed', $transaction_id, $amount);
-    //                     $this->orderModel->updateOrderStatus($order_id, 'pending'); 
-    //                     return ['status' => 'error', 'message' => 'Payment failed'];
-    //                 }
-    //             } catch (\Exception $e) {
-    //                 return ['status' => 'error', 'message' => $e->getMessage()];
-    //             }
-    //         } else {
-    //             return ['status' => 'error', 'message' => 'Stripe token missing'];
-    //         }
-    //     } else if ($payment_method == 'cash') {
-
-    //         $this->paymentModel->savePayment($user_id, $order_id, 'cash', 'pending', null, $amount);
-    //         $this->orderModel->updateOrderStatus($order_id, 'pending');                   
-    //         return ['status' => 'success'];
-    //     } else {
-    //         return ['status' => 'error', 'message' => 'Invalid payment method'];
-    //     }
-    // }
+    private function sendNotification($user_id, $message) {
+        global $pdo;
+        $stmt = $pdo->prepare("INSERT INTO notifications (user_id, title, message) VALUES (:user_id, 'Payment Update', :message)");
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':message', $message);
+        $stmt->execute();
+    }
     
-    // public function processPayment($order_id, $user_id, $payment_method, $amount) {
-    //     if ($payment_method == 'card') {
-    //         if (isset($_POST['stripeToken'])) {
-    //             \Stripe\Stripe::setApiKey(STRIPE_API_KEY);
-    //             try {
-    //                 // Stripe Payment Process
-    //                 $charge = \Stripe\Charge::create([
-    //                     'amount' => $amount * 100, 
-    //                     'currency' => 'usd',
-    //                     'source' => $_POST['stripeToken'], 
-    //                     'description' => "Payment for Order #$order_id"
-    //                 ]);
-    //                 $transaction_id = $charge->id;
-    //                 if (strlen($transaction_id) > 255) {
-    //                     throw new Exception("Transaction ID exceeds the maximum length of 255 characters.");
-    //                 }
-    //                 if ($charge->status == 'succeeded') {
-    //                     $this->orderModel->updateOrderStatus($order_id, 'completed'); 
-    //                     return ['status' => 'success'];
-    //                 }else {
-    //                     $this->orderModel->updateOrderStatus($order_id, 'pending'); 
-    //                     return ['status' => 'success'];
-    //                 }
-    //                 $this->paymentModel->savePayment($user_id, $order_id, 'card', 'completed', $transaction_id, $amount);
-    //                 return ['status' => 'success'];
-    //             } catch (\Exception $e) {
-    //                 return ['status' => 'error', 'message' => $e->getMessage()];
-    //             }
-    //         } else {
-    //             return ['status' => 'error', 'message' => 'Stripe token missing'];
-    //         }
-    //     } else {
-    //         // Cash on Delivery Payment - Save and Update Order status to 'pending'
-    //         $this->paymentModel->savePayment($user_id, $order_id, 'cash', 'pending', null, $amount);
-    //         $this->orderModel->updateOrderStatus($order_id, 'pending');                   
-    //         return ['status' => 'success'];
-    //     }
-    // }
-
 }
 
+// function generateInvoice($order_id, $total_amount) {
+//     // require('fpdf.php');
+//     $pdf = new FPDF();
+//     $pdf->AddPage();
+//     $pdf->SetFont('Arial', 'B', 16);
+//     $pdf->Cell(40, 10, 'Invoice for Order #' . $order_id);
+//     $pdf->Ln();
+//     $pdf->Cell(40, 10, 'Total Amount: $' . $total_amount);
+//     $pdf->Output('F', 'invoices/invoice_' . $order_id . '.pdf');
+// }
+
+// if (!file_exists('invoices')) {
+//     mkdir('invoices', 0777, true);
+// }
 ?>
