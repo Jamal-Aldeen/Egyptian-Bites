@@ -1,18 +1,18 @@
 <?php
-session_start();
-require_once __DIR__ . '/../../config/db.php';  
-require_once __DIR__ . '/../../controllers/OrderController.php';
+require_once __DIR__ . '/../../controllers/OrderController.php'; 
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /views/shared/login.php"); 
+    header('Location: /views/shared/login.php');
     exit();
 }
 
-$sortOrder = isset($_GET['sort']) && $_GET['sort'] == 'asc' ? 'ASC' : 'DESC';  
+$sortOrder = isset($_GET['sort']) && $_GET['sort'] === 'asc' ? 'asc' : 'desc'; 
 
 $orderController = new OrderController($pdo);
-$orders = $orderController->getOrderHistory($_SESSION['user_id'], $sortOrder); 
+
+$orders = $orderController->getOrderHistory($_SESSION['user_id'], $sortOrder);
 ?>
+
 
 <?php include '../layouts/header.php'; ?>
 <!DOCTYPE html>
@@ -55,11 +55,18 @@ $orders = $orderController->getOrderHistory($_SESSION['user_id'], $sortOrder);
                         <td><?= ucfirst($order['status']) ?></td>
                         <td><?= date('d M Y', strtotime($order['created_at'])) ?></td>
                         <td>
-                            <form method="POST" action="Reorder.php">
-                                <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-                                <button type="submit" class="btn btn-warning btn-sm">Reorder</button>
-                            </form>
-                        </td>
+
+                    <form method="POST" action="Reorder.php" style="display: inline-block; margin-right: 10px;">
+                        <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                        <button type="submit" class="btn btn-warning btn-sm">Reorder</button>
+                    </form>
+    
+                    <form method="POST" action="order-tracking.php" style="display: inline-block; margin-right: 10px;">
+                        <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+                        <button type="submit" class="btn btn-info btn-sm">Track Order</button>
+                    </form>
+                    </td>
+
                     </tr>
                 <?php endforeach; ?>
             </tbody>
