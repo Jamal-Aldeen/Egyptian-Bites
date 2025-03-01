@@ -1,236 +1,106 @@
-# Egyptian-Bites
+# Egyptian-Bites 🍽️
 
-### **Folder Structure**
+Welcome to **Egyptian-Bites**, a comprehensive web-based restaurant management system designed to streamline operations for modern dining establishments. Manage users, menus, inventory, orders, reservations, and more with an intuitive dashboard and robust backend.
 
-```
-restaurant-app/
-├── config/
-│   ├── db.php                # Database configuration
-├── controllers/
-│   ├── StaffController.php   # Handles staff-related logic
-│   ├── CustomerController.php # Handles customer-related logic
-│   ├── OrderController.php    # Handles order-related logic
-│   ├── ReservationController.php # Handles reservation-related logic
-├── models/
-│   ├── User.php              # User model (Staff/Customer)
-│   ├── Menu.php              # Menu model
-│   ├── Order.php             # Order model
-│   ├── Reservation.php       # Reservation model
-│   ├── Inventory.php         # Inventory model
-├── views/
-│   ├── layouts/
-│   │   ├── header.php        # Common header
-│   │   ├── footer.php        # Common footer
-│   ├── staff/
-│   │   ├── dashboard.php     # Staff dashboard
-│   │   ├── menu-management.php # Manage menu items
-│   │   ├── order-management.php # Manage orders
-│   │   ├── reservation-management.php # Manage reservations
-│   ├── customer/
-│   │   ├── menu.php          # Customer menu browsing
-│   │   ├── order-placement.php # Place orders
-│   │   ├── reservation.php   # Book tables
-│   ├── shared/
-│   │   ├── login.php         # Login form
-│   │   ├── register.php      # Registration form
-├── public/
-│   ├── css/
-│   │   ├── styles.css        # Custom CSS
-│   ├── js/
-│   │   ├── scripts.js        # Custom JavaScript
-│   ├── images/               # Store images
-├── index.php                 # Entry point of the application
-└── .env                      # Environment variables (optional)
-```
+## Features 🌟
 
----
+- **User Management:**
+  - Secure login for staff and administrators.
+  - Role-based access for managing users and permissions.
+  - Edit, delete, and update user information easily.
 
-### **Explanation of Folder Structure**
-1. **`config/`**: Contains configuration files, such as database settings.
-2. **`controllers/`**: Houses all the controller classes responsible for handling business logic.
-3. **`models/`**: Contains all the model classes that interact with the database.
-4. **`views/`**: Stores HTML templates for different user interfaces.
-5. **`public/`**: Holds static assets like CSS, JavaScript, and images.
-6. **`index.php`**: Acts as the entry point for the application.
-7. **`.env`**: Optional file for storing environment-specific configurations.
+- **Menu & Special Offers:**
+  - Add, edit, and delete menu items and categories.
+  - Upload images for menu items.
+  - Create and manage special offers with discount types and validity dates.
 
----
+- **Inventory Management:**
+  - Track stock levels and set reorder thresholds.
+  - Add new items and manage existing inventory seamlessly.
 
-### **Example Files**
+- **Dashboard & Reports:**
+  - View key metrics such as total sales, active orders, and upcoming reservations.
+  - Generate detailed sales reports with export options (CSV and PDF).
 
-#### 1. `config/db.php` (Database Configuration)
-```php
-<?php
-class Database {
-    private $host = "localhost";
-    private $db_name = "restaurant_db";
-    private $username = "root";
-    private $password = "";
-    public $conn;
+- **Reservations:**
+  - Manage customer reservations with real-time status updates.
+  - Confirm or cancel reservations through an interactive interface.
 
-    public function connect() {
-        try {
-            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            return $this->conn;
-        } catch (PDOException $e) {
-            echo "Connection Error: " . $e->getMessage();
-        }
-    }
-}
-?>
-```
+## How to Use 
 
----
+1. **Admin Login:**
+   - Navigate to the admin login page and sign in with your credentials.
+2. **Manage Users:**
+   - Use the user management panel to update roles, delete users, or add new staff.
+3. **Update Menu:**
+   - Access the menu management section to add new dishes, update descriptions, and change images.
+4. **Track Inventory:**
+   - Monitor stock levels, add items, and set reorder alerts in the inventory management section.
+5. **View Reports:**
+   - Filter sales data by date and export reports to CSV or PDF.
+6. **Handle Reservations:**
+   - Confirm or cancel customer reservations directly from the dashboard.
 
-#### 2. `models/User.php` (User Model)
-```php
-<?php
-class User {
-    private $conn;
-    private $table = "users";
+## Screenshots 
 
-    public $id;
-    public $name;
-    public $email;
-    public $password;
-    public $role; // 'staff' or 'customer'
+### Extended Gallery
+- **Home Page:**  
+  ![Home Page](documentation/home-page.jpeg)
+- **Login Screen:**  
+  ![Login Screen](documentation/login-screen.jpeg)
+  - **User Registration Page:**  
+  ![User Registration](documentation/user-registration.jpeg)
+- **Detailed Menu View:**  
+  ![Detailed Menu View](documentation/detailed-menu.jpeg)
+- **Reservation Generation Page:**  
+  ![Reservation Generation](documentation/Reservation-generation.jpeg)
+- **Order Processing:**  
+  ![Order Processing](documentation/order-processing.jpeg)
+- **Special Offers Display:**  
+  ![Special Offers](documentation/special-offers.jpeg)
+- **Items Update Screen:**  
+  ![Items Update](documentation/Items-update.jpeg)
+- **User Profile:**  
+  ![User Dashboard](documentation/user-profile.jpeg)
+  - **Reservation Management:**  
+  ![Reservation Management](documentation/reservation-management.jpeg)
 
-    public function __construct($db) {
-        $this->conn = $db;
-    }
+### Core Functionality
+- **Dashboard Overview:**  
+  ![Dashboard Overview](documentation/dashboard.jpeg)
+- **User Management:**  
+  ![User Management](documentation/user-management.jpeg)
+- **Menu Management:**  
+  ![Menu Management](documentation/menu-management.jpeg)
+- **Inventory & Reports:**  
+  ![Inventory & Reports](documentation/inventory-reports.jpeg)
 
-    public function register() {
-        $query = "INSERT INTO {$this->table} (name, email, password, role) VALUES (:name, :email, :password, :role)";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':name', $this->name);
-        $stmt->bindParam(':email', $this->email);
-        $stmt->bindParam(':password', $this->password);
-        $stmt->bindParam(':role', $this->role);
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
-    }
+## Installation 🛠️
 
-    public function login($email, $password) {
-        $query = "SELECT * FROM {$this->table} WHERE email = :email AND password = :password";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $password);
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-}
-?>
-```
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/Jamal-Aldeen/Egyptian-Bites.git
+   cd Egyptian-Bites
+   ```
+2. **Setup the Environment:**
+   - Ensure you have PHP, MySQL, and a web server (Apache) installed.
+   - Import the provided SQL schema to initialize your database.
+3. **Configuration:**
+   - Update the database credentials in the `/config/db.php` file.
+   - Set proper permissions for the `/public/uploads/` directory to allow file uploads.
+4. **Launch the Application:**
+   - Configure your web server to serve the project directory.
+   - Open your browser and navigate to your project URL (e.g., `http://localhost/Egyptian-Bites`).
 
----
+## Technologies Used 💻
 
-#### 3. `controllers/StaffController.php` (Staff Controller)
-```php
-<?php
-include_once '../models/User.php';
-include_once '../config/db.php';
+- **PHP**: Server-side processing and backend logic.
+- **MySQL**: Database management for storing user, order, and inventory data.
+- **Bootstrap 5**: Responsive design and styling.
+- **JavaScript (AJAX)**: Dynamic content updates and interactive features.
+- **HTML5 & CSS3**: Structure and presentation of the web application.
 
-class StaffController {
-    private $db;
-    private $user;
+## Acknowledgments 🙏
 
-    public function __construct() {
-        $database = new Database();
-        $this->db = $database->connect();
-        $this->user = new User($this->db);
-    }
-
-    public function manageMenu() {
-        // Logic to fetch and display menu items for staff
-        include '../views/staff/menu-management.php';
-    }
-
-    public function updateMenuItem($itemId, $newPrice) {
-        // Logic to update menu item price
-        echo "Updated menu item $itemId with new price $newPrice";
-    }
-}
-?>
-```
-
----
-
-#### 4. `views/layouts/header.php` (Bootstrap Header)
-```php
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant App</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../public/css/styles.css">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="#">Restaurant App</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="login.php">Login</a></li>
-                    <li class="nav-item"><a class="nav-link" href="register.php">Register</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-```
-
----
-
-#### 5. `views/customer/menu.php` (Customer Menu Page)
-```php
-<?php include '../layouts/header.php'; ?>
-<div class="container mt-5">
-    <h1 class="text-center">Our Menu</h1>
-    <div class="row">
-        <!-- Example menu item -->
-        <div class="col-md-4">
-            <div class="card">
-                <img src="../public/images/pizza.jpg" class="card-img-top" alt="Pizza">
-                <div class="card-body">
-                    <h5 class="card-title">Margherita Pizza</h5>
-                    <p class="card-text">Delicious pizza with fresh ingredients.</p>
-                    <p class="card-text"><strong>Price:</strong> $10</p>
-                    <a href="#" class="btn btn-primary">Add to Cart</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<?php include '../layouts/footer.php'; ?>
-```
-
----
-
-#### 6. `index.php` (Entry Point)
-```php
-<?php
-session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: views/shared/login.php");
-    exit;
-}
-
-// Load appropriate page based on user role
-$userRole = $_SESSION['role'];
-if ($userRole === 'staff') {
-    include 'views/staff/dashboard.php';
-} elseif ($userRole === 'customer') {
-    include 'views/customer/menu.php';
-}
-?>
-```
-
----
+- **Assets:** All images, icons, and design elements are either custom-created or sourced from free-to-use resources.
+- **Inspiration:** Developed with inspiration from modern restaurant management solutions and designed to provide an all-in-one management experience.

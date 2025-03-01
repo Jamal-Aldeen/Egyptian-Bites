@@ -112,24 +112,89 @@ document.addEventListener("DOMContentLoaded", function () {
         cartDataInput.value = JSON.stringify(cart);
     }
 
+document.addEventListener("DOMContentLoaded", function () {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartList = document.getElementById("cart-items");
+    const totalPriceElement = document.getElementById("total-price");
+    const cartDataInput = document.getElementById("cart_data");
+
+    function calculateItemPrice(item) {
+        let price = item.price;
+        if (item.discount_type === 'Percentage') {
+            price -= item.price * item.discount_value / 100;
+        } else if (item.discount_type === 'Fixed') {
+            price -= item.discount_value;
+        }
+        return price;
+    }
+
+    function renderCart() {
+        cartList.innerHTML = "";
+        let totalPrice = 0;
+
+        if (cart.length === 0) {
+            cartList.innerHTML = '<li class="list-group-item text-danger">Your cart is empty.</li>';
+        } else {
+            cart.forEach((item, index) => {
+                const itemPrice = calculateItemPrice(item);
+                const itemTotal = itemPrice * item.quantity;
+                totalPrice += itemTotal;
+
+                cartList.innerHTML += `
+                    <li class="list-group-item cart-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-quantity">(x${item.quantity})</div>
+                            <div class="price">$${itemTotal.toFixed(2)}</div>
+                        </div>
+                        <div class="d-flex align-items-center cart-actions">
+                            <button class="btn btn-sm btn-outline-secondary update-quantity" 
+                                data-index="${index}" data-change="-1">-</button>
+                            <input type="number" class="form-control mx-2 text-center" 
+                                value="${item.quantity}" min="1" style="width: 60px;" readonly>
+                            <button class="btn btn-sm btn-outline-secondary update-quantity" 
+                                data-index="${index}" data-change="1">+</button>
+                            <button class="btn btn-danger btn-sm ms-2 remove-item" 
+                                data-index="${index}">Remove</button>
+                        </div>
+                    </li>
+                `;
+            });
+        }
+
+        totalPriceElement.textContent = totalPrice.toFixed(2);
+        cartDataInput.value = JSON.stringify(cart);
+    }
+
     cartList.addEventListener("click", function (event) {
         if (event.target.classList.contains("update-quantity")) {
-            const index = event.target.dataset.index;
+            const index = parseInt(event.target.dataset.index);
             const change = parseInt(event.target.dataset.change);
             cart[index].quantity = Math.max(1, cart[index].quantity + change);
             localStorage.setItem("cart", JSON.stringify(cart));
             renderCart();
         }
+        
         if (event.target.classList.contains("remove-item")) {
-            const index = event.target.dataset.index;
+            const index = parseInt(event.target.dataset.index);
             cart.splice(index, 1);
             localStorage.setItem("cart", JSON.stringify(cart));
             renderCart();
         }
     });
 
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const invalidItems = cart.filter(item => !item.category_id);
+        if (invalidItems.length > 0) {
+            e.preventDefault();
+            alert('The cart contains invalid items. Please check your order.');
+        }
+    });
+
     renderCart();
 });
+});
+
 </script>
 
 </body>

@@ -2,14 +2,12 @@
 session_start();
 require_once '../../config/db.php';
 include '../layouts/header.php';
-// include_once('../../controllers/Notification.php'); 
 
 // --- Pagination Setup ---
-$limit = 4;
+$limit = 8; // Increased limit for better user experience
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
-if ($page < 1) {
-    $page = 1;
-}
+$page = max(1, $page); // Ensures the page is at least 1
+
 $offset = ($page - 1) * $limit;
 
 // --- Count total menu items ---
@@ -17,27 +15,39 @@ $countQuery = "SELECT COUNT(*) AS total FROM MenuItems";
 $countStmt = $pdo->prepare($countQuery);
 $countStmt->execute();
 $totalRows = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
-$totalPages = ceil($totalRows / $limit);
+$totalPages = ($totalRows > 0) ? ceil($totalRows / $limit) : 1; // Avoid division by zero
 
 // --- Fetch categories ---
-$query = "SELECT DISTINCT id, name FROM MenuCategories ORDER BY name";
-$stmt = $pdo->prepare($query);
-$stmt->execute();
-$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$categoryQuery = "SELECT id, name FROM MenuCategories ORDER BY name";
+$categoryStmt = $pdo->prepare($categoryQuery);
+$categoryStmt->execute();
+$categories = $categoryStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// --- Fetch paginated menu items ---
-$query = "SELECT id, name, description, price, image, category_id 
-          FROM MenuItems 
-          ORDER BY name 
-          LIMIT :offset, :limit";
-$stmt = $pdo->prepare($query);
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
-$stmt->execute();
-$menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// --- Fetch paginated menu items with active offers ---
+$menuQuery = "SELECT mi.id, mi.name, mi.description, mi.price, mi.image, mi.category_id,
+                     so.discount_type, so.discount_value, so.end_date,
+                     CASE 
+                         WHEN so.discount_type = 'Percentage' THEN mi.price - (mi.price * so.discount_value / 100)
+                         WHEN so.discount_type = 'Fixed' THEN mi.price - so.discount_value
+                         ELSE mi.price
+                     END AS final_price
+              FROM MenuItems mi
+              LEFT JOIN SpecialOffers so 
+              ON mi.id = so.menu_item_id 
+              AND so.end_date >= CURDATE()  -- Ensuring active offers
+              ORDER BY mi.name
+              LIMIT :offset, :limit";
+
+$menuStmt = $pdo->prepare($menuQuery);
+$menuStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$menuStmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$menuStmt->execute();
+$menuItems = $menuStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Our Menu</title>
@@ -45,156 +55,11 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <!-- Bootstrap 5 & Font Awesome 4.7.0 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <style>
-    body {
-      background-color: #f8f9fa;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    /* Hero Section */
-    .hero {
-      background: url('/public/assets/images/egypt-food.jpg') no-repeat center center/cover;
-      height: 50vh;
-      position: relative;
-      color: #fff;
-      margin-bottom: 2rem;
-    }
-
-    .hero-overlay {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-    }
-
-    .hero .container {
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero h1 {
-      font-size: 3rem;
-      font-weight: bold;
-    }
-
-    .hero p {
-      font-size: 1.25rem;
-    }
-
-    /* Search Bar */
-    .search-bar {
-      max-width: 400px;
-      margin: 20px auto;
-    }
-
-    .search-bar input {
-      border-radius: 20px;
-      padding: 10px 20px;
-      border: 1px solid #ced4da;
-    }
-
-    /* Category Navigation */
-    .nav-pills .nav-link {
-      border-radius: 20px;
-      margin: 0 5px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .nav-pills .nav-link.active {
-      background-color: #d4a017;
-      color: white;
-    }
-
-    .nav-pills .nav-link:hover {
-      background-color: rgba(212, 160, 23, 0.1);
-      color: #d4a017;
-    }
-
-    /* Menu Card Styling */
-    .menu-card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      margin: 15px;
-      transition: transform 0.3s ease;
-      overflow: hidden;
-    }
-
-    .menu-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .card-img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 12px 12px 0 0;
-    }
-
-    .card-body {
-      padding: 15px;
-    }
-
-    .card-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #2c3e50;
-      margin-bottom: 10px;
-    }
-
-    .card-desc {
-      font-size: 0.9rem;
-      color: #7f8c8d;
-      height: 60px;
-      overflow: hidden;
-    }
-
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 15px;
-    }
-
-    .card-price {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #d4a017;
-    }
-
-    .btn-add-cart {
-      background: #d4a017;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 25px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .btn-add-cart:hover {
-      background: #b58900;
-    }
-
-    /* Pagination */
-    .pagination {
-      margin-top: 20px;
-    }
-
-    .page-link {
-      color: #d4a017;
-    }
-
-    .page-item.active .page-link {
-      background-color: #d4a017;
-      border-color: #d4a017;
-    }
-  </style>
+  <link rel="stylesheet" href="/public/css/menu.css">
 </head>
+
 <body>
+
   <!-- Hero Section -->
   <section class="hero d-flex align-items-center justify-content-center">
     <div class="hero-overlay"></div>
@@ -203,14 +68,14 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <p class="lead">Explore our variety of authentic Egyptian dishes!</p>
     </div>
   </section>
-  
+
   <!-- Search Bar -->
   <div class="container">
     <div class="search-bar">
       <input type="text" id="searchInput" class="form-control" placeholder="Search menu items...">
     </div>
   </div>
-  
+
   <!-- Category Navigation -->
   <div class="container mb-4">
     <ul class="nav nav-pills justify-content-center" id="categoryNav">
@@ -226,25 +91,32 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <?php endforeach; ?>
     </ul>
   </div>
-  
+
   <!-- Product Grid -->
   <div class="container">
     <div class="row" id="menuItemsContainer">
       <?php foreach ($menuItems as $item): ?>
         <div class="col-md-3 col-sm-6 menu-item" data-category="<?= htmlspecialchars($item['category_id']) ?>">
           <div class="menu-card">
-            <div class="card-header">
-              <img src="<?= !empty($item['image']) ? '/public/uploads/menu-image/' . htmlspecialchars($item['image']) : '/public/uploads/menu-image/default-menu.jpg'; ?>" 
-                   alt="<?= htmlspecialchars($item['name']) ?>"
-                   class="card-img">
-            </div>
+            <img src="<?= !empty($item['image']) ? '/public/uploads/menu-image/' . htmlspecialchars($item['image']) : '/public/uploads/menu-image/default-menu.jpg'; ?>"
+              alt="<?= htmlspecialchars($item['name']) ?>" class="card-img">
             <div class="card-body">
               <h5 class="card-title"><?= htmlspecialchars($item['name']) ?></h5>
               <p class="card-desc"><?= htmlspecialchars($item['description']) ?></p>
               <div class="card-footer">
-                <span class="card-price">$<?= number_format($item['price'], 2) ?></span>
-                <button class="btn-add-cart" 
-                        onclick="addToCart(<?= $item['id'] ?>, '<?= htmlspecialchars(addslashes($item['name'])) ?>', <?= $item['price'] ?>, <?= $item['category_id'] ?>)">
+                <span class="card-price">
+                  <?php if (!empty($item['discount_type'])): ?>
+                    <span style="text-decoration: line-through; color: red;">$<?= number_format($item['price'], 2) ?></span>
+                    <span style="color: green; font-weight: bold;" id="final-price-<?= $item['id'] ?>">
+                      $<?= number_format($item['final_price'], 2) ?>
+                    </span>
+                    <span class="offer-badge">🔥 <?= $item['discount_value'] . ($item['discount_type'] === 'Percentage' ? '%' : '$') ?> Off!</span>
+                  <?php else: ?>
+                    <span id="final-price-<?= $item['id'] ?>">$<?= number_format($item['price'], 2) ?></span>
+                  <?php endif; ?>
+                </span>
+                <button class="btn-add-cart"
+                  onclick="addToCart(<?= $item['id'] ?>, '<?= htmlspecialchars(addslashes($item['name'])) ?>', <?= $item['price'] ?>, <?= $item['category_id'] ?>, '<?= $item['discount_type'] ?>', <?= $item['discount_value'] ?? 0 ?>)">
                   <i class="fa fa-cart-plus"></i> Add to Cart
                 </button>
               </div>
@@ -253,37 +125,38 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
       <?php endforeach; ?>
     </div>
-    
-    <!-- Pagination Navigation -->
-    <nav aria-label="Menu pagination">
-      <ul class="pagination justify-content-center">
-        <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-          <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
-        </li>
-        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-          <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-          </li>
-        <?php endfor; ?>
-        <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
-          <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      </ul>
-    </nav>
   </div>
-  
+
+  <!-- Pagination Navigation -->
+  <nav aria-label="Menu pagination">
+    <ul class="pagination justify-content-center">
+      <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+        <a class="page-link" href="?page=<?= $page - 1 ?>" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+        <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+          <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+        </li>
+      <?php endfor; ?>
+      <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
+        <a class="page-link" href="?page=<?= $page + 1 ?>" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
   <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // Category Filtering
       const navLinks = document.querySelectorAll('#categoryNav .nav-link');
       navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
           e.preventDefault();
           navLinks.forEach(l => l.classList.remove('active'));
           this.classList.add('active');
@@ -293,10 +166,10 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
           });
         });
       });
-      
+
       // Search Functionality
       const searchInput = document.getElementById('searchInput');
-      searchInput.addEventListener('input', function() {
+      searchInput.addEventListener('input', function () {
         const query = this.value.toLowerCase();
         document.querySelectorAll('.menu-item').forEach(item => {
           const title = item.querySelector('.card-title').textContent.toLowerCase();
@@ -307,48 +180,82 @@ $menuItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
     });
 
     // Add to Cart Functionality
-    function addToCart(id, name, price, category_id) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const existingItem = cart.find(item => item.id === id);
+    function addToCart(id, name, price, category_id, discount_type = '', discount_value = 0) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let existingItem = cart.find(item => item.id === id);
 
-      if (existingItem) {
+    let finalPrice = price;  // Default final price is the base price
+    let discountMessage = '';
+
+    // Check if there is a special offer and apply it
+    if (discount_type) {
+        if (discount_type === 'Percentage') {
+            finalPrice = price - (price * discount_value / 100); // Apply percentage discount
+            discountMessage = `<span style="color: red; font-weight: bold;">Special Offer: ${discount_value}% OFF!</span>`;
+        } else if (discount_type === 'Fixed') {
+            finalPrice = price - discount_value;  // Apply fixed amount discount
+            discountMessage = `<span style="color: red; font-weight: bold;">Discount: -$${discount_value}</span>`;
+        }
+    }
+
+    if (existingItem) {
+        // If item already in cart, just update quantity and price
         existingItem.quantity += 1;
-      } else {
+        existingItem.finalPrice = finalPrice;  // Update final price in cart
+    } else {
+        // If new item, add it to the cart with the calculated final price
         cart.push({
-          id: id,
-          name: name,
-          price: parseFloat(price),
-          quantity: 1,
-          category_id: category_id
+            id: id,
+            name: name,
+            price: parseFloat(price),
+            finalPrice: parseFloat(finalPrice),
+            quantity: 1,
+            category_id: category_id,
+            discount_type: discount_type,
+            discount_value: discount_value
         });
-      }
-
-      localStorage.setItem("cart", JSON.stringify(cart));
-      updateCartCount();
-      
-      // Show added feedback
-      const btn = event.target;
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = '<i class="fa fa-check"></i> Added!';
-      btn.style.backgroundColor = '#28a745';
-      
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
-        btn.style.backgroundColor = '#d4a017';
-      }, 2000);
     }
 
-    // Update cart count in header
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const count = cart.reduce((acc, item) => acc + item.quantity, 0);
-      document.getElementById('cart-count').textContent = count;
-    }
+    // Save the updated cart to localStorage
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();  // Update the cart count in the UI
 
-    // Initialize cart count on page load
-    updateCartCount();
+    // Display SweetAlert notification when item is added
+    Swal.fire({
+        title: "Item Added!",
+        html: `
+            <strong>${name}</strong> has been added to your cart.<br>
+            <p><strong>Price:</strong> <span style="text-decoration: ${discountMessage ? 'line-through' : 'none'};">$${price}</span>
+            ${discountMessage ? `<span style="color: green; font-size: 1.2em;">$${finalPrice.toFixed(2)}</span>` : ''}</p>
+            ${discountMessage ? `<p>${discountMessage}</p>` : ''}`
+        ,
+        icon: "success",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#d4a017"
+    });
+
+    // Update the final price in the cart page view
+    updateCartTotal();
+}
+
+function updateCartTotal() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const total = cart.reduce((acc, item) => acc + item.finalPrice * item.quantity, 0);
+    document.getElementById('cart-total').textContent = `$${total.toFixed(2)}`; // Update total with discount
+}
+
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+    document.getElementById('cart-count').textContent = count;
+}
+
+// Initialize cart count and total on page load
+updateCartCount();
+updateCartTotal();
+
   </script>
-  
-  <?php include '../layouts/footer.php'; ?>
+
 </body>
+
 </html>
