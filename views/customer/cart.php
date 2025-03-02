@@ -31,9 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
         if ($result) {
             $_SESSION['cart'] = [];
             echo '<script>localStorage.removeItem("cart");</script>';
-            // $success = 'Order placed successfully!';
-            // header("Location: /views/customer/order-history.php");
-            // exit();
         } else {
             throw new Exception('Failed to place order');
         }
@@ -82,50 +79,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalPriceElement = document.getElementById("total-price");
     const cartDataInput = document.getElementById("cart_data");
 
-    function renderCart() {
-        cartList.innerHTML = "";
-        let total = 0;
-        
-        if (cart.length === 0) {
-            cartList.innerHTML = '<li class="list-group-item text-danger empty-cart-message">Your cart is empty.</li>';
-        } else {
-            cart.forEach((item, index) => {
-                total += item.price * item.quantity;
-                const li = document.createElement("li");
-                li.className = "list-group-item cart-item d-flex justify-content-between align-items-center";
-                li.innerHTML = `
-                    <div>
-                        <div class="item-name">${item.name}</div>
-                        <div class="price">$${(item.price * item.quantity).toFixed(2)}</div>
-                    </div>
-                    <div class="d-flex align-items-center cart-actions">
-                        <button class="btn btn-sm btn-outline-secondary update-quantity" data-index="${index}" data-change="-1">-</button>
-                        <input type="number" class="form-control mx-2 text-center" value="${item.quantity}" min="1" readonly style="width: 60px;">
-                        <button class="btn btn-sm btn-outline-secondary update-quantity" data-index="${index}" data-change="1">+</button>
-                        <button class="btn btn-danger btn-sm remove-item" data-index="${index}">Remove</button>
-                    </div>
-                `;
-                cartList.appendChild(li);
-            });
-        }
-        totalPriceElement.innerText = total.toFixed(2);
-        cartDataInput.value = JSON.stringify(cart);
-    }
-
-document.addEventListener("DOMContentLoaded", function () {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const cartList = document.getElementById("cart-items");
-    const totalPriceElement = document.getElementById("total-price");
-    const cartDataInput = document.getElementById("cart_data");
-
     function calculateItemPrice(item) {
-        let price = item.price;
+        let price = parseFloat(item.price);
         if (item.discount_type === 'Percentage') {
-            price -= item.price * item.discount_value / 100;
+            price -= price * parseFloat(item.discount_value) / 100;
         } else if (item.discount_type === 'Fixed') {
-            price -= item.discount_value;
+            price -= parseFloat(item.discount_value);
         }
-        return price;
+        return price > 0 ? price : 0;
     }
 
     function renderCart() {
@@ -140,25 +101,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 const itemTotal = itemPrice * item.quantity;
                 totalPrice += itemTotal;
 
-                cartList.innerHTML += `
-                    <li class="list-group-item cart-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="item-name">${item.name}</div>
-                            <div class="item-quantity">(x${item.quantity})</div>
-                            <div class="price">$${itemTotal.toFixed(2)}</div>
-                        </div>
-                        <div class="d-flex align-items-center cart-actions">
-                            <button class="btn btn-sm btn-outline-secondary update-quantity" 
-                                data-index="${index}" data-change="-1">-</button>
-                            <input type="number" class="form-control mx-2 text-center" 
-                                value="${item.quantity}" min="1" style="width: 60px;" readonly>
-                            <button class="btn btn-sm btn-outline-secondary update-quantity" 
-                                data-index="${index}" data-change="1">+</button>
-                            <button class="btn btn-danger btn-sm ms-2 remove-item" 
-                                data-index="${index}">Remove</button>
-                        </div>
-                    </li>
+                const li = document.createElement("li");
+                li.className = "list-group-item cart-item d-flex justify-content-between align-items-center";
+                li.innerHTML = `
+                    <div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-quantity">(x${item.quantity})</div>
+                        <div class="price">$${itemTotal.toFixed(2)}</div>
+                    </div>
+                    <div class="d-flex align-items-center cart-actions">
+                        <button class="btn btn-sm btn-outline-secondary update-quantity" data-index="${index}" data-change="-1">-</button>
+                        <input type="number" class="form-control mx-2 text-center" value="${item.quantity}" min="1" readonly style="width: 60px;">
+                        <button class="btn btn-sm btn-outline-secondary update-quantity" data-index="${index}" data-change="1">+</button>
+                        <button class="btn btn-danger btn-sm remove-item" data-index="${index}">Remove</button>
+                    </div>
                 `;
+                cartList.appendChild(li);
             });
         }
 
@@ -184,17 +142,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     document.querySelector('form').addEventListener('submit', function(e) {
-        const invalidItems = cart.filter(item => !item.category_id);
-        if (invalidItems.length > 0) {
+        if (cart.length === 0) {
             e.preventDefault();
-            alert('The cart contains invalid items. Please check your order.');
+            alert('Your cart is empty! Please add items before placing an order.');
         }
     });
 
     renderCart();
 });
-});
-
 </script>
 
 </body>
